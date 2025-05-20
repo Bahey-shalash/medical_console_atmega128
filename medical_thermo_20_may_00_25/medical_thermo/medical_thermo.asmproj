@@ -1,0 +1,158 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="14.0">
+  <PropertyGroup>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectVersion>7.0</ProjectVersion>
+    <ToolchainName>com.Atmel.AVRAssembler</ToolchainName>
+    <ProjectGuid>59B1D629-9DCC-43ed-A0FD-8AB0E4D622AB</ProjectGuid>
+    <avrdeviceseries>none</avrdeviceseries>
+    <avrdevice>ATmega128</avrdevice>
+    <OutputFileName>$(MSBuildProjectName)</OutputFileName>
+    <OutputFileExtension>.obj</OutputFileExtension>
+    <OutputDirectory>$(MSBuildProjectDirectory)\$(Configuration)</OutputDirectory>
+    <Language>ASSEMBLY</Language>
+    <AssemblyName>medical_thermo</AssemblyName>
+    <Name>medical_thermo</Name>
+    <RootNamespace>medical_thermo</RootNamespace>
+    <ToolchainFlavour>Native</ToolchainFlavour>
+    <EntryFile>$(MSBuildProjectDirectory)\main.asm</EntryFile>
+    <KeepTimersRunning>true</KeepTimersRunning>
+    <OverrideVtor>false</OverrideVtor>
+    <CacheFlash>true</CacheFlash>
+    <ProgFlashFromRam>true</ProgFlashFromRam>
+    <RamSnippetAddress />
+    <UncachedRange />
+    <preserveEEPROM>true</preserveEEPROM>
+    <OverrideVtorValue />
+    <BootSegment>2</BootSegment>
+    <eraseonlaunchrule>0</eraseonlaunchrule>
+    <AsfFrameworkConfig>
+      <framework-data xmlns="">
+        <options />
+        <configurations />
+        <files />
+        <documentation help="" />
+        <offline-documentation help="" />
+        <dependencies>
+          <content-extension eid="atmel.asf" uuidref="Atmel.ASF" version="3.32.0" />
+        </dependencies>
+      </framework-data>
+    </AsfFrameworkConfig>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <ToolchainSettings>
+      <AvrAssembler>
+        <avrasm.assembler.general.AdditionalIncludeDirectories>
+          <ListValues>
+            <Value>%24(PackRepoDir)\atmel\ATmega_DFP\1.1.130\avrasm\inc</Value>
+          </ListValues>
+        </avrasm.assembler.general.AdditionalIncludeDirectories>
+        <avrasm.assembler.general.IncludeFile>m128def.inc</avrasm.assembler.general.IncludeFile>
+      </AvrAssembler>
+    </ToolchainSettings>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+    <ToolchainSettings>
+      <AvrAssembler>
+        <avrasm.assembler.general.AdditionalIncludeDirectories>
+          <ListValues>
+            <Value>%24(PackRepoDir)\atmel\ATmega_DFP\1.1.130\avrasm\inc</Value>
+          </ListValues>
+        </avrasm.assembler.general.AdditionalIncludeDirectories>
+        <avrasm.assembler.general.IncludeFile>m128def.inc</avrasm.assembler.general.IncludeFile>
+      </AvrAssembler>
+    </ToolchainSettings>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="definitions.asm">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="encoder.asm">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="i2cx.asm">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="lcd.asm">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="LED_MATRIX_A.asm">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="LED_MATRIX_PIN7_PORTD.asm">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="macros.asm">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="maim4.asm">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="main6.asm">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="main5.asm">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="main.asm">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="menu.asm">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="menu1.asm">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="music.asm">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="printf.asm">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="sound.asm">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="doctor_state.asm">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="game1_state.asm">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="game2_state.asm">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="game3_state.asm">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="home_state.asm">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="wire1.asm">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ws2812b_4MHz_demo01_S.asm">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ws2812_demo_scroll0.asm">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ws2812_driver.asm">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ws2812_driver_PORTA.asm">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ws2812_driver0.asm">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ws2812_test_xy.asm">
+      <SubType>Code</SubType>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="i2c_eeprom2017.hex">
+      <SubType>Code</SubType>
+    </None>
+  </ItemGroup>
+  <Import Project="$(AVRSTUDIO_EXE_PATH)\\Vs\\Assembler.targets" />
+</Project>
