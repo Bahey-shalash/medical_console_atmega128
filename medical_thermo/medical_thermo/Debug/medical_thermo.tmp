@@ -17,7 +17,7 @@
   <FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\wire1.asm</FILE>
   <FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\ws2812_driver.asm</FILE>
   <FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\home_state.asm</FILE>
-  <FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\game1_state.asm</FILE>
+  <FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\snake_state.asm</FILE>
   <FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\game2_state.asm</FILE>
   <FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\game3_state.asm</FILE>
   <FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\doctor_state.asm</FILE>
@@ -127,8 +127,8 @@
   <home_loop><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\home_state.asm</FILE><LINE>5</LINE></home_loop>
   <home_body><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\home_state.asm</FILE><LINE>10</LINE></home_body>
   <temp_task><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\main.asm</FILE><LINE>185</LINE></temp_task>
-  <game1_loop><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\game1_state.asm</FILE><LINE>5</LINE></game1_loop>
-  <g1_body><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\game1_state.asm</FILE><LINE>10</LINE></g1_body>
+  <game1_loop><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\snake_state.asm</FILE><LINE>5</LINE></game1_loop>
+  <g1_body><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\snake_state.asm</FILE><LINE>10</LINE></g1_body>
   <game2_loop><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\game2_state.asm</FILE><LINE>5</LINE></game2_loop>
   <g2_body><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\game2_state.asm</FILE><LINE>10</LINE></g2_body>
   <game3_loop><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\game3_state.asm</FILE><LINE>5</LINE></game3_loop>

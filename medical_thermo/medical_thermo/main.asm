@@ -61,7 +61,7 @@ phase:      .byte 1                     ; 0=Convert, 1=Read
 ;  State modules
 ;----------------------------------------------------------------------
             .include "home_state.asm"
-            .include "game1_state.asm"
+            .include "snake_state.asm"
             .include "game2_state.asm"
             .include "game3_state.asm"
             .include "doctor_state.asm"
@@ -130,7 +130,7 @@ switch:
             rcall home_loop
             rjmp  switch
 
-sw_g1:
+sw_g1:;snake
             cpi   r16,ST_GAME1
             brne  sw_g2
             rcall game1_loop

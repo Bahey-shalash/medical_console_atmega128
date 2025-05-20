@@ -1,5 +1,5 @@
 
-AVRASM ver. 2.2.6  Z:\medical_consol_atmega128\medical_thermo\medical_thermo\main.asm Tue May 20 11:21:35 2025
+AVRASM ver. 2.2.6  Z:\medical_consol_atmega128\medical_thermo\medical_thermo\main.asm Tue May 20 12:34:37 2025
 
 [builtin](2): Including file 'C:/Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.1.130\avrasm\inc\m128def.inc'
 Z:\medical_consol_atmega128\medical_thermo\medical_thermo\main.asm(9): Including file 'C:/Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.1.130\avrasm\inc\m128def.inc'
@@ -10,7 +10,7 @@ Z:\medical_consol_atmega128\medical_thermo\medical_thermo\main.asm(57): Includin
 Z:\medical_consol_atmega128\medical_thermo\medical_thermo\main.asm(58): Including file 'Z:\medical_consol_atmega128\medical_thermo\medical_thermo\wire1.asm'
 Z:\medical_consol_atmega128\medical_thermo\medical_thermo\main.asm(59): Including file 'Z:\medical_consol_atmega128\medical_thermo\medical_thermo\ws2812_driver.asm'
 Z:\medical_consol_atmega128\medical_thermo\medical_thermo\main.asm(63): Including file 'Z:\medical_consol_atmega128\medical_thermo\medical_thermo\home_state.asm'
-Z:\medical_consol_atmega128\medical_thermo\medical_thermo\main.asm(64): Including file 'Z:\medical_consol_atmega128\medical_thermo\medical_thermo\game1_state.asm'
+Z:\medical_consol_atmega128\medical_thermo\medical_thermo\main.asm(64): Including file 'Z:\medical_consol_atmega128\medical_thermo\medical_thermo\snake_state.asm'
 Z:\medical_consol_atmega128\medical_thermo\medical_thermo\main.asm(65): Including file 'Z:\medical_consol_atmega128\medical_thermo\medical_thermo\game2_state.asm'
 Z:\medical_consol_atmega128\medical_thermo\medical_thermo\main.asm(66): Including file 'Z:\medical_consol_atmega128\medical_thermo\medical_thermo\game3_state.asm'
 Z:\medical_consol_atmega128\medical_thermo\medical_thermo\main.asm(67): Including file 'Z:\medical_consol_atmega128\medical_thermo\medical_thermo\doctor_state.asm'
@@ -23,7 +23,7 @@ Z:\medical_consol_atmega128\medical_thermo\medical_thermo\main.asm(57): Includin
 Z:\medical_consol_atmega128\medical_thermo\medical_thermo\main.asm(58): Including file 'Z:\medical_consol_atmega128\medical_thermo\medical_thermo\wire1.asm'
 Z:\medical_consol_atmega128\medical_thermo\medical_thermo\main.asm(59): Including file 'Z:\medical_consol_atmega128\medical_thermo\medical_thermo\ws2812_driver.asm'
 Z:\medical_consol_atmega128\medical_thermo\medical_thermo\main.asm(63): Including file 'Z:\medical_consol_atmega128\medical_thermo\medical_thermo\home_state.asm'
-Z:\medical_consol_atmega128\medical_thermo\medical_thermo\main.asm(64): Including file 'Z:\medical_consol_atmega128\medical_thermo\medical_thermo\game1_state.asm'
+Z:\medical_consol_atmega128\medical_thermo\medical_thermo\main.asm(64): Including file 'Z:\medical_consol_atmega128\medical_thermo\medical_thermo\snake_state.asm'
 Z:\medical_consol_atmega128\medical_thermo\medical_thermo\main.asm(65): Including file 'Z:\medical_consol_atmega128\medical_thermo\medical_thermo\game2_state.asm'
 Z:\medical_consol_atmega128\medical_thermo\medical_thermo\main.asm(66): Including file 'Z:\medical_consol_atmega128\medical_thermo\medical_thermo\game3_state.asm'
 Z:\medical_consol_atmega128\medical_thermo\medical_thermo\main.asm(67): Including file 'Z:\medical_consol_atmega128\medical_thermo\medical_thermo\doctor_state.asm'
@@ -4167,7 +4167,7 @@ Z:\medical_consol_atmega128\medical_thermo\medical_thermo\main.asm(63): 'Z:\medi
                                  
 000241 913f                                  pop   r19
 000242 912f                                  pop   r18
-                                             .include "game1_state.asm"
+                                             .include "snake_state.asm"
 000243 9508                      
                                  ;  Game-1 state  (sel == 1)
                                  ;======================================================================
@@ -4431,7 +4431,7 @@ Z:\medical_consol_atmega128\medical_thermo\medical_thermo\main.asm(67): 'Z:\medi
 00030a df13                                  rcall home_loop
 00030b cffb                                  rjmp  switch
                                  
-                                 sw_g1:
+                                 sw_g1:;snake
 00030c 3001                                  cpi   r16,ST_GAME1
 00030d f411                                  brne  sw_g2
 00030e df35                                  rcall game1_loop

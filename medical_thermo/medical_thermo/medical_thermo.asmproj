@@ -115,7 +115,7 @@
     <Compile Include="doctor_state.asm">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="game1_state.asm">
+    <Compile Include="snake_state.asm">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="game2_state.asm">
