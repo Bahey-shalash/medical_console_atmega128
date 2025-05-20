@@ -1,5 +1,5 @@
 
-AVRASM ver. 2.2.6  Z:\medical_thermo_19_may_12h\medical_thermo\main.asm Mon May 19 17:27:51 2025
+AVRASM ver. 2.2.6  Z:\medical_consol_atmega128\medical_thermo\medical_thermo\main.asm Tue May 20 11:21:35 2025
 
 
 EQU  SIGNATURE_000 0000001e
@@ -953,12 +953,12 @@ DSEG flags        00000100
 DSEG temp_lsb     00000101
 DSEG temp_msb     00000102
 DSEG phase        00000103
-CSEG reset        000002ba
-CSEG int0_isr     00000323
-CSEG int1_isr     00000329
-CSEG int2_isr     00000330
-CSEG int3_isr     00000332
-CSEG t1_isr       00000335
+CSEG reset        000002da
+CSEG int0_isr     00000343
+CSEG int1_isr     00000349
+CSEG int2_isr     00000350
+CSEG int3_isr     00000352
+CSEG t1_isr       00000355
 EQU  LCD_IR       00008000
 EQU  LCD_DR       0000c000
 CSEG LCD_wr_ir    0000001e
@@ -1086,23 +1086,23 @@ CSEG ws_idx_xy    0000020e
 CSEG ws_offset_idx 00000214
 CSEG home_loop    0000021e
 CSEG home_body    00000221
-CSEG temp_task    00000310
-CSEG game1_loop   0000023c
-CSEG g1_body      0000023f
-CSEG game2_loop   0000025a
-CSEG g2_body      0000025d
-CSEG game3_loop   00000278
-CSEG g3_body      0000027b
-CSEG doctor_loop  00000296
-CSEG doc_body     00000298
-CSEG temp_convert 000002fa
-CSEG main_loop    000002e7
-CSEG switch       000002e7
-CSEG sw_g1        000002ec
-CSEG sw_g2        000002f0
-CSEG sw_g3        000002f4
-CSEG sw_doc       000002f8
-CSEG temp_fetch   00000302
-CSEG do_convert   0000031e
-CSEG no_wrap0     00000328
-CSEG cont1        0000032e
+CSEG temp_task    00000330
+CSEG game1_loop   00000244
+CSEG g1_body      00000247
+CSEG game2_loop   0000026a
+CSEG g2_body      0000026d
+CSEG game3_loop   00000290
+CSEG g3_body      00000293
+CSEG doctor_loop  000002b6
+CSEG doc_body     000002b8
+CSEG temp_convert 0000031a
+CSEG main_loop    00000307
+CSEG switch       00000307
+CSEG sw_g1        0000030c
+CSEG sw_g2        00000310
+CSEG sw_g3        00000314
+CSEG sw_doc       00000318
+CSEG temp_fetch   00000322
+CSEG do_convert   0000033e
+CSEG no_wrap0     00000348
+CSEG cont1        0000034e

@@ -11,6 +11,8 @@ g3_body:
 			rcall lcd_clear 
             PRINTF LCD
             .db "Game3",0
+			
+			WAIT_US 250000             ; ~4 Hz refresh
 
             lds   r18,flags
             sbrc  r18,FLG_TEMP
