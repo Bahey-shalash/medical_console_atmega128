@@ -11,14 +11,7 @@
 ;  ws_offset_idx   r24              u w ZL ZH                        
 ;  (SREG always changes as any normal arithmetic will.)               
 ; ?????????????????????????????????????????????????????????????????????
-;• WS_PUSH_ALL   – push every register any of the public helpers
-;                    (ws_byte3wr, ws_idx_xy, ws_offset_idx) may change.
-;  • WS_POP_ALL    – restore them in reverse order.
 ;
-;  Use pattern
-;       WS_PUSH_ALL
-;           ; — build / send frame here —
-;       WS_POP_ALL
 ; If your code needs a0–a2 kept, push them before calling ws_byte3wr.
 ;
 ; ????? pin configuration (override before .include if you wish) ?????
@@ -28,29 +21,7 @@
 .equ WS_PIN_MASK = (1 << WS_PIN_IDX)
 
 .equ WS_BUF_BASE = 0x0400          ; 8×8×3-byte frame buffer
-        .macro WS_PUSH_ALL
-            push    a0
-            push    a1
-            push    a2
-            push    u
-            push    w
-            push    r24
-            push    r25
-            push    ZH
-            push    ZL
-        .endm
 
-        .macro WS_POP_ALL
-            pop     ZL
-            pop     ZH
-            pop     r25
-            pop     r24
-            pop     w
-            pop     u
-            pop     a2
-            pop     a1
-            pop     a0
-        .endm
 ; ????? timing-critical bit macros (4 MHz) ????????????????????????????
 ; “0” bit total ? 5 cycles (T0H ? 0.40 µs, T0L ? 0.85 µs)
 .macro WS_WR0

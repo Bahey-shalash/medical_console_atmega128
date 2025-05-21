@@ -15,15 +15,15 @@
     <Name>medical_thermo</Name>
     <RootNamespace>medical_thermo</RootNamespace>
     <ToolchainFlavour>Native</ToolchainFlavour>
-    <EntryFile>$(MSBuildProjectDirectory)\main.asm</EntryFile>
+    <EntryFile>$(MSBuildProjectDirectory)\ws2812_test_xy_with_lcd_loop.asm</EntryFile>
     <KeepTimersRunning>true</KeepTimersRunning>
     <OverrideVtor>false</OverrideVtor>
     <CacheFlash>true</CacheFlash>
     <ProgFlashFromRam>true</ProgFlashFromRam>
-    <RamSnippetAddress />
+    <RamSnippetAddress>0x20000000</RamSnippetAddress>
     <UncachedRange />
     <preserveEEPROM>true</preserveEEPROM>
-    <OverrideVtorValue />
+    <OverrideVtorValue>exception_table</OverrideVtorValue>
     <BootSegment>2</BootSegment>
     <eraseonlaunchrule>0</eraseonlaunchrule>
     <AsfFrameworkConfig>
@@ -38,6 +38,19 @@
         </dependencies>
       </framework-data>
     </AsfFrameworkConfig>
+    <avrtool>com.atmel.avrdbg.tool.simulator</avrtool>
+    <avrtoolserialnumber />
+    <avrdeviceexpectedsignature>0x1E9702</avrdeviceexpectedsignature>
+    <com_atmel_avrdbg_tool_simulator>
+      <ToolOptions xmlns="">
+        <InterfaceProperties>
+        </InterfaceProperties>
+      </ToolOptions>
+      <ToolType xmlns="">com.atmel.avrdbg.tool.simulator</ToolType>
+      <ToolNumber xmlns="">
+      </ToolNumber>
+      <ToolName xmlns="">Simulator</ToolName>
+    </com_atmel_avrdbg_tool_simulator>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <ToolchainSettings>
@@ -50,6 +63,7 @@
         <avrasm.assembler.general.IncludeFile>m128def.inc</avrasm.assembler.general.IncludeFile>
       </AvrAssembler>
     </ToolchainSettings>
+    <OutputType>Executable</OutputType>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
     <ToolchainSettings>
@@ -67,6 +81,9 @@
     <Compile Include="definitions.asm">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="ws2812_test_xy_with_lcd_loop.asm">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="encoder.asm">
       <SubType>Code</SubType>
     </Compile>
@@ -76,25 +93,37 @@
     <Compile Include="lcd.asm">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="LED_MATRIX_A.asm">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="LED_MATRIX_PIN7_PORTD.asm">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="macros.asm">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="maim4.asm">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="main6.asm">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="main5.asm">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="main.asm">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="matrix_helpers.asm">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="matrix_testing\LED_MATRIX_A.asm">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="matrix_testing\LED_MATRIX_PIN7_PORTD.asm">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="matrix_testing\ws2812b_4MHz_demo01_S.asm">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="matrix_testing\ws2812_demo_scroll0.asm">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="matrix_testing\ws2812_driver0.asm">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="matrix_testing\ws2812_driver_old.asm">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="matrix_testing\ws2812_driver_PORTA.asm">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="matrix_testing\ws2812_driver_unit_test.asm">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="menu.asm">
@@ -106,7 +135,25 @@
     <Compile Include="music.asm">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="old_mains\maim4.asm">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="old_mains\main5.asm">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="old_mains\main6.asm">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="pixel_scroller.asm">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="printf.asm">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="snake_test.asm">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="snake_tester_dumby.asm">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="sound.asm">
@@ -130,19 +177,10 @@
     <Compile Include="wire1.asm">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="ws2812b_4MHz_demo01_S.asm">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="ws2812_demo_scroll0.asm">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="ws2812_driver.asm">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="ws2812_driver_PORTA.asm">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="ws2812_driver0.asm">
+    <Compile Include="ws2812_driver_working_u.asm">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="ws2812_test_xy.asm">
@@ -153,6 +191,10 @@
     <None Include="i2c_eeprom2017.hex">
       <SubType>Code</SubType>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="matrix_testing" />
+    <Folder Include="old_mains" />
   </ItemGroup>
   <Import Project="$(AVRSTUDIO_EXE_PATH)\\Vs\\Assembler.targets" />
 </Project>

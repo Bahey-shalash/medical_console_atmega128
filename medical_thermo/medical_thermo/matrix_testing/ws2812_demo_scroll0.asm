@@ -24,7 +24,7 @@
 ; -----------------------------------------------------------------------------
 reset:
     LDSP RAMEND
-    rcall ws_init                      ; configure PA1
+    rcall ws_init                      ; configure 
           OUTI DDRC, 0x03                    ; PC0|PC1 outputs
         ; PD7 = output (WS data), PD0 = input (button) + pull-up
         OUTI DDRD, (1<<7)                  ; DDRD7=1 ? PD7 output; DDRD0=0 ? PD0 input

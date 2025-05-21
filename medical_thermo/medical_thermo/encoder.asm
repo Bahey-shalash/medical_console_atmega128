@@ -77,6 +77,21 @@ i_down_done:
 	sez						; set Z
 	ret
 
+encoder_update:
+    ; save old a0
+    mov r16, a0
+
+    ; call the existing routine
+    rcall encoder
+
+    ; now a0 = new count, r16 = old count
+    mov r17, a0
+    ; compute ? = new ? old
+    sub r17, r16       ; r17 = a0_new ? a0_old
+    mov r3, r17        ; put result in r3
+
+    ret
+
 encoder_button:
 	sbrc	_w,ENCOD_I
 	rjmp	i_rise

@@ -57,6 +57,8 @@ phase:      .byte 1                     ; 0=Convert, 1=Read
             .include "printf.asm"
             .include "wire1.asm"
             .include "ws2812_driver.asm"
+			.include "encoder.asm"
+			 .include "matrix_helpers.asm"
 ;----------------------------------------------------------------------
 ;  State modules
 ;----------------------------------------------------------------------
@@ -72,7 +74,8 @@ reset:
             LDSP  RAMEND
             rcall LCD_init
             rcall wire1_init
-
+			;— WS2812 matrix on PD7 -----------------------------------------------
+   
 ;— Buttons PD0–PD3: inputs w/ pull-ups -------------------------------
             cbi   DDRD,0
             cbi   DDRD,1
@@ -82,7 +85,7 @@ reset:
             sbi   PORTD,1
             sbi   PORTD,2
             sbi   PORTD,3
-
+			rcall ws_init
 ;— LED-strip on PF7 (active-low) --------------------------------------
             lds   r16,DDRF
             ori   r16,(1<<LED_BIT)
@@ -124,33 +127,34 @@ reset:
 ;======================================================================
 main_loop:
 switch:
-            mov   r16,sel
-            cpi   r16,ST_HOME
-            brne  sw_g1
-            rcall home_loop
-            rjmp  switch
+        mov   r16, sel
 
-sw_g1:;snake
-            cpi   r16,ST_GAME1
-            brne  sw_g2
-            rcall game1_loop
-            rjmp  switch
+        cpi   r16, ST_HOME
+        brne  sw_g1
+        rcall home_init              ; <-- changed
+        rjmp  switch
+
+sw_g1:
+        cpi   r16, ST_GAME1
+        brne  sw_g2
+        rcall snake_init
+        rjmp  switch
 
 sw_g2:
-            cpi   r16,ST_GAME2
-            brne  sw_g3
-            rcall game2_loop
-            rjmp  switch
+        cpi   r16, ST_GAME2
+        brne  sw_g3
+        rcall game2_init
+        rjmp  switch
 
 sw_g3:
-            cpi   r16,ST_GAME3
-            brne  sw_doc
-            rcall game3_loop
-            rjmp  switch
+        cpi   r16, ST_GAME3
+        brne  sw_doc
+        rcall game3_init
+        rjmp  switch
 
 sw_doc:
-            rcall doctor_loop
-            rjmp  switch
+        rcall doctor_init
+        rjmp  switch
 
 ;======================================================================
 ;  1-Wire helpers
@@ -205,49 +209,67 @@ do_convert:
 ;======================================================================
 ;  Interrupt service routines
 ;======================================================================
+;-----------------------  INT0 – next state  --------------------------
 int0_isr:
-            inc   sel
-            ldi   r16,REG_STATES
-            cp    sel,r16
-            brlo  no_wrap0
-            clr   sel
-no_wrap0:
-            reti
+        push  r16
+        inc   sel
+        ldi   r16,REG_STATES
+        cp    sel,r16
+        brlo  int0_done
+        clr   sel                   ; wrap 3?0
+int0_done:
+        pop   r16
+        reti
 
+;-----------------------  INT1 – previous state -----------------------
 int1_isr:
-            tst   sel
-            brne  cont1
-            ldi   r16,REG_STATES-1
-            mov   sel,r16
-            reti
-cont1:
-            dec   sel
-            reti
+        push  r16
+        tst   sel
+        brne  int1_dec
+        ldi   r16,REG_STATES-1      ; wrap 0?3
+        mov   sel,r16
+        pop   r16
+        reti
+int1_dec:
+        dec   sel
+        pop   r16
+        reti
 
+;-----------------------  INT2 – goto Home ----------------------------
 int2_isr:
-            clr   sel
-            reti
+        clr   sel                   ; ST_HOME
+        reti
 
+;-----------------------  INT3 – Doctor mode --------------------------
 int3_isr:
-            ldi   r16,ST_DOCTOR
-            mov   sel,r16
-            reti
+        push  r16
+        ldi   r16,ST_DOCTOR
+        mov   sel,r16
+        pop   r16
+        reti
 
-; Timer-1 overflow — reload, toggle PF7, flag temp --------------------
+;-----------------------  Timer-1 overflow  ---------------------------
 t1_isr:
-            ldi   r16,T1_PREH
-            out   TCNT1H,r16
-            ldi   r16,T1_PREL
-            out   TCNT1L,r16
+        push  r16
+        push  r17
 
-            ; toggle PF7
-            lds   r16,PORTF
-            ldi   r17,(1<<LED_BIT)
-            eor   r16,r17
-            sts   PORTF,r16
+        ; reload counter
+        ldi   r16,T1_PREH
+        out   TCNT1H,r16
+        ldi   r16,T1_PREL
+        out   TCNT1L,r16
 
-            lds   r16,flags
-            ori   r16,(1<<FLG_TEMP)
-            sts   flags,r16
-            reti
+        ; heartbeat LED on PF7
+        lds   r16,PORTF
+        ldi   r17,(1<<LED_BIT)
+        eor   r16,r17
+        sts   PORTF,r16
 
+        ; set “temperature task” flag
+        lds   r16,flags
+        ori   r16,(1<<FLG_TEMP)
+        sts   flags,r16
+
+        pop   r17
+        pop   r16
+        reti
