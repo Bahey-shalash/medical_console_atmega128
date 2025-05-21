@@ -15,7 +15,7 @@
     <Name>medical_thermo</Name>
     <RootNamespace>medical_thermo</RootNamespace>
     <ToolchainFlavour>Native</ToolchainFlavour>
-    <EntryFile>$(MSBuildProjectDirectory)\ws2812_test_xy_with_lcd_loop.asm</EntryFile>
+    <EntryFile>$(MSBuildProjectDirectory)\main.asm</EntryFile>
     <KeepTimersRunning>true</KeepTimersRunning>
     <OverrideVtor>false</OverrideVtor>
     <CacheFlash>true</CacheFlash>
@@ -99,7 +99,7 @@
     <Compile Include="main.asm">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="matrix_helpers.asm">
+    <Compile Include="ws2812_helpers.asm">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="matrix_testing\LED_MATRIX_A.asm">

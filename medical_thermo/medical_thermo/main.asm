@@ -58,7 +58,7 @@ phase:      .byte 1                     ; 0=Convert, 1=Read
             .include "wire1.asm"
             .include "ws2812_driver.asm"
 			.include "encoder.asm"
-			 .include "matrix_helpers.asm"
+			.include "ws2812_helpers.asm"
 ;----------------------------------------------------------------------
 ;  State modules
 ;----------------------------------------------------------------------
@@ -125,36 +125,39 @@ reset:
 ;======================================================================
 ;  MAIN LOOP — state dispatch
 ;======================================================================
+; === main.asm (excerpt – only the dispatch section changed) ==========
+; --- dispatch table --------------------------------------------------
 main_loop:
 switch:
-        mov   r16, sel
+        mov   r16,sel
 
-        cpi   r16, ST_HOME
-        brne  sw_g1
-        rcall home_init              ; <-- changed
+        cpi   r16,ST_HOME
+        brne  swSnake
+        rcall home_init
         rjmp  switch
 
-sw_g1:
-        cpi   r16, ST_GAME1
-        brne  sw_g2
+swSnake:
+        cpi   r16,ST_GAME1
+        brne  swGameTwo
         rcall snake_init
         rjmp  switch
 
-sw_g2:
-        cpi   r16, ST_GAME2
-        brne  sw_g3
-        rcall game2_init
+swGameTwo:
+        cpi   r16,ST_GAME2
+        brne  swGameThree
+        rcall gameTwoInit            ; *** label changed
         rjmp  switch
 
-sw_g3:
-        cpi   r16, ST_GAME3
-        brne  sw_doc
-        rcall game3_init
+swGameThree:
+        cpi   r16,ST_GAME3
+        brne  swDoctor
+        rcall gameThreeInit          ; *** label changed
         rjmp  switch
 
-sw_doc:
-        rcall doctor_init
+swDoctor:
+        rcall doctorInit             ; *** colon removed
         rjmp  switch
+; ====================================================================
 
 ;======================================================================
 ;  1-Wire helpers

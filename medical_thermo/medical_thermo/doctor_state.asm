@@ -1,70 +1,71 @@
+;======================================================================
+;  Doctor mode  – ST_DOCTOR
+;======================================================================
 
-;----------------------------------------------------------------------
-;  INIT
-;----------------------------------------------------------------------
-doctor_init:
+doctorInit:
         push  r18
         rcall lcd_clear
-        rcall doctor_loop
+        rcall doctorLoop
         pop   r18
         ret
 
 ;----------------------------------------------------------------------
-;  LOOP
-;----------------------------------------------------------------------
-doctor_loop:
-loop_doc:
-        ;----- temperature background task ---------------------------
-        lds  r18, flags
-        sbrc r18, FLG_TEMP
+doctorLoop:
+loopDoctor:
+        ;---- background temperature ---------------------------------
+        lds  r18,flags
+        sbrc r18,FLG_TEMP
         rcall temp_task
 
-        ;----- LCD: show °C ------------------------------------------
+        ;---- LCD -----------------------------------------------------
         rcall lcd_clear
-        lds  a0, temp_lsb
-        lds  a1, temp_msb
+        lds  a0,temp_lsb
+        lds  a1,temp_msb
         PRINTF LCD
-        .db "Doctor ", FFRAC2+FSIGN, a, 4, $42, "C",0
+        .db "Doctor ",FFRAC2+FSIGN,a,4,$42,"C",0
 
-        ;----- Matrix: colour bar in column 7 ------------------------
-        ; clear background
-        ldi  a0, 0x00
-        ldi  a1, 0x00
-        ldi  a2, 0x00
-        rcall ws_fill_color
+        ;---- Matrix --------------------------------------------------
+        WS_PUSH_ALL
+            ldi  a0,0
+            ldi  a1,0
+            ldi  a2,0
+            rcall ws_fill_color
 
-        ; convert temp to 0–63 buckets (˜2 °C each)
-        lds  r22, temp_lsb
-        lsr  r22
-        cpi  r22, 64
-        brlo temp_ok
-        ldi  r22, 63
-temp_ok:
-        ldi  r24, 7              ; x = right-most column
-        ldi  r25, 7              ; start at top
+            lds  r22,temp_lsb
+            lsr  r22
+            cpi  r22,64
+            brlo bucketOk
+            ldi  r22,63
+bucketOk:
+            ldi  r24,7
+            ldi  r25,7
+thermLoop:
+            cpi  r25,4
+            brlo greenPart
+redPart:
+            ldi  a0,0
+            ldi  a1,0x10
+            rjmp colourDone
+greenPart:
+            ldi  a0,0x10
+            ldi  a1,0
+colourDone:
+            ldi  a2,0
+            rcall ws_plot_xy
+            dec  r25
+            dec  r22
+            brpl thermLoop
 
-while_temp_bar:
-        cpi  r25, 4
-        brlo green_part
-red_part:
-        ldi  a0, 0x00
-        ldi  a1, 0x10            ; red
-        rjmp plot_colour
-green_part:
-        ldi  a0, 0x10            ; green
-        ldi  a1, 0x00
-plot_colour:
-        ldi  a2, 0x00
-        rcall ws_plot_xy
-        dec  r25
-        dec  r22
-        brge while_temp_bar
+            rcall ws_show_frame
+        WS_POP_ALL
 
-        rcall ws_show_frame
+        ;---- housekeeping -------------------------------------------
+        WAIT_US 100000
+        WAIT_US 20000
 
-        ;----- refresh / exit test -----------------------------------
-        WAIT_US 250000
-        mov  r18, sel
-        cpi  r18, ST_DOCTOR
-        breq loop_doc
+        mov   r18,sel
+        cpi   r18,ST_DOCTOR
+        brne  exitDoctor           ; *** long-range fix
+        rjmp  loopDoctor
+exitDoctor:                         ; ***
         ret

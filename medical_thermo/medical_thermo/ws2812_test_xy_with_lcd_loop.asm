@@ -98,3 +98,6 @@ main:
         WS_POP_ALL
 
         rjmp   main
+
+
+;LETS GOOOOOOOOOOOOOOOOOOOOOOO IT WORKEDDDDDDDDD

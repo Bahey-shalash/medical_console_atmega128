@@ -7,14 +7,22 @@
   <DIR>C:\Program Files (x86)\Atmel\Studio\7.0\toolchain\avr8\avrassembler\Include</DIR>
   <DIR></DIR>
  </INCLUDE_PATH>
- <SOURCE_FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\ws2812_test_xy_with_lcd_loop.asm</SOURCE_FILE>
+ <SOURCE_FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\main.asm</SOURCE_FILE>
  <INCLUDED_FILES>
   <FILE>C:/Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.1.130\avrasm\inc\m128def.inc</FILE>
-  <FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\macros.asm</FILE>
   <FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\definitions.asm</FILE>
+  <FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\macros.asm</FILE>
   <FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\lcd.asm</FILE>
   <FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\printf.asm</FILE>
+  <FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\wire1.asm</FILE>
   <FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\ws2812_driver.asm</FILE>
+  <FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\encoder.asm</FILE>
+  <FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\ws2812_helpers.asm</FILE>
+  <FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\home_state.asm</FILE>
+  <FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\snake_state.asm</FILE>
+  <FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\game2_state.asm</FILE>
+  <FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\game3_state.asm</FILE>
+  <FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\doctor_state.asm</FILE>
  </INCLUDED_FILES>
  <OBJECT_FILES>
   <FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\Debug\medical_thermo.obj</FILE>
@@ -27,7 +35,16 @@
   <FILE>medical_thermo.lss</FILE>
  </OUTPUT_FILES>
  <LABELS>
-  <reset><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\ws2812_test_xy_with_lcd_loop.asm</FILE><LINE>18</LINE></reset>
+  <flags><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\main.asm</FILE><LINE>31</LINE></flags>
+  <temp_lsb><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\main.asm</FILE><LINE>32</LINE></temp_lsb>
+  <temp_msb><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\main.asm</FILE><LINE>33</LINE></temp_msb>
+  <phase><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\main.asm</FILE><LINE>34</LINE></phase>
+  <reset><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\main.asm</FILE><LINE>73</LINE></reset>
+  <int0_isr><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\main.asm</FILE><LINE>216</LINE></int0_isr>
+  <int1_isr><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\main.asm</FILE><LINE>228</LINE></int1_isr>
+  <int2_isr><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\main.asm</FILE><LINE>242</LINE></int2_isr>
+  <int3_isr><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\main.asm</FILE><LINE>247</LINE></int3_isr>
+  <t1_isr><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\main.asm</FILE><LINE>255</LINE></t1_isr>
   <LCD_wr_ir><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\lcd.asm</FILE><LINE>10</LINE></LCD_wr_ir>
   <lcd_4us><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\lcd.asm</FILE><LINE>18</LINE></lcd_4us>
   <lcd_2us><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\lcd.asm</FILE><LINE>20</LINE></lcd_2us>
@@ -85,6 +102,16 @@
   <_mul41><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\printf.asm</FILE><LINE>431</LINE></_mul41>
   <__m41><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\printf.asm</FILE><LINE>433</LINE></__m41>
   <__d41><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\printf.asm</FILE><LINE>449</LINE></__d41>
+  <wire1_wait><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\wire1.asm</FILE><LINE>39</LINE></wire1_wait>
+  <wire1_init><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\wire1.asm</FILE><LINE>49</LINE></wire1_init>
+  <wire1_reset><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\wire1.asm</FILE><LINE>54</LINE></wire1_reset>
+  <wire1_write0><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\wire1.asm</FILE><LINE>55</LINE></wire1_write0>
+  <wire1_write1><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\wire1.asm</FILE><LINE>56</LINE></wire1_write1>
+  <wire1_read1><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\wire1.asm</FILE><LINE>57</LINE></wire1_read1>
+  <wire1_write><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\wire1.asm</FILE><LINE>59</LINE></wire1_write>
+  <wire1_read><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\wire1.asm</FILE><LINE>73</LINE></wire1_read>
+  <wire1_crc><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\wire1.asm</FILE><LINE>83</LINE></wire1_crc>
+  <crc1><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\wire1.asm</FILE><LINE>86</LINE></crc1>
   <ws_init><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\ws2812_driver.asm</FILE><LINE>74</LINE></ws_init>
   <ws_byte3wr><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\ws2812_driver.asm</FILE><LINE>80</LINE></ws_byte3wr>
   <_b0><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\ws2812_driver.asm</FILE><LINE>86</LINE></_b0>
@@ -99,8 +126,67 @@
   <ws_reset><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\ws2812_driver.asm</FILE><LINE>131</LINE></ws_reset>
   <ws_idx_xy><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\ws2812_driver.asm</FILE><LINE>137</LINE></ws_idx_xy>
   <ws_offset_idx><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\ws2812_driver.asm</FILE><LINE>146</LINE></ws_offset_idx>
-  <clr_fb><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\ws2812_test_xy_with_lcd_loop.asm</FILE><LINE>33</LINE></clr_fb>
-  <main><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\ws2812_test_xy_with_lcd_loop.asm</FILE><LINE>76</LINE></main>
-  <send_px><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\ws2812_test_xy_with_lcd_loop.asm</FILE><LINE>88</LINE></send_px>
+  <enc_old><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\encoder.asm</FILE><LINE>8</LINE></enc_old>
+  <encoder_init><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\encoder.asm</FILE><LINE>13</LINE></encoder_init>
+  <encoder><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\encoder.asm</FILE><LINE>22</LINE></encoder>
+  <encoder_button><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\encoder.asm</FILE><LINE>95</LINE></encoder_button>
+  <i_down><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\encoder.asm</FILE><LINE>64</LINE></i_down>
+  <i_up><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\encoder.asm</FILE><LINE>48</LINE></i_up>
+  <a_rise><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\encoder.asm</FILE><LINE>56</LINE></a_rise>
+  <a_fall><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\encoder.asm</FILE><LINE>51</LINE></a_fall>
+  <i_up_done><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\encoder.asm</FILE><LINE>60</LINE></i_up_done>
+  <a_rise2><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\encoder.asm</FILE><LINE>72</LINE></a_rise2>
+  <a_fall2><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\encoder.asm</FILE><LINE>67</LINE></a_fall2>
+  <i_down_done><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\encoder.asm</FILE><LINE>76</LINE></i_down_done>
+  <encoder_update><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\encoder.asm</FILE><LINE>80</LINE></encoder_update>
+  <i_rise><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\encoder.asm</FILE><LINE>101</LINE></i_rise>
+  <i_fall><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\encoder.asm</FILE><LINE>98</LINE></i_fall>
+  <ws_fill_color><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\ws2812_helpers.asm</FILE><LINE>12</LINE></ws_fill_color>
+  <fill_loop><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\ws2812_helpers.asm</FILE><LINE>19</LINE></fill_loop>
+  <ws_plot_xy><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\ws2812_helpers.asm</FILE><LINE>34</LINE></ws_plot_xy>
+  <ws_show_frame><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\ws2812_helpers.asm</FILE><LINE>57</LINE></ws_show_frame>
+  <show_loop><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\ws2812_helpers.asm</FILE><LINE>63</LINE></show_loop>
+  <delayFrame><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\ws2812_helpers.asm</FILE><LINE>77</LINE></delayFrame>
+  <home_init><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\home_state.asm</FILE><LINE>5</LINE></home_init>
+  <home_loop><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\home_state.asm</FILE><LINE>15</LINE></home_loop>
+  <loopHome><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\home_state.asm</FILE><LINE>16</LINE></loopHome>
+  <temp_task><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\main.asm</FILE><LINE>192</LINE></temp_task>
+  <exitHome><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\home_state.asm</FILE><LINE>43</LINE></exitHome>
+  <snake_init><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\snake_state.asm</FILE><LINE>5</LINE></snake_init>
+  <snake_loop><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\snake_state.asm</FILE><LINE>15</LINE></snake_loop>
+  <loopSnake><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\snake_state.asm</FILE><LINE>16</LINE></loopSnake>
+  <drawBar><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\snake_state.asm</FILE><LINE>36</LINE></drawBar>
+  <exitSnake><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\snake_state.asm</FILE><LINE>57</LINE></exitSnake>
+  <gameTwoInit><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\game2_state.asm</FILE><LINE>5</LINE></gameTwoInit>
+  <gameTwoLoop><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\game2_state.asm</FILE><LINE>15</LINE></gameTwoLoop>
+  <loopGameTwo><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\game2_state.asm</FILE><LINE>16</LINE></loopGameTwo>
+  <rowsX><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\game2_state.asm</FILE><LINE>35</LINE></rowsX>
+  <exitGameTwo><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\game2_state.asm</FILE><LINE>60</LINE></exitGameTwo>
+  <gameThreeInit><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\game3_state.asm</FILE><LINE>5</LINE></gameThreeInit>
+  <gameThreeLoop><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\game3_state.asm</FILE><LINE>15</LINE></gameThreeLoop>
+  <loopGameThree><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\game3_state.asm</FILE><LINE>16</LINE></loopGameThree>
+  <rowsSq><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\game3_state.asm</FILE><LINE>35</LINE></rowsSq>
+  <colsSq><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\game3_state.asm</FILE><LINE>37</LINE></colsSq>
+  <exitGameThree><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\game3_state.asm</FILE><LINE>61</LINE></exitGameThree>
+  <doctorInit><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\doctor_state.asm</FILE><LINE>5</LINE></doctorInit>
+  <doctorLoop><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\doctor_state.asm</FILE><LINE>13</LINE></doctorLoop>
+  <loopDoctor><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\doctor_state.asm</FILE><LINE>14</LINE></loopDoctor>
+  <bucketOk><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\doctor_state.asm</FILE><LINE>39</LINE></bucketOk>
+  <thermLoop><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\doctor_state.asm</FILE><LINE>42</LINE></thermLoop>
+  <greenPart><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\doctor_state.asm</FILE><LINE>49</LINE></greenPart>
+  <redPart><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\doctor_state.asm</FILE><LINE>45</LINE></redPart>
+  <colourDone><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\doctor_state.asm</FILE><LINE>52</LINE></colourDone>
+  <exitDoctor><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\doctor_state.asm</FILE><LINE>70</LINE></exitDoctor>
+  <temp_convert><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\main.asm</FILE><LINE>165</LINE></temp_convert>
+  <main_loop><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\main.asm</FILE><LINE>130</LINE></main_loop>
+  <switch><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\main.asm</FILE><LINE>131</LINE></switch>
+  <swSnake><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\main.asm</FILE><LINE>139</LINE></swSnake>
+  <swGameTwo><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\main.asm</FILE><LINE>145</LINE></swGameTwo>
+  <swGameThree><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\main.asm</FILE><LINE>151</LINE></swGameThree>
+  <swDoctor><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\main.asm</FILE><LINE>157</LINE></swDoctor>
+  <temp_fetch><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\main.asm</FILE><LINE>175</LINE></temp_fetch>
+  <do_convert><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\main.asm</FILE><LINE>206</LINE></do_convert>
+  <int0_done><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\main.asm</FILE><LINE>223</LINE></int0_done>
+  <int1_dec><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\main.asm</FILE><LINE>236</LINE></int1_dec>
  </LABELS>
 </ASSEMBLER_INFO>
