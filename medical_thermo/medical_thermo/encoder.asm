@@ -88,7 +88,7 @@ encoder_update:
     mov r17, a0
     ; compute ? = new ? old
     sub r17, r16       ; r17 = a0_new ? a0_old
-    mov r3, r17        ; put result in r3
+     mov  r15, r17        ; put result in r15, us
 
     ret
 

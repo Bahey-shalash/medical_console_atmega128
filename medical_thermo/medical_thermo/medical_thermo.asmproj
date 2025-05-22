@@ -81,6 +81,9 @@
     <Compile Include="definitions.asm">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="encoder_led.asm">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="game3_state.asm">
       <SubType>Code</SubType>
     </Compile>
@@ -154,9 +157,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="printf.asm">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="snake_test.asm">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="sound.asm">
