@@ -159,9 +159,6 @@
     <Compile Include="snake_test.asm">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="snake_tester_dumby.asm">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="sound.asm">
       <SubType>Code</SubType>
     </Compile>

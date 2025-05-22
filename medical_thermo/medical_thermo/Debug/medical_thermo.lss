@@ -1,5 +1,5 @@
 
-AVRASM ver. 2.2.6  Z:\medical_consol_atmega128\medical_thermo\medical_thermo\main.asm Thu May 22 18:43:27 2025
+AVRASM ver. 2.2.6  Z:\medical_consol_atmega128\medical_thermo\medical_thermo\main.asm Thu May 22 20:19:22 2025
 
 [builtin](2): Including file 'C:/Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.1.130\avrasm\inc\m128def.inc'
 Z:\medical_consol_atmega128\medical_thermo\medical_thermo\main.asm(19): Including file 'C:/Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.1.130\avrasm\inc\m128def.inc'
@@ -3194,18 +3194,18 @@ Z:\medical_consol_atmega128\medical_thermo\medical_thermo\main.asm(86): Includin
                                  ;  Interrupt vectors
                                  ;======================================================================
                                              .org 0
-000000 940c 034f                             jmp  reset
+000000 940c 03a4                             jmp  reset
                                  
                                              .org INT0addr      ; next state
-000002 940c 03ba                             jmp  int0_isr
+000002 940c 040f                             jmp  int0_isr
                                              .org INT1addr      ; previous state
-000004 940c 03c2                             jmp  int1_isr
+000004 940c 0417                             jmp  int1_isr
                                              .org INT2addr      ; go home
-000006 940c 03cc                             jmp  int2_isr
+000006 940c 0421                             jmp  int2_isr
                                              .org INT3addr      ; doctor mode
-000008 940c 03ce                             jmp  int3_isr
+000008 940c 0423                             jmp  int3_isr
                                              .org OVF1addr      ; Timer-1 overflow
-00001c 940c 03d3                             jmp  t1_isr
+00001c 940c 0428                             jmp  t1_isr
                                  
                                  ;---------------------------------------------------------------------
                                  ;  Library / driver includes (after vectors)
@@ -4380,10 +4380,29 @@ Z:\medical_consol_atmega128\medical_thermo\medical_thermo\main.asm(82): 'Z:\medi
                                  home_done:
                                              .include "snake_state.asm"
 00029e 9508                      
-                                 ;  SNAKE  state  (Game 1)
-                                 ;----------------------------------------------------------------------
+                                 ;  SNAKE  state – ST_GAME1 (with head as blue & direction storage)
+                                 ;======================================================================
                                  
+                                 ;---------------------------------------------------------------------
+                                 ; ? Data section – circular buffer, counters & directions
+                                 ;---------------------------------------------------------------------
+                                 .dseg
+000105                           snake_body:   .byte 64     ; circular buffer holds x+8*y for each segment
+000145                           head_idx:     .byte 1      ; index of newest segment
+000146                           tail_idx:     .byte 1      ; index of oldest segment
+000147                           snake_len:    .byte 1      ; current length (<=64)
+                                 ; new direction vars:
+000148                           direction:    .byte 1      ; current direction: 0=up,1=right,2=down,3=left
+000149                           next_dir:     .byte 1      ; queued next direction
+                                 
+                                 ;---------------------------------------------------------------------
+                                 .cseg
+                                 
+                                 ;======================================================================
+                                 ;  snake_init  – entry from main.asm dispatcher
+                                 ;======================================================================
                                  snake_init:
+                                         ; 1) LCD header
 00029f dd95                              rcall   lcd_clear
 0002a0 e209
 0002a1 2e40
@@ -4394,316 +4413,456 @@ Z:\medical_consol_atmega128\medical_thermo\medical_thermo\main.asm(82): 'Z:\medi
 0002a6 4b41
 0002a7 0045                              .db     "SNAKE",0
                                  
-                                         ; red matrix
-0002a8 e020                              ldi     a0, 0x00
-0002a9 e03f                              ldi     a1, 0x0F
-0002aa e040                              ldi     a2, 0x00
-0002ab dfb1                              rcall   matrix_solid
+                                         ; 2) initialise data structures (snake length = 3)
+0002a8 d01d                              rcall   snake_init_data
                                  
+                                         ; 3) draw initial frame
+0002a9 d03a                              rcall   snake_draw
+                                 
+                                         ; 4) exit to wait-loop
+0002aa 9508                              ret
+                                 
+                                 ;======================================================================
+                                 ;  Main wait-loop – exits when sel ? ST_GAME1
+                                 ;======================================================================
                                  snake_wait:
-0002ac 2ce6                              mov     s, sel
-0002ad e001
-0002ae 16e0                             _CPI     s, ST_GAME1
-0002af f4a1                              brne    snake_done
-0002b0 e302
-0002b1 2e30
-0002b2 e001
-0002b3 930f
-0002b4 923f
-0002b5 e300
-0002b6 2e30
-0002b7 e006
-0002b8 943a
-0002b9 f7f1
-0002ba 943a
-0002bb 950a
-0002bc f7d9
-0002bd 903f
-0002be 910f
-0002bf 943a
-0002c0 f791
-0002c1 950a
-0002c2 f781                              WAIT_MS 50
-0002c3 cfe8                              rjmp    snake_wait
+0002ab 2ce6                              mov     s, sel
+0002ac e001
+0002ad 16e0                              _CPI    s, ST_GAME1
+0002ae f4b1                              brne    snake_done
+                                 
+                                         ; Game tick
+0002af d069                              rcall   update_game    ; handle direction change & movement
+0002b0 d033                              rcall   snake_draw     ; redraw frame
+0002b1 ef04
+0002b2 2e30
+0002b3 e002
+0002b4 930f
+0002b5 923f
+0002b6 e300
+0002b7 2e30
+0002b8 e006
+0002b9 943a
+0002ba f7f1
+0002bb 943a
+0002bc 950a
+0002bd f7d9
+0002be 903f
+0002bf 910f
+0002c0 943a
+0002c1 f791
+0002c2 950a
+0002c3 f781                              WAIT_MS 500            ; basic tick interval
+0002c4 cfe6                              rjmp    snake_wait
                                  
                                  snake_done:
+0002c5 9508                              ret
+                                 
+                                 ;======================================================================
+                                 ;  snake_init_data  – build 3-segment snake & init directions
+                                 ;======================================================================
+                                 snake_init_data:
+                                         ; clear buffer to 0xFF
+0002c6 e0e5                              ldi     ZL, low(snake_body)
+0002c7 e0f1                              ldi     ZH, high(snake_body)
+0002c8 e460                              ldi     r22, 64
+                                 For_clear:
+0002c9 ef0f                              ldi     w, 0xFF
+0002ca 9301                              st      Z+, w
+0002cb 956a                              dec     r22
+0002cc f7e1                              brne    For_clear
+                                 
+                                         ; write 3 segments at (2,3)=26, (3,3)=27, (4,3)=28
+0002cd e0e5                              ldi     ZL, low(snake_body)
+0002ce e0f1                              ldi     ZH, high(snake_body)
+0002cf e10a                              ldi     w, 26    ; tail
+0002d0 9301                              st      Z+, w
+0002d1 e10b                              ldi     w, 27    ; mid
+0002d2 9301                              st      Z+, w
+0002d3 e10c                              ldi     w, 28    ; head
+0002d4 8300                              st      Z,  w
+                                 
+                                         ; set indices & length
+0002d5 e002                              ldi     w, 2
+0002d6 9300 0145                         sts     head_idx, w
+0002d8 2700                              clr     w
+0002d9 9300 0146                         sts     tail_idx, w
+0002db e003                              ldi     w, 3
+0002dc 9300 0147                         sts     snake_len, w
+                                 
+                                         ; init directions to RIGHT (1)
+0002de e001                              ldi     w, 1
+0002df 9300 0148                         sts     direction, w
+0002e1 9300 0149                         sts     next_dir, w
+                                 
+0002e3 9508                              ret
+                                 
+                                 ;======================================================================
+                                 ;  snake_draw – redraw whole matrix, head in blue
+                                 ;======================================================================
+                                 snake_draw:
+                                         ; 0) clear to black
+0002e4 2722                              clr     a0
+0002e5 2733                              clr     a1
+0002e6 2744                              clr     a2
+0002e7 df75                              rcall   matrix_solid
+                                 
+                                         ; 1) prepare loop vars
+0002e8 90e0 0147                         lds     s, snake_len     ; s = length
+0002ea 2d5e                              mov     r21, s
+0002eb 955a                              dec     r21              ; r21 = index of head in loop (len-1)
+0002ec e060                              ldi     r22, 0           ; iterator i
+                                 For_segments:
+0002ed 156e                              cp      r22, s
+0002ee f0e1                              breq    out_segments
+                                 
+                                         ; load buffer[i]
+0002ef e0e5                              ldi     ZL, low(snake_body)
+0002f0 e0f1                              ldi     ZH, high(snake_body)
+0002f1 0fe6                              add     ZL, r22
+0002f2 f408                              brcc    seg_ptr_ok
+0002f3 95f3                              inc     ZH
+                                 seg_ptr_ok:
+0002f4 8100                              ld      w, Z
+                                 
+                                         ; unpack w ? x=r24, y=r25
+0002f5 2f80                              mov     r24, w
+0002f6 7087                              andi    r24, 0x07
+0002f7 2f90                              mov     r25, w
+0002f8 9592                              swap    r25
+0002f9 7097                              andi    r25, 0x07
+                                 
+                                         ; compute buffer index
+0002fa df17                              rcall   ws_idx_xy
+0002fb df1c                              rcall   ws_offset_idx
+                                 
+                                         ; choose color: head or body
+0002fc 1765                              cp      r22, r21
+0002fd f009                              breq    draw_head
+0002fe c004                              rjmp    draw_body
+                                 
+                                 draw_head:
+                                         ; blue head
+0002ff 2722                              clr     a0          ; G = 0
+000300 2733                              clr     a1          ; R = 0
+000301 e04f                              ldi     a2, 0x0F    ; B = bright
+000302 c003                              rjmp    write_pixel
+                                 
+                                 draw_body:
+                                         ; regular bright green
+000303 e02f                              ldi     a0, 0x0F    ; G
+000304 2733                              clr     a1          ; R
+000305 2744                              clr     a2          ; B
+                                 
+                                 write_pixel:
+000306 9321                              st      Z+, a0
+000307 9331                              st      Z+, a1
+000308 8340                              st      Z,  a2
+                                 
+000309 9563                              inc     r22
+00030a cfe2                              rjmp    For_segments
+                                 out_segments:
+                                 
+                                         ; 2) transmit buffer
+00030b e0e0                              ldi     ZL, low(WS_BUF_BASE)
+00030c e0f4                              ldi     ZH, high(WS_BUF_BASE)
+00030d e400
+00030e 2e00                              _LDI    r0, 64
+                                 For_send:
+00030f 9121                              ld      a0, Z+
+000310 9131                              ld      a1, Z+
+000311 9141                              ld      a2, Z+
+000312 94f8                              cli
+000313 debf                              rcall   ws_byte3wr
+000314 9478                              sei
+000315 940a                              dec     r0
+000316 f7c1                              brne    For_send
+000317 def0                              rcall   ws_reset
+000318 9508                              ret
+                                 
+                                 ;======================================================================
+                                 ;  update_game – placeholder for movement & direction logic
+                                 ;======================================================================
+                                 update_game:
+                                         ; TODO: read inputs into next_dir, then mov direction, next_dir on move
+000319 9508                              ret
                                              .include "game2_state.asm"
-0002c4 9508                      
+                                 
                                  ;  GAME 2  state
                                  ;----------------------------------------------------------------------
                                  
                                  gameTwoInit:
-0002c5 dd6f                              rcall   lcd_clear
-0002c6 e209
-0002c7 2e40
-0002c8 e000
-0002c9 2e50
-0002ca dd9c                              PRINTF  LCD
-0002cb 4147
-0002cc 454d
-0002cd 3220
-0002ce 0000                              .db     "GAME 2",0,0
+00031a dd1a                              rcall   lcd_clear
+00031b e209
+00031c 2e40
+00031d e000
+00031e 2e50
+00031f dd47                              PRINTF  LCD
+000320 4147
+000321 454d
+000322 3220
+000323 0000                              .db     "GAME 2",0,0
                                  
                                          ; blue matrix
-0002cf e020                              ldi     a0, 0x00
-0002d0 e030                              ldi     a1, 0x00
-0002d1 e04f                              ldi     a2, 0x0F
-0002d2 df8a                              rcall   matrix_solid
+000324 e020                              ldi     a0, 0x00
+000325 e030                              ldi     a1, 0x00
+000326 e04f                              ldi     a2, 0x0F
+000327 df35                              rcall   matrix_solid
                                  
                                  game2_wait:
-0002d3 2ce6                              mov     s, sel
-0002d4 e002
-0002d5 16e0                              _CPI     s, ST_GAME2
-0002d6 f4a1                              brne    game2_done
-0002d7 e302
-0002d8 2e30
-0002d9 e001
-0002da 930f
-0002db 923f
-0002dc e300
-0002dd 2e30
-0002de e006
-0002df 943a
-0002e0 f7f1
-0002e1 943a
-0002e2 950a
-0002e3 f7d9
-0002e4 903f
-0002e5 910f
-0002e6 943a
-0002e7 f791
-0002e8 950a
-0002e9 f781                              WAIT_MS 50
-0002ea cfe8                              rjmp    game2_wait
+000328 2ce6                              mov     s, sel
+000329 e002
+00032a 16e0                              _CPI     s, ST_GAME2
+00032b f4a1                              brne    game2_done
+00032c e302
+00032d 2e30
+00032e e001
+00032f 930f
+000330 923f
+000331 e300
+000332 2e30
+000333 e006
+000334 943a
+000335 f7f1
+000336 943a
+000337 950a
+000338 f7d9
+000339 903f
+00033a 910f
+00033b 943a
+00033c f791
+00033d 950a
+00033e f781                              WAIT_MS 50
+00033f cfe8                              rjmp    game2_wait
                                  
                                  game2_done:
                                              .include "game3_state.asm"
-0002eb 9508                      
+000340 9508                      
                                  ;  GAME 3  state
                                  ;----------------------------------------------------------------------
                                  
                                  gameThreeInit:
-0002ec dd48                              rcall   lcd_clear
-0002ed e209
-0002ee 2e40
-0002ef e000
-0002f0 2e50
-0002f1 dd75                              PRINTF  LCD
-0002f2 4147
-0002f3 454d
-0002f4 3320
+000341 dcf3                              rcall   lcd_clear
+000342 e209
+000343 2e40
+000344 e000
+000345 2e50
+000346 dd20                              PRINTF  LCD
+000347 4147
+000348 454d
+000349 3320
 Z:\medical_consol_atmega128\medical_thermo\medical_thermo\game3_state.asm(8): warning: .cseg .db misalignment - padding zero byte
 Z:\medical_consol_atmega128\medical_thermo\medical_thermo\main.asm(85): 'Z:\medical_consol_atmega128\medical_thermo\medical_thermo\game3_state.asm' included form here
-0002f5 0000                              .db     "GAME 3",0
+00034a 0000                              .db     "GAME 3",0
                                  
                                          ; yellow matrix  (R+G)
-0002f6 e028                              ldi     a0, 0x08
-0002f7 e038                              ldi     a1, 0x08
-0002f8 e040                              ldi     a2, 0x00
-0002f9 df63                              rcall   matrix_solid
+00034b e028                              ldi     a0, 0x08
+00034c e038                              ldi     a1, 0x08
+00034d e040                              ldi     a2, 0x00
+00034e df0e                              rcall   matrix_solid
                                  
                                  game3_wait:
-0002fa 2ce6                              mov     s, sel
-0002fb e003
-0002fc 16e0                              _CPI     s, ST_GAME3
-0002fd f4a1                              brne    game3_done
-0002fe e302
-0002ff 2e30
-000300 e001
-000301 930f
-000302 923f
-000303 e300
-000304 2e30
-000305 e006
-000306 943a
-000307 f7f1
-000308 943a
-000309 950a
-00030a f7d9
-00030b 903f
-00030c 910f
-00030d 943a
-00030e f791
-00030f 950a
-000310 f781                              WAIT_MS 50
-000311 cfe8                              rjmp    game3_wait
+00034f 2ce6                              mov     s, sel
+000350 e003
+000351 16e0                              _CPI     s, ST_GAME3
+000352 f4a1                              brne    game3_done
+000353 e302
+000354 2e30
+000355 e001
+000356 930f
+000357 923f
+000358 e300
+000359 2e30
+00035a e006
+00035b 943a
+00035c f7f1
+00035d 943a
+00035e 950a
+00035f f7d9
+000360 903f
+000361 910f
+000362 943a
+000363 f791
+000364 950a
+000365 f781                              WAIT_MS 50
+000366 cfe8                              rjmp    game3_wait
                                  
                                  game3_done:
                                              .include "doctor_state.asm"
-000312 9508                      
+000367 9508                      
                                  ;  doctor_state.asm      – ST_DOCTOR diagnostic screen
                                  ;======================================================================
                                  
                                  
                                  doctorInit:
-000313 932f                              push    r18                    ; save caller’s a0 slot
+000368 932f                              push    r18                    ; save caller’s a0 slot
                                  
                                          ;––– 1. clear LCD and show header ––––––––––––––––––––––––––––
-000314 dd20                              rcall   lcd_clear
-000315 e209
-000316 2e40
-000317 e000
-000318 2e50
-000319 dd4d                              PRINTF  LCD
-00031a 6f44
-00031b 7463
-00031c 726f
-00031d 0000                              .db     "Doctor",0,0;removes annoying warning by alligning 
+000369 dccb                              rcall   lcd_clear
+00036a e209
+00036b 2e40
+00036c e000
+00036d 2e50
+00036e dcf8                              PRINTF  LCD
+00036f 6f44
+000370 7463
+000371 726f
+000372 0000                              .db     "Doctor",0,0;removes annoying warning by alligning 
                                  
                                          ;––– 2. blank the LED matrix (all LEDs off) ––––––––––––––––––
-00031e 2722                              clr     a0                     ; G
-00031f 2733                              clr     a1                     ; R
-000320 2744                              clr     a2                     ; B
-000321 df3b                              rcall   matrix_solid           ; fills buffer & transmits
+000373 2722                              clr     a0                     ; G
+000374 2733                              clr     a1                     ; R
+000375 2744                              clr     a2                     ; B
+000376 dee6                              rcall   matrix_solid           ; fills buffer & transmits
                                  
                                  ;======================================================================
                                  ;  main refresh loop – runs until sel ? ST_DOCTOR
                                  ;======================================================================
                                  doctor_loop:
                                          ;---  temperature housekeeping  -------------------------------
-000322 9120 0100                         lds     r18, flags
-000324 fd20                              sbrc    r18, FLG_TEMP          ; if ready flag set …
-000325 d07f                              rcall   temp_task              ; … service background task
+000377 9120 0100                         lds     r18, flags
+000379 fd20                              sbrc    r18, FLG_TEMP          ; if ready flag set …
+00037a d07f                              rcall   temp_task              ; … service background task
                                  
                                          ;---  fetch last reading & print ------------------------------
-000326 9120 0101                         lds     a0, temp_lsb
-000328 9130 0102                         lds     a1, temp_msb
-00032a dd0a                      		rcall   lcd_clear
-00032b e209
-00032c 2e40
-00032d e000
-00032e 2e50
-00032f dd37                              PRINTF  LCD
-000330 6f44
-000331 7463
-000332 726f
-000333 8b20
-000334 0412
-000335 4342
-000336 0000                              .db     "Doctor ", FFRAC2+FSIGN, a, 4, $42, "C", 0,0
+00037b 9120 0101                         lds     a0, temp_lsb
+00037d 9130 0102                         lds     a1, temp_msb
+00037f dcb5                      		rcall   lcd_clear
+000380 e209
+000381 2e40
+000382 e000
+000383 2e50
+000384 dce2                              PRINTF  LCD
+000385 6f44
+000386 7463
+000387 726f
+000388 8b20
+000389 0412
+00038a 4342
+00038b 0000                              .db     "Doctor ", FFRAC2+FSIGN, a, 4, $42, "C", 0,0
                                  
-000337 ef0a
-000338 2e30
-000339 e001
-00033a 930f
-00033b 923f
-00033c e300
-00033d 2e30
-00033e e006
-00033f 943a
-000340 f7f1
-000341 943a
-000342 950a
-000343 f7d9
-000344 903f
-000345 910f
-000346 943a
-000347 f791
-000348 950a
-000349 f781                              WAIT_MS 250                    ; ?4 Hz update rate
+00038c ef0a
+00038d 2e30
+00038e e001
+00038f 930f
+000390 923f
+000391 e300
+000392 2e30
+000393 e006
+000394 943a
+000395 f7f1
+000396 943a
+000397 950a
+000398 f7d9
+000399 903f
+00039a 910f
+00039b 943a
+00039c f791
+00039d 950a
+00039e f781                              WAIT_MS 250                    ; ?4 Hz update rate
                                  
                                          ;---  stay only while we are still in Doctor ------------------
-00034a 2d26                              mov     r18, sel
-00034b 3024                              cpi     r18, ST_DOCTOR
-00034c f2a9                              breq    doctor_loop
+00039f 2d26                              mov     r18, sel
+0003a0 3024                              cpi     r18, ST_DOCTOR
+0003a1 f2a9                              breq    doctor_loop
                                  
                                          ;––– 3. leave state ––––––––––––––––––––––––––––––––––––––––––
-00034d 912f                              pop     r18
-00034e 9508                      
+0003a2 912f                              pop     r18
+0003a3 9508                      
                                  ;======================================================================
                                  ;  RESET sequence
                                  ;======================================================================
                                  reset:
-00034f ef0f
-000350 bf0d
-000351 e100
-000352 bf0e                                  LDSP  RAMEND
-000353 dcf5                                  rcall LCD_init
-000354 de2d                                  rcall wire1_init
+0003a4 ef0f
+0003a5 bf0d
+0003a6 e100
+0003a7 bf0e                                  LDSP  RAMEND
+0003a8 dca0                                  rcall LCD_init
+0003a9 ddd8                                  rcall wire1_init
                                  
                                  ; — Buttons PD0–PD3: inputs with pull-ups ----------------------------
-000355 9888                                  cbi   DDRD,0
-000356 9889                                  cbi   DDRD,1
-000357 988a                                  cbi   DDRD,2
-000358 988b                                  cbi   DDRD,3
-000359 9a90                                  sbi   PORTD,0
-00035a 9a91                                  sbi   PORTD,1
-00035b 9a92                                  sbi   PORTD,2
-00035c 9a93                                  sbi   PORTD,3
+0003aa 9888                                  cbi   DDRD,0
+0003ab 9889                                  cbi   DDRD,1
+0003ac 988a                                  cbi   DDRD,2
+0003ad 988b                                  cbi   DDRD,3
+0003ae 9a90                                  sbi   PORTD,0
+0003af 9a91                                  sbi   PORTD,1
+0003b0 9a92                                  sbi   PORTD,2
+0003b1 9a93                                  sbi   PORTD,3
                                  
                                  ; — WS2812 driver init (sets PD7 output) -----------------------------
-00035d de72                                  rcall ws_init
+0003b2 de1d                                  rcall ws_init
                                  
                                  ; — Heartbeat LED on PF7 (active-low) --------------------------------
-00035e e800
-00035f 9300 0061                             OUTEI DDRF,(1<<LED_BIT)    ; PF7 ? output (clobbers w)
-000361 e800
-000362 9300 0062                             OUTEI PORTF,(1<<LED_BIT)   ; drive high = LED off
+0003b3 e800
+0003b4 9300 0061                             OUTEI DDRF,(1<<LED_BIT)    ; PF7 ? output (clobbers w)
+0003b6 e800
+0003b7 9300 0062                             OUTEI PORTF,(1<<LED_BIT)   ; drive high = LED off
                                  
                                  ; — Ensure WS2812 line idle low until driver starts ------------------
-000364 9897                                  cbi   PORTD,7
+0003b9 9897                                  cbi   PORTD,7
                                  
                                  ; — Timer-1 one-second tick ------------------------------------------
-000365 ef00                                  ldi   w,T1_PREH
-000366 bd0d                                  out   TCNT1H,w
-000367 eb0e                                  ldi   w,T1_PREL
-000368 bd0c                                  out   TCNT1L,w
-000369 e005                                  ldi   w,(1<<CS12)|(1<<CS10)
-00036a bd0e                                  out   TCCR1B,w
-00036b e004
-00036c bf07                                  OUTI  TIMSK,(1<<TOIE1)
+0003ba ef00                                  ldi   w,T1_PREH
+0003bb bd0d                                  out   TCNT1H,w
+0003bc eb0e                                  ldi   w,T1_PREL
+0003bd bd0c                                  out   TCNT1L,w
+0003be e005                                  ldi   w,(1<<CS12)|(1<<CS10)
+0003bf bd0e                                  out   TCCR1B,w
+0003c0 e004
+0003c1 bf07                                  OUTI  TIMSK,(1<<TOIE1)
                                  
                                  ; — INT0–INT3 falling-edge config -----------------------------------
-00036d ea0a
-00036e 9300 006a                             OUTEI EICRA,0b10101010
-000370 e00f
-000371 bf09                                  OUTI  EIMSK,0b00001111
+0003c2 ea0a
+0003c3 9300 006a                             OUTEI EICRA,0b10101010
+0003c5 e00f
+0003c6 bf09                                  OUTI  EIMSK,0b00001111
                                  
-000372 9478                                  sei                         ; global IRQ enable
+0003c7 9478                                  sei                         ; global IRQ enable
                                  
                                  ; — Kick off first DS18B20 conversion --------------------------------
-000373 2700                                  clr   w                     ; w is volatile – fine here
-000374 9300 0103                             sts   phase,w
-000376 d018                                  rcall temp_convert
+0003c8 2700                                  clr   w                     ; w is volatile – fine here
+0003c9 9300 0103                             sts   phase,w
+0003cb d018                                  rcall temp_convert
                                  
-000377 2466                                  clr   sel                   ; start in Home state
+0003cc 2466                                  clr   sel                   ; start in Home state
                                  
                                  ;======================================================================
                                  ;  MAIN LOOP – state dispatch
                                  ;======================================================================
                                  main_loop:
                                  switch:
-000378 2ce6                                  mov   s,sel                ; copy once, keep stable
-000379 e000
-00037a 16e0                                  _CPI   s,ST_HOME
-00037b f411                                  brne  swSnake
-00037c defc                                  rcall home_init
-00037d cffa                                  rjmp  switch
+0003cd 2ce6                                  mov   s,sel                ; copy once, keep stable
+0003ce e000
+0003cf 16e0                                  _CPI   s,ST_HOME
+0003d0 f411                                  brne  swSnake
+0003d1 dea7                                  rcall home_init
+0003d2 cffa                                  rjmp  switch
                                  
                                  swSnake:
-00037e e001
-00037f 16e0                                  _CPI   s,ST_GAME1
-000380 f411                                  brne  swGameTwo
-000381 df1d                                  rcall snake_init
-000382 cff5                                  rjmp  switch
+0003d3 e001
+0003d4 16e0                                  _CPI   s,ST_GAME1
+0003d5 f411                                  brne  swGameTwo
+0003d6 dec8                                  rcall snake_init
+0003d7 cff5                                  rjmp  switch
                                  
                                  swGameTwo:
-000383 e002
-000384 16e0                                  _CPI   s,ST_GAME2
-000385 f411                                  brne  swGameThree
-000386 df3e                                  rcall gameTwoInit
-000387 cff0                                  rjmp  switch
+0003d8 e002
+0003d9 16e0                                  _CPI   s,ST_GAME2
+0003da f411                                  brne  swGameThree
+0003db df3e                                  rcall gameTwoInit
+0003dc cff0                                  rjmp  switch
                                  
                                  swGameThree:
-000388 e003
-000389 16e0                                  _CPI   s,ST_GAME3
-00038a f411                                  brne  swDoctor
-00038b df60                                  rcall gameThreeInit
-00038c cfeb                                  rjmp  switch
+0003dd e003
+0003de 16e0                                  _CPI   s,ST_GAME3
+0003df f411                                  brne  swDoctor
+0003e0 df60                                  rcall gameThreeInit
+0003e1 cfeb                                  rjmp  switch
                                  
                                  swDoctor:
-00038d df85                                  rcall doctorInit
-00038e cfe9                                  rjmp  switch
+0003e2 df85                                  rcall doctorInit
+0003e3 cfe9                                  rjmp  switch
                                  
                                  ;======================================================================
                                  ;  1-Wire helpers
@@ -4711,28 +4870,28 @@ Z:\medical_consol_atmega128\medical_thermo\medical_thermo\main.asm(85): 'Z:\medi
                                  ; Use s (r14) instead of w so we don’t depend on the volatile macro reg.
                                  
                                  temp_convert:
-00038f 92ef                                  push  s
-000390 ddf4                                  rcall wire1_reset
-000391 ec2c                                  ldi   a0,skipROM
-000392 de1e                                  rcall wire1_write
-000393 e424                                  ldi   a0,convertT
-000394 de1c                                  rcall wire1_write
-000395 90ef                                  pop   s
-000396 9508                                  ret
+0003e4 92ef                                  push  s
+0003e5 dd9f                                  rcall wire1_reset
+0003e6 ec2c                                  ldi   a0,skipROM
+0003e7 ddc9                                  rcall wire1_write
+0003e8 e424                                  ldi   a0,convertT
+0003e9 ddc7                                  rcall wire1_write
+0003ea 90ef                                  pop   s
+0003eb 9508                                  ret
                                  
                                  temp_fetch:
-000397 92ef                                  push  s
-000398 ddec                                  rcall wire1_reset
-000399 ec2c                                  ldi   a0,skipROM
-00039a de16                                  rcall wire1_write
-00039b eb2e                                  ldi   a0,readScratchpad
-00039c de14                                  rcall wire1_write
-00039d de1e                                  rcall wire1_read
-00039e 9320 0101                             sts   temp_lsb,a0
-0003a0 de1b                                  rcall wire1_read
-0003a1 9320 0102                             sts   temp_msb,a0
-0003a3 90ef                                  pop   s
-0003a4 9508                                  ret
+0003ec 92ef                                  push  s
+0003ed dd97                                  rcall wire1_reset
+0003ee ec2c                                  ldi   a0,skipROM
+0003ef ddc1                                  rcall wire1_write
+0003f0 eb2e                                  ldi   a0,readScratchpad
+0003f1 ddbf                                  rcall wire1_write
+0003f2 ddc9                                  rcall wire1_read
+0003f3 9320 0101                             sts   temp_lsb,a0
+0003f5 ddc6                                  rcall wire1_read
+0003f6 9320 0102                             sts   temp_msb,a0
+0003f8 90ef                                  pop   s
+0003f9 9508                                  ret
                                  
                                  ;---------------------------------------------------------------------
                                  ;  Background temperature task
@@ -4740,95 +4899,95 @@ Z:\medical_consol_atmega128\medical_thermo\medical_thermo\main.asm(85): 'Z:\medi
                                  ; Only s is used; w may change at macro calls we don’t care about here.
                                  
                                  temp_task:
-0003a5 90e0 0100                             lds   s,flags
-0003a7 ef0e
-0003a8 22e0                                  _ANDI  s,~(1<<FLG_TEMP)
-0003a9 92e0 0100                             sts   flags,s
+0003fa 90e0 0100                             lds   s,flags
+0003fc ef0e
+0003fd 22e0                                  _ANDI  s,~(1<<FLG_TEMP)
+0003fe 92e0 0100                             sts   flags,s
                                  
-0003ab 90e0 0103                             lds   s,phase
-0003ad 20ee                                  tst   s
-0003ae f029                                  breq  temp_do_convert
+000400 90e0 0103                             lds   s,phase
+000402 20ee                                  tst   s
+000403 f029                                  breq  temp_do_convert
                                  
-0003af dfe7                                  rcall temp_fetch
-0003b0 24ee                                  clr   s
-0003b1 92e0 0103                             sts   phase,s
-0003b3 9508                                  ret
+000404 dfe7                                  rcall temp_fetch
+000405 24ee                                  clr   s
+000406 92e0 0103                             sts   phase,s
+000408 9508                                  ret
                                  
                                  temp_do_convert:
-0003b4 dfda                                  rcall temp_convert
-0003b5 e001
-0003b6 2ee0                                  _LDI   s,1
-0003b7 92e0 0103                             sts   phase,s
-0003b9 9508                                  ret
+000409 dfda                                  rcall temp_convert
+00040a e001
+00040b 2ee0                                  _LDI   s,1
+00040c 92e0 0103                             sts   phase,s
+00040e 9508                                  ret
                                  
                                  ;======================================================================
                                  ;  Interrupt service routines
                                  ;======================================================================
                                  ;----------------------  INT0 – next state  ---------------------------
                                  int0_isr:
-0003ba 930f                                  push  w                    ; save volatile macro reg
-0003bb 9463                                  inc   sel
-0003bc e004                                  ldi   w,REG_STATES
-0003bd 1660                                  cp    sel,w
-0003be f008                                  brlo  int0_done
-0003bf 2466                                  clr   sel                  ; wrap ? 0
+00040f 930f                                  push  w                    ; save volatile macro reg
+000410 9463                                  inc   sel
+000411 e004                                  ldi   w,REG_STATES
+000412 1660                                  cp    sel,w
+000413 f008                                  brlo  int0_done
+000414 2466                                  clr   sel                  ; wrap ? 0
                                  int0_done:
-0003c0 910f                                  pop   w
-0003c1 9518                                  reti
+000415 910f                                  pop   w
+000416 9518                                  reti
                                  
                                  ;----------------------  INT1 – previous state ------------------------
                                  int1_isr:
-0003c2 930f                                  push  w
-0003c3 2066                                  tst   sel
-0003c4 f421                                  brne  int1_dec
-0003c5 e003                                  ldi   w,REG_STATES-1       ; wrap ? 3
-0003c6 2e60                                  mov   sel,w
-0003c7 910f                                  pop   w
-0003c8 9518                                  reti
+000417 930f                                  push  w
+000418 2066                                  tst   sel
+000419 f421                                  brne  int1_dec
+00041a e003                                  ldi   w,REG_STATES-1       ; wrap ? 3
+00041b 2e60                                  mov   sel,w
+00041c 910f                                  pop   w
+00041d 9518                                  reti
                                  int1_dec:
-0003c9 946a                                  dec   sel
-0003ca 910f                                  pop   w
-0003cb 9518                                  reti
+00041e 946a                                  dec   sel
+00041f 910f                                  pop   w
+000420 9518                                  reti
                                  
                                  ;----------------------  INT2 – goto Home ----------------------------
                                  int2_isr:
-0003cc 2466                                  clr   sel
-0003cd 9518                                  reti
+000421 2466                                  clr   sel
+000422 9518                                  reti
                                  
                                  ;----------------------  INT3 – Doctor mode --------------------------
                                  int3_isr:
-0003ce 930f                                  push  w
-0003cf e004                                  ldi   w,ST_DOCTOR
-0003d0 2e60                                  mov   sel,w
-0003d1 910f                                  pop   w
-0003d2 9518                                  reti
+000423 930f                                  push  w
+000424 e004                                  ldi   w,ST_DOCTOR
+000425 2e60                                  mov   sel,w
+000426 910f                                  pop   w
+000427 9518                                  reti
                                  
                                  ;----------------------  Timer-1 overflow ----------------------------
                                  t1_isr:
-0003d3 930f                                  push  w                     ; save macro scratch
-0003d4 931f                                  push  _w                    ; save ISR scratch
+000428 930f                                  push  w                     ; save macro scratch
+000429 931f                                  push  _w                    ; save ISR scratch
                                  
                                              ; reload counter
-0003d5 ef00                                  ldi   w,T1_PREH
-0003d6 bd0d                                  out   TCNT1H,w
-0003d7 eb0e                                  ldi   w,T1_PREL
-0003d8 bd0c                                  out   TCNT1L,w
+00042a ef00                                  ldi   w,T1_PREH
+00042b bd0d                                  out   TCNT1H,w
+00042c eb0e                                  ldi   w,T1_PREL
+00042d bd0c                                  out   TCNT1L,w
                                  
                                              ; heartbeat LED on PF7 (toggle)
-0003d9 90e0 0062                             lds   s,PORTF
-0003db e810                                  ldi   _w,(1<<LED_BIT)
-0003dc 26e1                                  eor   s,_w
-0003dd 92e0 0062                             sts   PORTF,s
+00042e 90e0 0062                             lds   s,PORTF
+000430 e810                                  ldi   _w,(1<<LED_BIT)
+000431 26e1                                  eor   s,_w
+000432 92e0 0062                             sts   PORTF,s
                                  
                                              ; set temperature task flag
-0003df 90e0 0100                             lds   s,flags
-0003e1 e001
-0003e2 2ae0                                  _ORI   s,(1<<FLG_TEMP)
-0003e3 92e0 0100                             sts   flags,s
+000434 90e0 0100                             lds   s,flags
+000436 e001
+000437 2ae0                                  _ORI   s,(1<<FLG_TEMP)
+000438 92e0 0100                             sts   flags,s
                                  
-0003e5 911f                                  pop   _w
-0003e6 910f                                  pop   w
-0003e7 9518                                  reti
+00043a 911f                                  pop   _w
+00043b 910f                                  pop   w
+00043c 9518                                  reti
 
 
 RESOURCE USE INFORMATION
@@ -4846,41 +5005,41 @@ counted separately from r26..r31 here.
 .dseg memory usage only counts static data declared with .byte
 
 "ATmega128" register use summary:
-x  :   6 y  :   0 z  :   6 r0 :   9 r1 :   0 r2 :   5 r3 :  58 r4 :   7 
+x  :   6 y  :   0 z  :  17 r0 :  11 r1 :   0 r2 :   5 r3 :  58 r4 :   7 
 r5 :   7 r6 :  15 r7 :   0 r8 :   5 r9 :   5 r10:   5 r11:   6 r12:  11 
-r13:   0 r14:  32 r15:   0 r16: 257 r17:  20 r18:  56 r19:  37 r20:  26 
-r21:  15 r22:  17 r23:  25 r24:  10 r25:  16 r26:   4 r27:   4 r28:   0 
-r29:   0 r30:  17 r31:  12 
+r13:   0 r14:  35 r15:   0 r16: 279 r17:  20 r18:  60 r19:  41 r20:  30 
+r21:  18 r22:  24 r23:  25 r24:  12 r25:  19 r26:   4 r27:   4 r28:   0 
+r29:   0 r30:  22 r31:  17 
 Registers used: 28 out of 35 (80.0%)
 
 "ATmega128" instruction use summary:
-.lds  :   0 .sts  :   0 adc   :   1 add   :   5 adiw  :   5 and   :   1 
-andi  :   9 asr   :   2 bclr  :   0 bld   :   2 brbc  :   0 brbs  :   0 
-brcc  :   3 brcs  :   0 break :   0 breq  :  18 brge  :   0 brhc  :   0 
+.lds  :   0 .sts  :   0 adc   :   1 add   :   6 adiw  :   5 and   :   1 
+andi  :  11 asr   :   2 bclr  :   0 bld   :   2 brbc  :   0 brbs  :   0 
+brcc  :   4 brcs  :   0 break :   0 breq  :  20 brge  :   0 brhc  :   0 
 brhs  :   0 brid  :   0 brie  :   0 brlo  :   2 brlt  :   0 brmi  :   1 
-brne  :  48 brpl  :   1 brsh  :   1 brtc  :   5 brts  :   0 brvc  :   0 
+brne  :  50 brpl  :   1 brsh  :   1 brtc  :   5 brts  :   0 brvc  :   0 
 brvs  :   0 bset  :   0 bst   :   6 call  :   0 cbi   :  15 cbr   :   0 
-clc   :   1 clh   :   0 cli   :   1 cln   :   0 clr   :  22 cls   :   0 
-clt   :   2 clv   :   0 clz   :   3 com   :   8 cp    :  11 cpc   :   3 
-cpi   :  11 cpse  :   0 dec   :  44 elpm  :   0 eor   :   3 fmul  :   0 
-fmuls :   0 fmulsu:   0 icall :   1 ijmp  :   1 in    :   8 inc   :   7 
-jmp   :   6 ld    :   9 ldd   :   0 ldi   : 139 lds   :  11 lpm   :  12 
-lsl   :   8 lsr   :   3 mov   :  58 movw  :   0 mul   :   0 muls  :   0 
+clc   :   1 clh   :   0 cli   :   2 cln   :   0 clr   :  30 cls   :   0 
+clt   :   2 clv   :   0 clz   :   3 com   :   8 cp    :  13 cpc   :   3 
+cpi   :  11 cpse  :   0 dec   :  47 elpm  :   0 eor   :   3 fmul  :   0 
+fmuls :   0 fmulsu:   0 icall :   1 ijmp  :   1 in    :   8 inc   :   9 
+jmp   :   6 ld    :  13 ldd   :   0 ldi   : 156 lds   :  12 lpm   :  12 
+lsl   :   8 lsr   :   3 mov   :  62 movw  :   0 mul   :   0 muls  :   0 
 mulsu :   0 neg   :   0 nop   :  18 or    :   1 ori   :   3 out   :  16 
-pop   :  49 push  :  47 rcall :  77 ret   :  44 reti  :   6 rjmp  :  57 
+pop   :  49 push  :  47 rcall :  85 ret   :  48 reti  :   6 rjmp  :  60 
 rol   :  10 ror   :  17 sbc   :   3 sbci  :   0 sbi   :  14 sbic  :   0 
 sbis  :   0 sbiw  :   0 sbr   :   1 sbrc  :  21 sbrs  :   4 sec   :   0 
-seh   :   0 sei   :   2 sen   :   0 ser   :   0 ses   :   0 set   :   2 
-sev   :   0 sez   :   1 sleep :   0 spm   :   0 st    :   3 std   :   0 
-sts   :  15 sub   :   4 subi  :   7 swap  :   4 tst   :  10 wdr   :   0 
+seh   :   0 sei   :   3 sen   :   0 ser   :   0 ses   :   0 set   :   2 
+sev   :   0 sez   :   1 sleep :   0 spm   :   0 st    :  10 std   :   0 
+sts   :  20 sub   :   4 subi  :   7 swap  :   5 tst   :  10 wdr   :   0 
 
 Instructions used: 66 out of 114 (57.9%)
 
 "ATmega128" memory use summary [bytes]:
 Segment   Begin    End      Code   Data   Used    Size   Use%
 ---------------------------------------------------------------
-[.cseg] 0x000000 0x0007d0   1914     50   1964  131072   1.5%
-[.dseg] 0x000100 0x000105      0      5      5    4096   0.1%
+[.cseg] 0x000000 0x00087a   2084     50   2134  131072   1.6%
+[.dseg] 0x000100 0x00014a      0     74     74    4096   1.8%
 [.eseg] 0x000000 0x000000      0      0      0    4096   0.0%
 
 Assembly complete, 0 errors, 3 warnings
