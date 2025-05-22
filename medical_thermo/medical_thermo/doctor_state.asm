@@ -1,71 +1,45 @@
 ;======================================================================
-;  Doctor mode  – ST_DOCTOR
+;  doctor_state.asm      – ST_DOCTOR diagnostic screen
 ;======================================================================
 
+
 doctorInit:
-        push  r18
-        rcall lcd_clear
-        rcall doctorLoop
-        pop   r18
-        ret
+        push    r18                    ; save caller’s a0 slot
 
-;----------------------------------------------------------------------
-doctorLoop:
-loopDoctor:
-        ;---- background temperature ---------------------------------
-        lds  r18,flags
-        sbrc r18,FLG_TEMP
-        rcall temp_task
+        ;––– 1. clear LCD and show header ––––––––––––––––––––––––––––
+        rcall   lcd_clear
+        PRINTF  LCD
+        .db     "Doctor",0,0;removes annoying warning by alligning 
 
-        ;---- LCD -----------------------------------------------------
-        rcall lcd_clear
-        lds  a0,temp_lsb
-        lds  a1,temp_msb
-        PRINTF LCD
-        .db "Doctor ",FFRAC2+FSIGN,a,4,$42,"C",0
+        ;––– 2. blank the LED matrix (all LEDs off) ––––––––––––––––––
+        clr     a0                     ; G
+        clr     a1                     ; R
+        clr     a2                     ; B
+        rcall   matrix_solid           ; fills buffer & transmits
 
-        ;---- Matrix --------------------------------------------------
-        WS_PUSH_ALL
-            ldi  a0,0
-            ldi  a1,0
-            ldi  a2,0
-            rcall ws_fill_color
+;======================================================================
+;  main refresh loop – runs until sel ? ST_DOCTOR
+;======================================================================
+doctor_loop:
+        ;---  temperature housekeeping  -------------------------------
+        lds     r18, flags
+        sbrc    r18, FLG_TEMP          ; if ready flag set …
+        rcall   temp_task              ; … service background task
 
-            lds  r22,temp_lsb
-            lsr  r22
-            cpi  r22,64
-            brlo bucketOk
-            ldi  r22,63
-bucketOk:
-            ldi  r24,7
-            ldi  r25,7
-thermLoop:
-            cpi  r25,4
-            brlo greenPart
-redPart:
-            ldi  a0,0
-            ldi  a1,0x10
-            rjmp colourDone
-greenPart:
-            ldi  a0,0x10
-            ldi  a1,0
-colourDone:
-            ldi  a2,0
-            rcall ws_plot_xy
-            dec  r25
-            dec  r22
-            brpl thermLoop
+        ;---  fetch last reading & print ------------------------------
+        lds     a0, temp_lsb
+        lds     a1, temp_msb
+		rcall   lcd_clear
+        PRINTF  LCD
+        .db     "Doctor ", FFRAC2+FSIGN, a, 4, $42, "C", 0,0
 
-            rcall ws_show_frame
-        WS_POP_ALL
+        WAIT_MS 250                    ; ?4 Hz update rate
 
-        ;---- housekeeping -------------------------------------------
-        WAIT_US 100000
-        WAIT_US 20000
+        ;---  stay only while we are still in Doctor ------------------
+        mov     r18, sel
+        cpi     r18, ST_DOCTOR
+        breq    doctor_loop
 
-        mov   r18,sel
-        cpi   r18,ST_DOCTOR
-        brne  exitDoctor           ; *** long-range fix
-        rjmp  loopDoctor
-exitDoctor:                         ; ***
+        ;––– 3. leave state ––––––––––––––––––––––––––––––––––––––––––
+        pop     r18
         ret
