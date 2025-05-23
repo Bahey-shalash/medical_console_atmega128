@@ -5,7 +5,7 @@
 home_init:
         rcall   lcd_clear
         PRINTF  LCD
-        .db     "HOME",0
+        .db     "HOME",0,0
 
         ; green matrix
         ldi     a0, 0x0F     ; G

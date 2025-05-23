@@ -112,8 +112,8 @@ reset:
             OUTEI PORTF,(1<<LED_BIT)   ; drive high = LED off
 
 ; === DEBUG LEDs on PF6 (CW) and PF5 (CCW) ============================
-        OUTEI DDRF,((1<<6)|(1<<5))       ; PF6 | PF5 ? outputs
-        OUTEI PORTF,((1<<6)|(1<<5))      ; start high  (LEDs off)
+;        OUTEI DDRF,((1<<6)|(1<<5))       ; PF6 | PF5 ? outputs
+ ;       OUTEI PORTF,((1<<6)|(1<<5))      ; start high  (LEDs off)
 
 
 ; � Ensure WS2812 line idle low until driver starts ------------------
