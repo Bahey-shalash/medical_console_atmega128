@@ -1,5 +1,5 @@
 ;======================================================================
-;  matrix_utils.asm  – solid-colour helper for the WS2812 8×8 matrix
+;  ws2812_helpers.asm  ï¿½ solid-colour helper for the WS2812 8ï¿½8 matrix
 ;  call:  a0 = G  a1 = R  a2 = B   (GRB order)
 ;  clobbers:  Z, r0, r22, w=r16  (all scratch according to policy)
 ;======================================================================

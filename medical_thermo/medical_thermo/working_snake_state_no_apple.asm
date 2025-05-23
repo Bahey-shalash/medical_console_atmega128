@@ -1,102 +1,128 @@
 ;======================================================================
-;  SNAKE state – ST_GAME1  (minimal apple addition)
-;  · 8×8 WS2812 matrix
-;  · 3‑segment snake — blue head / green body
-;  · Static red apple at (5,5)
-;  · Rotary‑encoder steering (@1 kHz queue)
-;  >>>  NO game‑play changes (no growth, no collisions) <<<
+;  SNAKE  state � ST_GAME1
+;  � 8�8 WS2812 matrix
+;  � 3-segment snake, blue head / green body
+;  � Rotary-encoder steering (every edge ? queued & drained @1 kHz)
 ;======================================================================
+;TODO: 0. play and pause game with the{ in encoder encoder_button:
+;	sbrc	_w,ENCOD_I
+;	rjmp	i_rise
+;i_fall:
+;	set						; set T=1 to indicate button press
+;	ret
+;i_rise:
+;	ret}
+;TODO: 1. add apple
+;TODO: 2. make the apple spawn at a random location (using a timer that) do not spawn on the snake
+;TODO: 3. add collision detection (snake vs apple)
+;TODO: 4. make the apple disappear when eaten
+;TODO: 5. make the snake grow when it eats the apple
+;TODO: 6. apple respauns when eaten
+;TODO: 7. make the snake grow when it eats the apple
+;TODO: 8. make the snake die when it runs into the wall
+;TODO: 9. make the snake die when it runs into itself
 
 ;---------------------------------------------------------------------
-; SRAM layout
+; ? Data section � circular buffer & control FIFO
 ;---------------------------------------------------------------------
 .dseg
 snake_body:   .byte 64      ; packed x + 8*y
 head_idx:     .byte 1
-tail_idx:     .byte 1
+ tail_idx:    .byte 1
 snake_len:    .byte 1
 
 direction:    .byte 1       ; 0=Up 1=Right 2=Down 3=Left
-apple_pos:    .byte 1       ; red apple pixel
 
-; 8‑slot FIFO for pending turns
+; ?? 8-slot FIFO of pending turns (0�3 headings) ????????????????????
 turn_queue:   .byte 8
-tq_head:      .byte 1
-tq_tail:      .byte 1
+tq_head:      .byte 1       ; write idx (0..7)
+tq_tail:      .byte 1       ; read  idx (0..7)
+;---------------------------------------------------------------------
 .cseg
 
 ;======================================================================
-; Initialisation & main loop (unchanged apart from apple seed)
+;  snake_init � entry from main dispatcher
 ;======================================================================
-
-snake_game_init:
+snake_init: ; game_snake_init now
     rcall lcd_clear
     PRINTF LCD
     .db "SNAKE",0
 
-    rcall encoder_init
+    rcall encoder_init             ; configure PE4�6
     rcall snake_init_data
     rcall snake_draw
-    rjmp snake_wait
+    rjmp snake_wait                ; ? main loop
 
+;======================================================================
+;  snake_wait � 1 ms poll loop, 500 ms frame timer
+;======================================================================
 snake_wait:
-    ldi r24,low(500)
-    ldi r25,high(500)
-pllp:
-    rcall update_game
+    ldi r24, low(500)
+    ldi r25, high(500)
+
+poll_loop:
+    rcall update_game              ; enqueue & dequeue @1 kHz
     WAIT_MS 1
-    sbiw r24,1
-    brne pllp
-    rcall move_snake
+    sbiw r24, 1                    ; decrement 16-bit counter
+    brne poll_loop
+
+    rcall move_snake               ; single step @500 ms
     rcall snake_draw
-    mov  s,sel
-    _CPI s,ST_GAME1
+
+    mov s, sel
+    _CPI s, ST_GAME1
     breq snake_wait
     ret
 
+;======================================================================
+;  snake_init_data � build 3-segment snake, clear FIFO & seed encoder
+;======================================================================
 snake_init_data:
-    ; clear body buffer → 0xFF
-    ldi ZL,low(snake_body)
-    ldi ZH,high(snake_body)
-    ldi r22,64
-clrbuf:
-    ldi w,0xFF
-    st Z+,w
+    ; clear body buffer ? 0xFF
+    ldi ZL, low(snake_body)
+    ldi ZH, high(snake_body)
+    ldi r22, 64
+clr_buf:
+    ldi w, 0xFF
+    st Z+, w
     dec r22
-    brne clrbuf
+    brne clr_buf
 
-    ; seed snake at (2,3)(3,3)(4,3)
-    ldi ZL,low(snake_body)
-    ldi ZH,high(snake_body)
-    ldi w,26
-    st Z+,w
-    ldi w,27
-    st Z+,w
-    ldi w,28
-    st Z,w
+    ; seed segments at (2,3),(3,3),(4,3)
+    ldi ZL, low(snake_body)
+    ldi ZH, high(snake_body)
+    ldi w, 26
+    st Z+, w
+    ldi w, 27
+    st Z+, w
+    ldi w, 28
+    st Z, w
 
-    ldi w,2      ; head index
-    sts head_idx,w
-    clr w        ; tail index =0
-    sts tail_idx,w
-    ldi w,3
-    sts snake_len,w
-
-    ldi w,1      ; heading RIGHT
-    sts direction,w
-
-    ; fixed apple at (5,5) → packed 5 + 8*5 = 45
-    ldi w,45
-    sts apple_pos,w
-
-    ; reset turn FIFO & encoder counters
+    ; init indices & length
+    ldi w, 2
+    sts head_idx, w
     clr w
-    sts tq_head,w
-    sts tq_tail,w
+    sts tail_idx, w
+    ldi w, 3
+    sts snake_len, w
+
+    ; start heading RIGHT
+    ldi w, 1
+    sts direction, w
+
+    ; clear the 8-slot FIFO
+    clr w
+    sts tq_head, w
+    sts tq_tail, w
+
+    ; zero encoder counters (a0/b0) to suppress boot-spike
     clr a0
     clr b0
-    in  w,ENCOD
-    sts enc_old,w
+
+    ; seed old-port so first encoder_update yields ?=0
+    in w, ENCOD
+    sts enc_old, w
+
     ret
 
 ;======================================================================
@@ -298,93 +324,76 @@ tail_ok:
 ;======================================================================
 ;  snake_draw � paint body & head, then WS2812 stream
 ;======================================================================
-;======================================================================
-; Rendering – snake then static apple
-;======================================================================
-
 snake_draw:
     clr a0
     clr a1
     clr a2
-    rcall matrix_solid          ; clear frame to black
+    rcall matrix_solid
 
-    ; --- draw snake -------------------------------------------------
-    lds r23,tail_idx
-    lds s,snake_len
+    lds r23, tail_idx
+    lds s, snake_len
     ldi r22,0
-snk_loop:
-    cp r22,s
-    breq snk_done
-    mov r24,r23
-    add r24,r22
+
+draw_loop:
+    cp r22, s
+    breq draw_done
+    ; compute buffer idx
+    mov r24, r23
+    add r24, r22
     cpi r24,64
     brlo idx_ok
     subi r24,64
 idx_ok:
-    ldi ZL,low(snake_body)
-    ldi ZH,high(snake_body)
-    add ZL,r24
+    ldi ZL, low(snake_body)
+    ldi ZH, high(snake_body)
+    add ZL, r24
     brcc buf_ok
     inc ZH
 buf_ok:
-    ld w,Z                       ; packed byte
-    ; unpack to x=r24, y=r25
-    mov r24,w
+    ld w, Z
+
+    ; unpack and pixel
+    mov r24, w
     andi r24,0x07
-    mov r25,w
+    mov r25, w
     swap r25
     andi r25,0x07
     rcall ws_idx_xy
     rcall ws_offset_idx
-    mov _w,s
+
+    mov _w, s
     dec _w
-    cp  r22,_w
-    breq head_pix
-body_pix:
-    ldi a0,0x0F ; green
+    cp r22, _w
+    breq head_col
+body_col:
+    ldi a0,0x0F
     clr a1
     clr a2
-    rjmp store_pix
-head_pix:
+    rjmp store_px
+head_col:
     clr a0
     clr a1
-    ldi a2,0x0F ; blue
-store_pix:
-    st Z+,a0
-    st Z+,a1
-    st Z,a2
+    ldi a2,0x0F
+store_px:
+    st Z+, a0
+    st Z+, a1
+    st Z, a2
+
     inc r22
-    rjmp snk_loop
-snk_done:
+    rjmp draw_loop
 
-    ; --- draw apple (red) ------------------------------------------
-    lds w,apple_pos             ; packed coordinate
-    mov r24,w
-    andi r24,0x07               ; x
-    mov r25,w
-    swap r25
-    andi r25,0x07               ; y
-    rcall ws_idx_xy
-    rcall ws_offset_idx
-    clr a0
-    ldi a1,0x0F                 ; bright red
-    clr a2
-    st  Z+,a0
-    st  Z+,a1
-    st  Z, a2
-
-    ; --- flush frame ------------------------------------------------
-    ldi ZL,low(WS_BUF_BASE)
-    ldi ZH,high(WS_BUF_BASE)
+draw_done:
+    ldi ZL, low(WS_BUF_BASE)
+    ldi ZH, high(WS_BUF_BASE)
     _LDI r0,64
-flush_loop:
-    ld a0,Z+
-    ld a1,Z+
-    ld a2,Z+
+send_lp:
+    ld a0, Z+
+    ld a1, Z+
+    ld a2, Z+
     cli
     rcall ws_byte3wr
     sei
     dec r0
-    brne flush_loop
+    brne send_lp
     rcall ws_reset
     ret

@@ -1,17 +1,17 @@
 ;======================================================================
-;  main.asm  – ATmega128L @ 4 MHz – STK-300
+;  main.asm  ï¿½ ATmega128L @ 4 MHz ï¿½ STK-300
 ;  Modular finite-state machine
-;   · WS2812 matrix on PD7  (driver)
-;   · LED-strip heartbeat on PF7 (active-low)
-;   · Buttons on PD0–PD3 (INT0–INT3)
+;   ï¿½ WS2812 matrix on PD7  (driver)
+;   ï¿½ LED-strip heartbeat on PF7 (active-low)
+;   ï¿½ Buttons on PD0ï¿½PD3 (INT0ï¿½INT3)
 ;======================================================================
 ;
 ;  Register policy ----------------------------------------------------
-;  r16 = w   : volatile scratch, clobbered by nearly every macro –
+;  r16 = w   : volatile scratch, clobbered by nearly every macro ï¿½
 ;              do **not** rely on its value except right after you
 ;              loaded it yourself and before the next macro call.
 ;  r17 = _w  : scratch inside interrupt prologues only.
-;  r14 = s   : long-lived scratch for general calculations – never
+;  r14 = s   : long-lived scratch for general calculations ï¿½ never
 ;              touched by macros.  Preserve if you call sub-routines
 ;              that may use it.
 ;---------------------------------------------------------------------
@@ -26,8 +26,8 @@
             .def  sel = r6           ; current FSM state
             .def  s   = r14          ; stable scratch register
 
-            .equ  FLG_TEMP   = 0     ; bit0 of `flags`  – temperature-ready
-            .equ  REG_STATES = 4     ; valid game states 0…3
+            .equ  FLG_TEMP   = 0     ; bit0 of `flags`  ï¿½ temperature-ready
+            .equ  REG_STATES = 4     ; valid game states 0ï¿½3
             .equ  ST_HOME    = 0
             .equ  ST_GAME1   = 1
             .equ  ST_GAME2   = 2
@@ -94,7 +94,7 @@ reset:
             rcall wire1_init
 			rcall encoder_init
 
-; — Buttons PD0–PD3: inputs with pull-ups ----------------------------
+; ï¿½ Buttons PD0ï¿½PD3: inputs with pull-ups ----------------------------
             cbi   DDRD,0
             cbi   DDRD,1
             cbi   DDRD,2
@@ -104,10 +104,10 @@ reset:
             sbi   PORTD,2
             sbi   PORTD,3
 
-; — WS2812 driver init (sets PD7 output) -----------------------------
+; ï¿½ WS2812 driver init (sets PD7 output) -----------------------------
             rcall ws_init
 
-; — Heartbeat LED on PF7 (active-low) --------------------------------
+; ï¿½ Heartbeat LED on PF7 (active-low) --------------------------------
             OUTEI DDRF,(1<<LED_BIT)    ; PF7 ? output (clobbers w)
             OUTEI PORTF,(1<<LED_BIT)   ; drive high = LED off
 
@@ -116,10 +116,10 @@ reset:
         OUTEI PORTF,((1<<6)|(1<<5))      ; start high  (LEDs off)
 
 
-; — Ensure WS2812 line idle low until driver starts ------------------
+; ï¿½ Ensure WS2812 line idle low until driver starts ------------------
             cbi   PORTD,7
 
-; — Timer-1 one-second tick ------------------------------------------
+; ï¿½ Timer-1 one-second tick ------------------------------------------
             ldi   w,T1_PREH
             out   TCNT1H,w
             ldi   w,T1_PREL
@@ -128,21 +128,21 @@ reset:
             out   TCCR1B,w
             OUTI  TIMSK,(1<<TOIE1)
 
-; — INT0–INT3 falling-edge config -----------------------------------
+; ï¿½ INT0ï¿½INT3 falling-edge config -----------------------------------
             OUTEI EICRA,0b10101010
             OUTI  EIMSK,0b00001111
 
             sei                         ; global IRQ enable
 
-; — Kick off first DS18B20 conversion --------------------------------
-            clr   w                     ; w is volatile – fine here
+; ï¿½ Kick off first DS18B20 conversion --------------------------------
+            clr   w                     ; w is volatile ï¿½ fine here
             sts   phase,w
             rcall temp_convert
 
             clr   sel                   ; start in Home state
 
 ;======================================================================
-;  MAIN LOOP – state dispatch
+;  MAIN LOOP ï¿½ state dispatch
 ;======================================================================
 main_loop:
 switch:
@@ -155,7 +155,7 @@ switch:
 swSnake:
             _CPI   s,ST_GAME1
             brne  swGameTwo
-            rcall snake_init
+            rcall snake_game_init; changed nameeeee
             rjmp  switch
 
 swGameTwo:
@@ -177,7 +177,7 @@ swDoctor:
 ;======================================================================
 ;  1-Wire helpers
 ;======================================================================
-; Use s (r14) instead of w so we don’t depend on the volatile macro reg.
+; Use s (r14) instead of w so we donï¿½t depend on the volatile macro reg.
 
 temp_convert:
             push  s
@@ -206,7 +206,7 @@ temp_fetch:
 ;---------------------------------------------------------------------
 ;  Background temperature task
 ;---------------------------------------------------------------------
-; Only s is used; w may change at macro calls we don’t care about here.
+; Only s is used; w may change at macro calls we donï¿½t care about here.
 
 temp_task:
             lds   s,flags
@@ -231,7 +231,7 @@ temp_do_convert:
 ;======================================================================
 ;  Interrupt service routines
 ;======================================================================
-;----------------------  INT0 – next state  ---------------------------
+;----------------------  INT0 ï¿½ next state  ---------------------------
 int0_isr:
             push  w                    ; save volatile macro reg
             inc   sel
@@ -243,7 +243,7 @@ int0_done:
             pop   w
             reti
 
-;----------------------  INT1 – previous state ------------------------
+;----------------------  INT1 ï¿½ previous state ------------------------
 int1_isr:
             push  w
             tst   sel
@@ -257,12 +257,12 @@ int1_dec:
             pop   w
             reti
 
-;----------------------  INT2 – goto Home ----------------------------
+;----------------------  INT2 ï¿½ goto Home ----------------------------
 int2_isr:
             clr   sel
             reti
 
-;----------------------  INT3 – Doctor mode --------------------------
+;----------------------  INT3 ï¿½ Doctor mode --------------------------
 int3_isr:
             push  w
             ldi   w,ST_DOCTOR
@@ -296,3 +296,5 @@ t1_isr:
             pop   w
             reti
 ;======================================================================
+;TODO: increse the debounce time for the buttons 
+;TODO: Wrap cli/sei around wire1_reset, wire1_read*, and wire1_write* (or at least around WIRE1 calls) before adding faster or more frequent interrupts.

@@ -102,16 +102,16 @@
   <_mul41><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\printf.asm</FILE><LINE>431</LINE></_mul41>
   <__m41><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\printf.asm</FILE><LINE>433</LINE></__m41>
   <__d41><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\printf.asm</FILE><LINE>449</LINE></__d41>
-  <wire1_wait><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\wire1.asm</FILE><LINE>39</LINE></wire1_wait>
-  <wire1_init><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\wire1.asm</FILE><LINE>49</LINE></wire1_init>
-  <wire1_reset><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\wire1.asm</FILE><LINE>54</LINE></wire1_reset>
-  <wire1_write0><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\wire1.asm</FILE><LINE>55</LINE></wire1_write0>
-  <wire1_write1><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\wire1.asm</FILE><LINE>56</LINE></wire1_write1>
-  <wire1_read1><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\wire1.asm</FILE><LINE>57</LINE></wire1_read1>
-  <wire1_write><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\wire1.asm</FILE><LINE>59</LINE></wire1_write>
-  <wire1_read><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\wire1.asm</FILE><LINE>73</LINE></wire1_read>
-  <wire1_crc><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\wire1.asm</FILE><LINE>83</LINE></wire1_crc>
-  <crc1><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\wire1.asm</FILE><LINE>86</LINE></crc1>
+  <wire1_wait><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\wire1.asm</FILE><LINE>41</LINE></wire1_wait>
+  <wire1_init><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\wire1.asm</FILE><LINE>51</LINE></wire1_init>
+  <wire1_reset><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\wire1.asm</FILE><LINE>56</LINE></wire1_reset>
+  <wire1_write0><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\wire1.asm</FILE><LINE>57</LINE></wire1_write0>
+  <wire1_write1><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\wire1.asm</FILE><LINE>58</LINE></wire1_write1>
+  <wire1_read1><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\wire1.asm</FILE><LINE>59</LINE></wire1_read1>
+  <wire1_write><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\wire1.asm</FILE><LINE>61</LINE></wire1_write>
+  <wire1_read><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\wire1.asm</FILE><LINE>75</LINE></wire1_read>
+  <wire1_crc><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\wire1.asm</FILE><LINE>85</LINE></wire1_crc>
+  <crc1><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\wire1.asm</FILE><LINE>88</LINE></crc1>
   <ws_init><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\ws2812_driver.asm</FILE><LINE>74</LINE></ws_init>
   <ws_byte3wr><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\ws2812_driver.asm</FILE><LINE>80</LINE></ws_byte3wr>
   <_b0><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\ws2812_driver.asm</FILE><LINE>86</LINE></_b0>
@@ -147,49 +147,50 @@
   <home_init><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\home_state.asm</FILE><LINE>5</LINE></home_init>
   <home_wait><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\home_state.asm</FILE><LINE>16</LINE></home_wait>
   <home_done><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\home_state.asm</FILE><LINE>23</LINE></home_done>
-  <snake_body><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\snake_state.asm</FILE><LINE>12</LINE></snake_body>
-  <head_idx><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\snake_state.asm</FILE><LINE>13</LINE></head_idx>
-  <tail_idx><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\snake_state.asm</FILE><LINE>14</LINE></tail_idx>
-  <snake_len><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\snake_state.asm</FILE><LINE>15</LINE></snake_len>
-  <direction><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\snake_state.asm</FILE><LINE>17</LINE></direction>
-  <turn_queue><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\snake_state.asm</FILE><LINE>20</LINE></turn_queue>
-  <tq_head><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\snake_state.asm</FILE><LINE>21</LINE></tq_head>
-  <tq_tail><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\snake_state.asm</FILE><LINE>22</LINE></tq_tail>
-  <snake_init><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\snake_state.asm</FILE><LINE>29</LINE></snake_init>
-  <snake_init_data><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\snake_state.asm</FILE><LINE>63</LINE></snake_init_data>
-  <snake_draw><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\snake_state.asm</FILE><LINE>310</LINE></snake_draw>
+  <snake_body><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\snake_state.asm</FILE><LINE>14</LINE></snake_body>
+  <head_idx><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\snake_state.asm</FILE><LINE>15</LINE></head_idx>
+  <tail_idx><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\snake_state.asm</FILE><LINE>16</LINE></tail_idx>
+  <snake_len><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\snake_state.asm</FILE><LINE>17</LINE></snake_len>
+  <direction><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\snake_state.asm</FILE><LINE>19</LINE></direction>
+  <apple_pos><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\snake_state.asm</FILE><LINE>20</LINE></apple_pos>
+  <turn_queue><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\snake_state.asm</FILE><LINE>23</LINE></turn_queue>
+  <tq_head><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\snake_state.asm</FILE><LINE>24</LINE></tq_head>
+  <tq_tail><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\snake_state.asm</FILE><LINE>25</LINE></tq_tail>
+  <snake_game_init><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\snake_state.asm</FILE><LINE>32</LINE></snake_game_init>
+  <snake_init_data><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\snake_state.asm</FILE><LINE>57</LINE></snake_init_data>
+  <snake_draw><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\snake_state.asm</FILE><LINE>305</LINE></snake_draw>
   <snake_wait><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\snake_state.asm</FILE><LINE>42</LINE></snake_wait>
-  <poll_loop><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\snake_state.asm</FILE><LINE>46</LINE></poll_loop>
-  <update_game><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\snake_state.asm</FILE><LINE>114</LINE></update_game>
-  <move_snake><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\snake_state.asm</FILE><LINE>220</LINE></move_snake>
-  <clr_buf><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\snake_state.asm</FILE><LINE>68</LINE></clr_buf>
-  <continue_update><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\snake_state.asm</FILE><LINE>133</LINE></continue_update>
-  <exit_update><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\snake_state.asm</FILE><LINE>204</LINE></exit_update>
-  <make_left><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\snake_state.asm</FILE><LINE>148</LINE></make_left>
-  <make_right><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\snake_state.asm</FILE><LINE>139</LINE></make_right>
-  <check_reverse><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\snake_state.asm</FILE><LINE>159</LINE></check_reverse>
-  <dec_ok><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\snake_state.asm</FILE><LINE>156</LINE></dec_ok>
-  <qok><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\snake_state.asm</FILE><LINE>182</LINE></qok>
-  <dqok><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\snake_state.asm</FILE><LINE>197</LINE></dqok>
-  <head_ptr_ok><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\snake_state.asm</FILE><LINE>230</LINE></head_ptr_ok>
-  <mv_right><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\snake_state.asm</FILE><LINE>261</LINE></mv_right>
-  <mv_left><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\snake_state.asm</FILE><LINE>267</LINE></mv_left>
-  <mv_up><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\snake_state.asm</FILE><LINE>253</LINE></mv_up>
-  <mv_down><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\snake_state.asm</FILE><LINE>247</LINE></mv_down>
-  <mv_done><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\snake_state.asm</FILE><LINE>274</LINE></mv_done>
-  <mv_up_ok><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\snake_state.asm</FILE><LINE>258</LINE></mv_up_ok>
-  <mv_left_ok><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\snake_state.asm</FILE><LINE>272</LINE></mv_left_ok>
-  <head_ok><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\snake_state.asm</FILE><LINE>287</LINE></head_ok>
-  <write_ok><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\snake_state.asm</FILE><LINE>294</LINE></write_ok>
-  <tail_ok><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\snake_state.asm</FILE><LINE>303</LINE></tail_ok>
-  <draw_loop><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\snake_state.asm</FILE><LINE>320</LINE></draw_loop>
-  <draw_done><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\snake_state.asm</FILE><LINE>368</LINE></draw_done>
-  <idx_ok><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\snake_state.asm</FILE><LINE>329</LINE></idx_ok>
-  <buf_ok><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\snake_state.asm</FILE><LINE>335</LINE></buf_ok>
-  <head_col><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\snake_state.asm</FILE><LINE>356</LINE></head_col>
-  <body_col><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\snake_state.asm</FILE><LINE>351</LINE></body_col>
-  <store_px><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\snake_state.asm</FILE><LINE>360</LINE></store_px>
-  <send_lp><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\snake_state.asm</FILE><LINE>372</LINE></send_lp>
+  <pllp><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\snake_state.asm</FILE><LINE>45</LINE></pllp>
+  <update_game><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\snake_state.asm</FILE><LINE>105</LINE></update_game>
+  <move_snake><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\snake_state.asm</FILE><LINE>211</LINE></move_snake>
+  <clrbuf><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\snake_state.asm</FILE><LINE>62</LINE></clrbuf>
+  <continue_update><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\snake_state.asm</FILE><LINE>124</LINE></continue_update>
+  <exit_update><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\snake_state.asm</FILE><LINE>195</LINE></exit_update>
+  <make_left><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\snake_state.asm</FILE><LINE>139</LINE></make_left>
+  <make_right><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\snake_state.asm</FILE><LINE>130</LINE></make_right>
+  <check_reverse><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\snake_state.asm</FILE><LINE>150</LINE></check_reverse>
+  <dec_ok><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\snake_state.asm</FILE><LINE>147</LINE></dec_ok>
+  <qok><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\snake_state.asm</FILE><LINE>173</LINE></qok>
+  <dqok><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\snake_state.asm</FILE><LINE>188</LINE></dqok>
+  <head_ptr_ok><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\snake_state.asm</FILE><LINE>221</LINE></head_ptr_ok>
+  <mv_right><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\snake_state.asm</FILE><LINE>252</LINE></mv_right>
+  <mv_left><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\snake_state.asm</FILE><LINE>258</LINE></mv_left>
+  <mv_up><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\snake_state.asm</FILE><LINE>244</LINE></mv_up>
+  <mv_down><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\snake_state.asm</FILE><LINE>238</LINE></mv_down>
+  <mv_done><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\snake_state.asm</FILE><LINE>265</LINE></mv_done>
+  <mv_up_ok><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\snake_state.asm</FILE><LINE>249</LINE></mv_up_ok>
+  <mv_left_ok><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\snake_state.asm</FILE><LINE>263</LINE></mv_left_ok>
+  <head_ok><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\snake_state.asm</FILE><LINE>278</LINE></head_ok>
+  <write_ok><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\snake_state.asm</FILE><LINE>285</LINE></write_ok>
+  <tail_ok><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\snake_state.asm</FILE><LINE>294</LINE></tail_ok>
+  <snk_loop><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\snake_state.asm</FILE><LINE>315</LINE></snk_loop>
+  <snk_done><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\snake_state.asm</FILE><LINE>358</LINE></snk_done>
+  <idx_ok><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\snake_state.asm</FILE><LINE>323</LINE></idx_ok>
+  <buf_ok><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\snake_state.asm</FILE><LINE>329</LINE></buf_ok>
+  <head_pix><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\snake_state.asm</FILE><LINE>348</LINE></head_pix>
+  <body_pix><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\snake_state.asm</FILE><LINE>343</LINE></body_pix>
+  <store_pix><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\snake_state.asm</FILE><LINE>352</LINE></store_pix>
+  <flush_loop><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\snake_state.asm</FILE><LINE>380</LINE></flush_loop>
   <gameTwoInit><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\game2_state.asm</FILE><LINE>5</LINE></gameTwoInit>
   <game2_wait><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\game2_state.asm</FILE><LINE>16</LINE></game2_wait>
   <game2_done><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\game2_state.asm</FILE><LINE>23</LINE></game2_done>
