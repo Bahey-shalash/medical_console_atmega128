@@ -1,32 +1,31 @@
 ;======================================================================
-;  SNAKE state – ST_GAME1  (minimal apple addition)
+;  SNAKE state – ST_GAME1 (static apple + wall-collision)
 ;  · 8×8 WS2812 matrix
-;  · 3‑segment snake — blue head / green body
+;  · 3-segment snake — blue head / green body
 ;  · Static red apple at (5,5)
-;  · Rotary‑encoder steering (@1 kHz queue)
-;  >>>  NO game‑play changes (no growth, no collisions) <<<
+;  · Rotary-encoder steering (@1 kHz queue)
+;  · NEW: border collision → “GAME OVER” freeze until state change
 ;======================================================================
 
 ;---------------------------------------------------------------------
 ; SRAM layout
 ;---------------------------------------------------------------------
 .dseg
-snake_body:   .byte 64      ; packed x + 8*y
+snake_body:   .byte 64      ; packed x + 8*y (0xFF = empty)
 head_idx:     .byte 1
 tail_idx:     .byte 1
 snake_len:    .byte 1
 
 direction:    .byte 1       ; 0=Up 1=Right 2=Down 3=Left
-apple_pos:    .byte 1       ; red apple pixel
+apple_pos:    .byte 1       ; packed apple pixel (5 + 8*5 = 45)
 
-; 8‑slot FIFO for pending turns
 turn_queue:   .byte 8
 tq_head:      .byte 1
 tq_tail:      .byte 1
 .cseg
 
 ;======================================================================
-; Initialisation & main loop (unchanged apart from apple seed)
+; Initialization & Main Loop
 ;======================================================================
 
 snake_game_init:
@@ -40,73 +39,76 @@ snake_game_init:
     rjmp snake_wait
 
 snake_wait:
-    ldi r24,low(500)
-    ldi r25,high(500)
-pllp:
+    ldi r24, low(500)
+    ldi r25, high(500)
+wait_loop:
     rcall update_game
     WAIT_MS 1
     sbiw r24,1
-    brne pllp
+    brne wait_loop
+
     rcall move_snake
     rcall snake_draw
-    mov  s,sel
-    _CPI s,ST_GAME1
-    breq snake_wait
+
+    mov  s, sel
+    _CPI s, ST_GAME1
+    breq wait_loop
     ret
 
+;---------------------------------------------------------------------
 snake_init_data:
-    ; clear body buffer → 0xFF
-    ldi ZL,low(snake_body)
-    ldi ZH,high(snake_body)
-    ldi r22,64
+    ; fill body buffer with 0xFF
+    ldi ZL, low(snake_body)
+    ldi ZH, high(snake_body)
+    ldi r22, 64
 clrbuf:
-    ldi w,0xFF
-    st Z+,w
+    ldi w, 0xFF
+    st  Z+, w
     dec r22
     brne clrbuf
 
-    ; seed snake at (2,3)(3,3)(4,3)
-    ldi ZL,low(snake_body)
-    ldi ZH,high(snake_body)
-    ldi w,26
-    st Z+,w
-    ldi w,27
-    st Z+,w
-    ldi w,28
-    st Z,w
+    ; seed snake at (2,3),(3,3),(4,3)
+    ldi ZL, low(snake_body)
+    ldi ZH, high(snake_body)
+    ldi w, 26
+    st  Z+, w
+    ldi w, 27
+    st  Z+, w
+    ldi w, 28
+    st  Z , w
 
-    ldi w,2      ; head index
-    sts head_idx,w
-    clr w        ; tail index =0
-    sts tail_idx,w
-    ldi w,3
-    sts snake_len,w
-
-    ldi w,1      ; heading RIGHT
-    sts direction,w
-
-    ; fixed apple at (5,5) → packed 5 + 8*5 = 45
-    ldi w,45
-    sts apple_pos,w
-
-    ; reset turn FIFO & encoder counters
+    ; init indices & length
+    ldi w,2
+    sts head_idx, w
     clr w
-    sts tq_head,w
-    sts tq_tail,w
+    sts tail_idx, w
+    ldi w,3
+    sts snake_len, w
+
+    ; initial heading RIGHT
+    ldi w,1
+    sts direction, w
+
+    ; static apple at (5,5)
+    ldi w,45
+    sts apple_pos, w
+
+    ; reset FIFO & encoder counters
+    clr w
+    sts tq_head, w
+    sts tq_tail, w
     clr a0
     clr b0
-    in  w,ENCOD
-    sts enc_old,w
+    in  w, ENCOD
+    sts enc_old, w
     ret
 
 ;======================================================================
-;  update_game � encoder_update ? enqueue & immediately dequeue one
+; update_game – encoder → turn FIFO (unchanged)
 ;======================================================================
 update_game:
-    ; preserve frame-counter registers r24:r25
     push r25
     push r24
-    ; preserve working registers
     push r18
     push r19
     push r20
@@ -114,277 +116,264 @@ update_game:
     push r22
     push r23
 
-    ; r15 ? �1 per detent or 0
-    rcall encoder_update
-    mov r19, r15
-    tst r19
-    brne continue_update
-    rjmp exit_update
+    rcall encoder_update      ; r15 = ±1 or 0
+    mov  r19, r15
+    tst  r19
+    brne cont_upd
+    rjmp exit_upd
 
-continue_update:
-    ; compute candidate heading in r20
-    lds r21, direction
-    tst r19
-    brmi make_left
+cont_upd:
+    lds   r21, direction
+    tst   r19
+    brmi turn_left
 
-make_right:
-    ; turn right (CW)
-    mov r20, r21
-    inc r20
-    cpi r20, 4
-    brlo check_reverse
-    clr r20
-    rjmp check_reverse
+turn_right:
+    mov   r20, r21
+    inc   r20
+    cpi   r20,4
+    brlo  chk_rev
+    clr   r20
+    rjmp  chk_rev
 
-make_left:
-    ; turn left (CCW)
-    mov r20, r21
-    tst r20
-    brne dec_ok
-    ldi r20, 3
-    rjmp check_reverse
+turn_left:
+    mov   r20, r21
+    tst   r20
+    brne  tl_ok
+    ldi   r20,3
+    rjmp  chk_rev
+tl_ok:
+    dec   r20
 
-dec_ok:
-    dec r20
+chk_rev:
+    mov   r22, r21
+    subi  r22, -2
+    andi  r22,0x03
+    cp    r20, r22
+    breq  exit_upd
 
-check_reverse:
-    ; reject 180� turn
-    mov r22, r21
-    subi r22, -2
-    andi r22, 0x03
-    cp r20, r22
-    breq exit_update
+    lds   r23, tq_head
+    mov   r24, r23
+    inc   r24
+    andi  r24,0x07
+    lds   r22, tq_tail
+    cp    r24, r22
+    breq  exit_upd
 
-    ; enqueue into turn_queue[tq_head]
-    lds r23, tq_head
-    mov r24, r23
-    inc r24
-    andi r24, 0x07
-    lds r22, tq_tail
-    cp r24, r22
-    breq exit_update          ; full? drop
-
-    ; store heading
-    ldi ZL, low(turn_queue)
-    ldi ZH, high(turn_queue)
-    add ZL, r23
-    brcc qok
-    inc ZH
+    ldi   ZL, low(turn_queue)
+    ldi   ZH, high(turn_queue)
+    add   ZL, r23
+    brcc  qok
+    inc   ZH
 qok:
-    st Z, r20
-    sts tq_head, r24
+    st    Z, r20
+    sts   tq_head, r24
 
-    ; immediately dequeue one to keep FIFO shallow
-    lds r22, tq_tail
-    lds r23, tq_head
-    cp r22, r23
-    breq exit_update          ; empty?
+    lds   r22, tq_tail
+    lds   r23, tq_head
+    cp    r22, r23
+    breq  exit_upd
 
-    ldi ZL, low(turn_queue)
-    ldi ZH, high(turn_queue)
-    add ZL, r22
-    brcc dqok
-    inc ZH
+    ldi   ZL, low(turn_queue)
+    ldi   ZH, high(turn_queue)
+    add   ZL, r22
+    brcc  dqok
+    inc   ZH
 dqok:
-    ld r20, Z                 ; oldest
-    inc r22
-    andi r22, 0x07
-    sts tq_tail, r22
-    sts direction, r20        ; apply it
+    ld    r20, Z
+    inc   r22
+    andi  r22,0x07
+    sts   tq_tail, r22
+    sts   direction, r20
 
-exit_update:
-    ; restore working registers
-    pop r23
-    pop r22
-    pop r21
-    pop r20
-    pop r19
-    pop r18
-    ; restore frame-counter registers
-    pop r24
-    pop r25
+exit_upd:
+    pop   r23
+    pop   r22
+    pop   r21
+    pop   r20
+    pop   r19
+    pop   r18
+    pop   r24
+    pop   r25
     ret
 
 ;======================================================================
-;  move_snake � advance one cell (toroidal), keep length = 3
+; move_snake – abort on border collision → freeze until state change
 ;======================================================================
 move_snake:
     lds   r18, direction
 
-    ; fetch current head
+    ; fetch current head → r20
     lds   r19, head_idx
     ldi   ZL, low(snake_body)
     ldi   ZH, high(snake_body)
     add   ZL, r19
-    brcc head_ptr_ok
+    brcc  head_ok
     inc   ZH
-head_ptr_ok:
+head_ok:
     ld    r20, Z
 
-    ; unpack x,y
+    ; unpack x=r21, y=r22
     mov   r21, r20
     andi  r21,0x07
     mov   r22, r20
     swap  r22
     andi  r22,0x07
 
-    ; apply move + wrap
-    cpi   r18,1
-    breq mv_right
-    cpi   r18,3
-    breq mv_left
-    cpi   r18,0
-    breq mv_up
-mv_down:
+    ; WALL CHECK & next step
+    cpi   r18,1         ; RIGHT?
+    breq  do_right
+    cpi   r18,3         ; LEFT?
+    breq  do_left
+    cpi   r18,0         ; UP?
+    breq  do_up
+    ; DOWN
     inc   r22
     cpi   r22,8
-    brlo  mv_done
-    clr   r22
-    rjmp  mv_done
-mv_up:
-    tst   r22
-    brne mv_up_ok
-    ldi   r22,7
-    rjmp mv_done
-mv_up_ok:
-    dec   r22
-    rjmp mv_done
-mv_right:
+    breq  hit_wall
+    rjmp  pack_move
+
+do_right:
     inc   r21
     cpi   r21,8
-    brlo mv_done
-    clr   r21
-    rjmp mv_done
-mv_left:
+    breq  hit_wall
+    rjmp  pack_move
+
+do_left:
     tst   r21
-    brne mv_left_ok
-    ldi   r21,7
-    rjmp mv_done
-mv_left_ok:
+    breq  hit_wall
     dec   r21
-mv_done:
+    rjmp  pack_move
 
-    ; repack and write head
-    mov r20, r21
-    mov _w, r22
-    swap _w
-    andi _w,0x70
-    or r20, _w
-    lds r19, head_idx
-    inc r19
-    cpi r19,64
-    brlo head_ok
-    clr r19
-head_ok:
-    sts head_idx, r19
-    ldi ZL, low(snake_body)
-    ldi ZH, high(snake_body)
-    add ZL, r19
-    brcc write_ok
-    inc ZH
-write_ok:
-    st Z, r20
+do_up:
+    tst   r22
+    breq  hit_wall
+    dec   r22
 
-    ; bump tail
-    lds r21, tail_idx
-    inc r21
-    cpi r21,64
-    brlo tail_ok
-    clr r21
-tail_ok:
-    sts tail_idx, r21
+pack_move:
+    mov   r20, r21
+    mov   _w, r22
+    swap  _w
+    andi  _w,0x70
+    or    r20, _w
+
+    lds   r19, head_idx
+    inc   r19
+    cpi   r19,64
+    brlo  idx_ok2
+    clr   r19
+idx_ok2:
+    sts   head_idx, r19
+    ldi   ZL, low(snake_body)
+    ldi   ZH, high(snake_body)
+    add   ZL, r19
+    brcc  wr_ok2
+    inc   ZH
+wr_ok2:
+    st    Z, r20
+
+    lds   r21, tail_idx
+    inc   r21
+    cpi   r21,64
+    brlo  tl_ok2
+    clr   r21
+tl_ok2:
+    sts   tail_idx, r21
+    ret
+
+hit_wall:
+    rcall lcd_clear
+    PRINTF LCD
+    .db "GAME OVER",0
+freeze_loop:
+    mov   r18, sel
+    _CPI  r18, ST_GAME1
+    breq  freeze_loop
     ret
 
 ;======================================================================
-;  snake_draw � paint body & head, then WS2812 stream
+; snake_draw – unchanged (draw snake then static apple)
 ;======================================================================
-;======================================================================
-; Rendering – snake then static apple
-;======================================================================
-
 snake_draw:
     clr a0
     clr a1
     clr a2
-    rcall matrix_solid          ; clear frame to black
+    rcall matrix_solid
 
-    ; --- draw snake -------------------------------------------------
-    lds r23,tail_idx
-    lds s,snake_len
-    ldi r22,0
-snk_loop:
-    cp r22,s
-    breq snk_done
-    mov r24,r23
-    add r24,r22
-    cpi r24,64
-    brlo idx_ok
+    lds  r23, tail_idx
+    lds  s,   snake_len
+    ldi  r22,0
+draw_snake:
+    cp   r22, s
+    breq snake_done
+    mov  r24, r23
+    add  r24, r22
+    cpi  r24,64
+    brlo idx_ok3
     subi r24,64
-idx_ok:
-    ldi ZL,low(snake_body)
-    ldi ZH,high(snake_body)
-    add ZL,r24
-    brcc buf_ok
-    inc ZH
-buf_ok:
-    ld w,Z                       ; packed byte
-    ; unpack to x=r24, y=r25
-    mov r24,w
+idx_ok3:
+    ldi  ZL, low(snake_body)
+    ldi  ZH, high(snake_body)
+    add  ZL, r24
+    brcc buf_ok3
+    inc  ZH
+buf_ok3:
+    ld   w, Z
+    mov  r24, w
     andi r24,0x07
-    mov r25,w
+    mov  r25, w
     swap r25
     andi r25,0x07
     rcall ws_idx_xy
     rcall ws_offset_idx
-    mov _w,s
-    dec _w
-    cp  r22,_w
+    mov  _w, s
+    dec  _w
+    cp   r22, _w
     breq head_pix
 body_pix:
-    ldi a0,0x0F ; green
-    clr a1
-    clr a2
+    ldi  a0,0x0F
+    clr  a1
+    clr  a2
     rjmp store_pix
 head_pix:
-    clr a0
-    clr a1
-    ldi a2,0x0F ; blue
+    clr  a0
+    clr  a1
+    ldi  a2,0x0F
 store_pix:
-    st Z+,a0
-    st Z+,a1
-    st Z,a2
-    inc r22
-    rjmp snk_loop
-snk_done:
+    st   Z+, a0
+    st   Z+, a1
+    st   Z , a2
+    inc  r22
+    rjmp draw_snake
 
-    ; --- draw apple (red) ------------------------------------------
-    lds w,apple_pos             ; packed coordinate
-    mov r24,w
-    andi r24,0x07               ; x
-    mov r25,w
+snake_done:
+    ; draw apple
+    lds  w, apple_pos
+    mov  r24, w
+    andi r24,0x07
+    mov  r25, w
     swap r25
-    andi r25,0x07               ; y
+    andi r25,0x07
     rcall ws_idx_xy
     rcall ws_offset_idx
-    clr a0
-    ldi a1,0x0F                 ; bright red
-    clr a2
-    st  Z+,a0
-    st  Z+,a1
-    st  Z, a2
+    clr  a0
+    ldi  a1,0x0F
+    clr  a2
+    st   Z+, a0
+    st   Z+, a1
+    st   Z , a2
 
-    ; --- flush frame ------------------------------------------------
-    ldi ZL,low(WS_BUF_BASE)
-    ldi ZH,high(WS_BUF_BASE)
+    ; flush buffer
+    ldi  ZL, low(WS_BUF_BASE)
+    ldi  ZH, high(WS_BUF_BASE)
     _LDI r0,64
 flush_loop:
-    ld a0,Z+
-    ld a1,Z+
-    ld a2,Z+
+    ld   a0, Z+
+    ld   a1, Z+
+    ld   a2, Z+
     cli
     rcall ws_byte3wr
     sei
-    dec r0
+    dec  r0
     brne flush_loop
     rcall ws_reset
     ret
