@@ -37,7 +37,7 @@
             .equ  T1_PREH    = 0xF0  ; Timer-1 preload (high)
             .equ  T1_PREL    = 0xBE  ; Timer-1 preload (low)
             .equ  LED_BIT    = 7     ; PF7 heartbeat (active-low)
-
+            .equ  BTN_DEBOUNCE = 50  ; Button debounce time in milliseconds
 ;---------------------------------------------------------------------
 ;  SRAM allocation
 ;---------------------------------------------------------------------
@@ -92,7 +92,7 @@ reset:
             LDSP  RAMEND
             rcall LCD_init
             rcall wire1_init
-			rcall encoder_init
+            rcall encoder_init
 
 ; � Buttons PD0�PD3: inputs with pull-ups ----------------------------
             cbi   DDRD,0
@@ -111,9 +111,6 @@ reset:
             OUTEI DDRF,(1<<LED_BIT)    ; PF7 ? output (clobbers w)
             OUTEI PORTF,(1<<LED_BIT)   ; drive high = LED off
 
-; === DEBUG LEDs on PF6 (CW) and PF5 (CCW) ============================
-;        OUTEI DDRF,((1<<6)|(1<<5))       ; PF6 | PF5 ? outputs
- ;       OUTEI PORTF,((1<<6)|(1<<5))      ; start high  (LEDs off)
 
 
 ; � Ensure WS2812 line idle low until driver starts ------------------
@@ -297,4 +294,3 @@ t1_isr:
             reti
 ;======================================================================
 ;TODO: increse the debounce time for the buttons 
-;TODO: Wrap cli/sei around wire1_reset, wire1_read*, and wire1_write* (or at least around WIRE1 calls) before adding faster or more frequent interrupts.

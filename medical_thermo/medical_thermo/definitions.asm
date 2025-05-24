@@ -23,7 +23,7 @@
 .equ	d	= 12	; 4-byte register d (overlapping with c)
 .def	d0	= r12
 .def	d1	= r13
-.def	d2	= r14
+.def	d2	= r14; we use it 
 .def	d3	= r15
 
 .def	w	= r16	; working register for macros
