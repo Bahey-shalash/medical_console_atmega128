@@ -2,13 +2,13 @@
 ;  SNAKE state – ST_GAME1               (constant-time apple handling)
 ;----------------------------------------------------------------------
 ;  • 8×8 WS2812 matrix
-;  • 3-segment snake  – blue head / green body
+;  • 3-segment (growing) snake  – blue head / green body
 ;  • Apple: red, re-spawns instantly at a random free cell when eaten
 ;  • Walls: collision → “GAME OVER” (freeze until `sel` ≠ ST_GAME1)
 ;  • Control: rotary encoder (turns queued @1 kHz)
 ;  • Pseudo-random: read Timer-0 counter (prescaler untouched)
 ;----------------------------------------------------------------------
-;  Snake length is fixed at three – no growth or self-collision yet
+;  Snake grows by +1 each time it eats an apple
 ;======================================================================
 
 ;---------------------------------------------------------------------
@@ -206,7 +206,7 @@ enc_exit:
     ret
 
 ;=====================================================================
-;  move_snake – borders & apple collision
+;  move_snake – borders, apple collision & GROWTH
 ;=====================================================================
 move_snake:
     lds  r18, direction
@@ -239,14 +239,14 @@ head_ptr:
     breq dir_up
     inc  r22
     cpi  r22, 8
-    breq hit_wall
-    rjmp pack_cell
+    brne pack_cell            ; ---- fixed span ----
+    rjmp hit_wall
 
 dir_right:
     inc  r21
     cpi  r21, 8
-    breq hit_wall
-    rjmp pack_cell
+    brne pack_cell
+    rjmp hit_wall
 
 dir_left:
     tst  r21
@@ -272,11 +272,32 @@ pack_cell:
     breq write_head
     cp   r20, r23
     brne write_head
+
+    ; -------- we ate the apple ----------
     ldi  r23, 0xFF
     sts  apple_pos, r23
-    rcall place_new_apple     ; constant-time routine (below)
+    rcall place_new_apple
+
+    ; grow: snake_len++  (max 64)
+    lds  r24, snake_len
+    cpi  r24, 64
+    breq write_head
+    inc  r24
+    sts  snake_len, r24
+    ; do NOT advance tail this frame -> handled by length check below
+    rjmp write_head_no_tail
 
 write_head:
+    ; advance tail normally when no growth
+    lds  r21, tail_idx
+    inc  r21
+    cpi  r21, 64
+    brlo tail_ok
+    clr  r21
+tail_ok:
+    sts  tail_idx, r21
+
+write_head_no_tail:
     lds  r19, head_idx
     inc  r19
     cpi  r19, 64
@@ -291,15 +312,6 @@ idx_ok_write:
     inc  ZH
 write_ptr:
     st   Z, r20
-
-    ; keep length 3
-    lds  r21, tail_idx
-    inc  r21
-    cpi  r21, 64
-    brlo tail_ok
-    clr  r21
-tail_ok:
-    sts  tail_idx, r21
     ret
 
 hit_wall:
@@ -313,7 +325,7 @@ freeze_game:
     ret
 
 ;=====================================================================
-;  place_new_apple – constant-time (8 passes) – NO dot-labels
+;  place_new_apple – constant-time (8 passes)
 ;=====================================================================
 ;  * executes 8 identical iterations every call  (~108 µs @ 4 MHz)
 ;  * first free coordinate found is committed after loop
@@ -353,55 +365,42 @@ loop_iter:
     lsl   r20                 ; y*8
     add   r20, r24            ; packed candidate
 
-    ; ----- compare to 3-segment snake ------------------------------
+    ; ----- compare to snake (variable length) ----------------------
     lds   r22, tail_idx
+    lds   r24, snake_len
+    clr   r21                 ; i = 0
+scan_loop:
+    cp    r21, r24
+    breq  free_found
 
-seg0_ptr:
+    mov   _w, r22             ; buf index = tail+i
+    add   _w, r21
+    cpi   _w, 64
+    brlo  idx_ok
+    subi  _w, 64
+idx_ok:
     ldi   ZL, low(snake_body)
     ldi   ZH, high(snake_body)
-    add   ZL, r22
-    brcc  seg0_buf
+    add   ZL, _w
+    brcc  buf_ptr
     inc   ZH
-seg0_buf:
-    ld    r24, Z
-    cp    r24, r20
+buf_ptr:
+    ld    _w, Z
+    cp    _w, r20
     breq  clash_found
+next_seg:
+    inc   r21
+    rjmp  scan_loop
 
-    inc   r22                 ; segment 1
-    cpi   r22, 64
-    brlo  seg1_idx
-    clr   r22
-seg1_idx:
-    ldi   ZL, low(snake_body)
-    ldi   ZH, high(snake_body)
-    add   ZL, r22
-    brcc  seg1_buf
-    inc   ZH
-seg1_buf:
-    ld    r24, Z
-    cp    r24, r20
-    breq  clash_found
-
-    inc   r22                 ; segment 2
-    cpi   r22, 64
-    brlo  seg2_idx
-    clr   r22
-seg2_idx:
-    ldi   ZL, low(snake_body)
-    ldi   ZH, high(snake_body)
-    add   ZL, r22
-    brcc  seg2_buf
-    inc   ZH
-seg2_buf:
-    ld    r24, Z
-    cp    r24, r20
-    breq  clash_found
-
-    tst   r18                 ; first free candidate ?
-    brne  skip_store
-    mov   r18, r20
-skip_store:
 clash_found:
+    rjmp  loop_continue
+
+free_found:
+    tst   r18
+    brne  loop_continue
+    mov   r18, r20
+
+loop_continue:
     dec   r23
     brne  loop_iter
 
