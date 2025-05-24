@@ -1,29 +1,62 @@
 ;======================================================================
-;  SNAKE state – ST_GAME1               (constant-time apple handling)
+;  SNAKE state – ST_GAME1 (cleaned up with constants)
 ;----------------------------------------------------------------------
 ;  • 8×8 WS2812 matrix
-;  • 3-segment (growing) snake  – blue head / green body
+;  • Growing snake – blue head / green body
 ;  • Apple: red, re-spawns instantly at a random free cell when eaten
-;  • Walls: collision → “GAME OVER” (freeze until `sel` ≠ ST_GAME1)
-;  • Control: rotary encoder (turns queued @1 kHz)
-;  • Pseudo-random: read Timer-0 counter (prescaler untouched)
+;  • Walls: collision → “GAME OVER” (freeze until sel ≠ ST_GAME1)
+;  • Control: rotary encoder (turns queued @ QUEUE_SIZE)
+;  • PRNG: read Timer-0 + ADC LSB (prescaler untouched)
 ;----------------------------------------------------------------------
 ;  Snake grows by +1 each time it eats an apple
 ;======================================================================
 
 ;---------------------------------------------------------------------
+;  Symbolic constants
+;---------------------------------------------------------------------
+.equ DIR_UPP              = 0
+.equ DIR_RIGHTT           = 1
+.equ DIR_DOWNN            = 2
+.equ DIR_LEFTT            = 3
+.equ DIR_INITT            = DIR_RIGHTT
+
+.equ Apple_INIT_POS       = 45
+
+.equ SNAKE_INIT_POS1      = 26
+.equ SNAKE_INIT_POS2      = 27
+.equ SNAKE_INIT_POS3      = 28
+.equ SNAKE_INIT_HEAD_IDX  = 2
+.equ SNAKE_INIT_LEN       = 3
+
+.equ FRAME_DELAY_MS       = 500
+
+.equ MATRIX_SIZE          = 8
+.equ GRID_CELLS           = MATRIX_SIZE * MATRIX_SIZE
+.equ COORD_MASK           = 0x07
+
+.equ QUEUE_SIZE           = 8
+.equ QUEUE_MASK           = QUEUE_SIZE - 1
+
+.equ APPLE_PLACEMENT_TRIES = 8
+
+.equ EMPTY_CELL           = 0xFF
+.equ BODY_GREEN           = 0x0F
+.equ HEAD_BLUE            = 0x0F
+.equ APPLE_RED            = 0x0F
+
+;---------------------------------------------------------------------
 ;  SRAM layout
 ;---------------------------------------------------------------------
 .dseg
-snake_body:   .byte 64      ; packed x + 8*y (0xFF = empty)
+snake_body:   .byte GRID_CELLS      ; packed x + MATRIX_SIZE*y
 head_idx:     .byte 1
 tail_idx:     .byte 1
 snake_len:    .byte 1
 
-direction:    .byte 1       ; 0 Up  1 Right  2 Down  3 Left
-apple_pos:    .byte 1       ; packed apple pixel (0xFF = none)
+direction:    .byte 1               ; DIR_UPP..DIR_LEFTT
+apple_pos:    .byte 1               ; EMPTY_CELL = no apple
 
-turn_queue:   .byte 8
+turn_queue:   .byte QUEUE_SIZE
 tq_head:      .byte 1
 tq_tail:      .byte 1
 .cseg
@@ -42,56 +75,59 @@ snake_game_init:
     rjmp snake_wait
 
 snake_init_data:
-    ; clear body buffer → 0xFF
+    ; clear body buffer → EMPTY_CELL
     ldi ZL, low(snake_body)
     ldi ZH, high(snake_body)
-    ldi r22, 64
+    ldi r22, GRID_CELLS
 clear_body:
-    ldi w, 0xFF
+    ldi w, EMPTY_CELL
     st  Z+, w
     dec r22
     brne clear_body
 
-    ; seed snake at (2,3)(3,3)(4,3)
+    ; seed snake at three positions
     ldi ZL, low(snake_body)
     ldi ZH, high(snake_body)
-    ldi w, 26
+    ldi w, SNAKE_INIT_POS1
     st  Z+, w
-    ldi w, 27
+    ldi w, SNAKE_INIT_POS2
     st  Z+, w
-    ldi w, 28
+    ldi w, SNAKE_INIT_POS3
     st  Z , w
 
     ; indices & length
-    ldi w, 2
+    ldi w, SNAKE_INIT_HEAD_IDX
     sts head_idx, w
     clr w
     sts tail_idx, w
-    ldi w, 3
+    ldi w, SNAKE_INIT_LEN
     sts snake_len, w
 
-    ldi w, 1                  ; heading RIGHT
+    ; initial direction & apple
+    ldi w, DIR_INITT
     sts direction, w
-
-    ldi w, 45                 ; apple at (5,5)
+    ldi w, Apple_INIT_POS
     sts apple_pos, w
 
+    ; queue pointers
     clr w
     sts tq_head, w
     sts tq_tail, w
+
+    ; encoder state
     clr a0
     clr b0
     in  w, ENCOD
     sts enc_old, w
-    ret                       ; Timer-0 untouched – PRNG read only
+    ret  ; Timer-0 prescaler untouched – PRNG read only
 
 ;=====================================================================
-;  MAIN LOOP  (fixed 500-ms frames)
+;  MAIN LOOP (fixed FRAME_DELAY_MS frames)
 ;=====================================================================
 snake_wait:
-    ;------------- start of frame -----------------------------------
-    ldi r24, low(500)
-    ldi r25, high(500)
+    ; start-of-frame delay
+    ldi r24, low(FRAME_DELAY_MS)
+    ldi r25, high(FRAME_DELAY_MS)
 frame_delay:
     rcall update_game
     WAIT_MS 1
@@ -101,17 +137,16 @@ frame_delay:
     rcall move_snake
     rcall snake_draw
 
-    ;------------- prepare next frame --------------------------------
-    ldi r24, low(500)          ; reload 500-ms counter
-    ldi r25, high(500)
-
-    mov  s, sel
+    ; prepare next frame
+    ldi r24, low(FRAME_DELAY_MS)
+    ldi r25, high(FRAME_DELAY_MS)
+    mov s, sel
     _CPI s, ST_GAME1
-    breq frame_delay            ; loop inside ST_GAME1
+    breq frame_delay
     ret
 
 ;=====================================================================
-;  update_game – rotary encoder → heading        (unchanged)
+;  update_game – rotary encoder → heading  (unchanged)
 ;=====================================================================
 update_game:
     push r25
@@ -137,7 +172,7 @@ enc_move:
 enc_right:
     mov  r20, r21
     inc  r20
-    cpi  r20, 4
+    cpi  r20, DIR_LEFTT+1
     brlo enc_chk
     clr  r20
     rjmp enc_chk
@@ -146,23 +181,23 @@ enc_left:
     mov  r20, r21
     tst  r20
     brne enc_left_ok
-    ldi  r20, 3
+    ldi  r20, DIR_LEFTT
     rjmp enc_chk
 enc_left_ok:
     dec  r20
 
-enc_chk:                        ; reject 180°
-    mov  r22, r21
-    subi r22, -2
-    andi r22, 0x03
-    cp   r20, r22
-    breq enc_exit
+enc_chk:                      ; reject 180°
+    mov  r22, r21  ; r22 = old_direction
+    subi r22, -2     ; r22 = old_direction + 2
+    andi r22, 0x03  ; r22 = (old_direction + 2) & 0b11 = (old_direction + 2) mod 4
+    cp   r20, r22    ; compare new_direction to the 180°-opposite
+    breq enc_exit   ; if equal, reject the 180° turn
 
     ; enqueue
     lds  r23, tq_head
     mov  r24, r23
     inc  r24
-    andi r24, 0x07
+    andi r24, QUEUE_MASK
     lds  r22, tq_tail
     cp   r24, r22
     breq enc_exit
@@ -190,7 +225,7 @@ enc_store:
 enc_read:
     ld   r20, Z
     inc  r22
-    andi r22, 0x07
+    andi r22, QUEUE_MASK
     sts  tq_tail, r22
     sts  direction, r20
 
@@ -206,12 +241,12 @@ enc_exit:
     ret
 
 ;=====================================================================
-;  move_snake – borders, apple collision & GROWTH
+;  move_snake – borders, apple collision & growth
 ;=====================================================================
 move_snake:
     lds  r18, direction
 
-    ; current head byte → r20
+    ; fetch current head
     lds  r19, head_idx
     ldi  ZL, low(snake_body)
     ldi  ZH, high(snake_body)
@@ -223,28 +258,28 @@ head_ptr:
 
     ; unpack x,y
     mov  r21, r20
-    andi r21, 0x07            ; x
+    andi r21, COORD_MASK
     mov  r22, r20
     lsr  r22
     lsr  r22
     lsr  r22
-    andi r22, 0x07            ; y
+    andi r22, COORD_MASK
 
-    ; border check & next cell
-    cpi  r18, 1
+    ; border check & compute next cell
+    cpi  r18, DIR_RIGHTT
     breq dir_right
-    cpi  r18, 3
+    cpi  r18, DIR_LEFTT
     breq dir_left
-    cpi  r18, 0
+    cpi  r18, DIR_UPP
     breq dir_up
     inc  r22
-    cpi  r22, 8
-    brne pack_cell            ; ---- fixed span ----
+    cpi  r22, MATRIX_SIZE
+    brne pack_cell
     rjmp hit_wall
 
 dir_right:
     inc  r21
-    cpi  r21, 8
+    cpi  r21, MATRIX_SIZE
     brne pack_cell
     rjmp hit_wall
 
@@ -260,47 +295,46 @@ dir_up:
     dec  r22
 
 pack_cell:
+    ; pack new head
     mov  r20, r22
     lsl  r20
     lsl  r20
-    lsl  r20                 ; y*8
-    add  r20, r21            ; + x → packed candidate
+    lsl  r20
+    add  r20, r21
 
     ; apple collision?
     lds  r23, apple_pos
-    cpi  r23, 0xFF
+    cpi  r23, EMPTY_CELL
     breq write_head
     cp   r20, r23
     brne write_head
 
-    ; -------- we ate the apple ----------
-    ldi  r23, 0xFF
+    ; eat apple → reposition & grow
+    ldi  r23, EMPTY_CELL
     sts  apple_pos, r23
     rcall place_new_apple
-
-    ; grow: snake_len++  (max 64)
     lds  r24, snake_len
-    cpi  r24, 64
+    cpi  r24, GRID_CELLS
     breq write_head
     inc  r24
     sts  snake_len, r24
-    ; do NOT advance tail this frame -> handled by length check below
     rjmp write_head_no_tail
 
 write_head:
-    ; advance tail normally when no growth
+    ; advance tail normally
     lds  r21, tail_idx
     inc  r21
-    cpi  r21, 64
+    cpi  r21, GRID_CELLS
     brlo tail_ok
     clr  r21
 tail_ok:
     sts  tail_idx, r21
 
 write_head_no_tail:
+    ; advance head index & write new head
     lds  r19, head_idx
     inc  r19
-    cpi  r19, 64
+    cpi  r19, GRID_CELLS
     brlo idx_ok_write
     clr  r19
 idx_ok_write:
@@ -327,9 +361,6 @@ freeze_game:
 ;=====================================================================
 ;  place_new_apple – constant-time (8 passes)
 ;=====================================================================
-;  * executes 8 identical iterations every call  (~108 µs @ 4 MHz)
-;  * first free coordinate found is committed after loop
-;---------------------------------------------------------------------
 place_new_apple:
     push r26
     push r25
@@ -341,72 +372,72 @@ place_new_apple:
     push r19
     push r18
 
-    clr   r18                 ; r18 = 0 → not yet chosen
-    ldi   r23, 8              ; exactly 8 iterations
+    clr   r18                ; first free candidate marker
+    ldi   r23, APPLE_PLACEMENT_TRIES
 
 loop_iter:
-    ; ----- PRNG candidate ------------------------------------------
+    ; PRNG candidate
     in    r24, TCNT0
-    in    r26, ADCL           ; ADC LSB
+    in    r26, ADCL
     eor   r24, r26
     lds   r19, head_idx
-    add   r24, r19            ; decorrelate
+    add   r24, r19
 
     mov   r25, r24
-    andi  r24, 0x07           ; x 0-7
+    andi  r24, COORD_MASK
     lsr   r25
     lsr   r25
     lsr   r25
-    andi  r25, 0x07           ; y 0-7
+    andi  r25, COORD_MASK
 
     mov   r20, r25
     lsl   r20
     lsl   r20
-    lsl   r20                 ; y*8
-    add   r20, r24            ; packed candidate
+    lsl   r20
+    add   r20, r24
 
-    ; ----- compare to snake (variable length) ----------------------
+    ; compare against all snake segments
     lds   r22, tail_idx
     lds   r24, snake_len
-    clr   r21                 ; i = 0
+    clr   r21               ; i = 0
 scan_loop:
     cp    r21, r24
     breq  free_found
-
-    mov   _w, r22             ; buf index = tail+i
+    mov   _w, r22
     add   _w, r21
-    cpi   _w, 64
+    cpi   _w, GRID_CELLS
     brlo  idx_ok
-    subi  _w, 64
+    subi  _w, GRID_CELLS
 idx_ok:
     ldi   ZL, low(snake_body)
     ldi   ZH, high(snake_body)
     add   ZL, _w
-    brcc  buf_ptr
+    brcc buf_ptr
     inc   ZH
 buf_ptr:
     ld    _w, Z
     cp    _w, r20
-    breq  clash_found
-next_seg:
+    breq clash_found
     inc   r21
     rjmp  scan_loop
 
 clash_found:
-    rjmp  loop_continue
+    ; segment clash → skip storing
+    rjmp loop_continue
 
 free_found:
     tst   r18
-    brne  loop_continue
+    brne loop_continue
     mov   r18, r20
 
 loop_continue:
     dec   r23
     brne  loop_iter
 
-    tst   r18                 ; commit result
-    brne  store_ok
-    mov   r18, r20            ; (never all clash, but be safe)
+    ; commit result
+    tst   r18
+    brne store_ok
+    mov   r18, r20
 store_ok:
     sts   apple_pos, r18
 
@@ -438,9 +469,9 @@ draw_loop:
     breq draw_done
     mov  r24, r23
     add  r24, r22
-    cpi  r24, 64
+    cpi  r24, GRID_CELLS
     brlo idx_ok3
-    subi r24, 64
+    subi r24, GRID_CELLS
 idx_ok3:
     ldi  ZL, low(snake_body)
     ldi  ZH, high(snake_body)
@@ -448,14 +479,14 @@ idx_ok3:
     brcc buf_ok3
     inc  ZH
 buf_ok3:
-    ld   w, Z                 ; packed = x + 8*y
+    ld   w, Z
     mov  r24, w
-    andi r24, 0x07            ; x
+    andi r24, COORD_MASK
     mov  r25, w
     lsr  r25
     lsr  r25
     lsr  r25
-    andi r25, 0x07            ; y
+    andi r25, COORD_MASK
     rcall ws_idx_xy
     rcall ws_offset_idx
     mov  _w, s
@@ -463,14 +494,14 @@ buf_ok3:
     cp   r22, _w
     breq head_pix
 body_pix:
-    ldi  a0, 0x0F             ; green body
+    ldi  a0, BODY_GREEN
     clr  a1
     clr  a2
     rjmp store_px
 head_pix:
     clr  a0
     clr  a1
-    ldi  a2, 0x0F             ; blue head
+    ldi  a2, HEAD_BLUE
 store_px:
     st   Z+, a0
     st   Z+, a1
@@ -479,21 +510,21 @@ store_px:
     rjmp draw_loop
 
 draw_done:
-    ; apple (if present)
+    ; apple
     lds  w, apple_pos
-    cpi  w, 0xFF
+    cpi  w, EMPTY_CELL
     breq flush_frame
     mov  r24, w
-    andi r24, 0x07
+    andi r24, COORD_MASK
     mov  r25, w
     lsr  r25
     lsr  r25
     lsr  r25
-    andi r25, 0x07
+    andi r25, COORD_MASK
     rcall ws_idx_xy
     rcall ws_offset_idx
     clr  a0
-    ldi  a1, 0x0F             ; red apple
+    ldi  a1, APPLE_RED
     clr  a2
     st   Z+, a0
     st   Z+, a1
@@ -502,7 +533,7 @@ draw_done:
 flush_frame:
     ldi  ZL, low(WS_BUF_BASE)
     ldi  ZH, high(WS_BUF_BASE)
-    _LDI r0, 64
+    _LDI r0, GRID_CELLS
 flush_loop:
     ld   a0, Z+
     ld   a1, Z+
