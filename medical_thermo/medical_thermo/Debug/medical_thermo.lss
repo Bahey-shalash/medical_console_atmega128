@@ -1,5 +1,5 @@
 
-AVRASM ver. 2.2.6  Z:\medical_consol_atmega128\medical_thermo\medical_thermo\main.asm Sat May 24 14:45:02 2025
+AVRASM ver. 2.2.6  Z:\medical_consol_atmega128\medical_thermo\medical_thermo\main.asm Sat May 24 17:53:28 2025
 
 [builtin](2): Including file 'C:/Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.1.130\avrasm\inc\m128def.inc'
 Z:\medical_consol_atmega128\medical_thermo\medical_thermo\main.asm(19): Including file 'C:/Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.1.130\avrasm\inc\m128def.inc'
@@ -3194,18 +3194,18 @@ Z:\medical_consol_atmega128\medical_thermo\medical_thermo\main.asm(86): Includin
                                  ;  Interrupt vectors
                                  ;======================================================================
                                              .org 0
-000000 940c 04d1                             jmp  reset
+000000 940c 054f                             jmp  reset
                                  
                                              .org INT0addr      ; next state
-000002 940c 053d                             jmp  int0_isr
+000002 940c 05bb                             jmp  int0_isr
                                              .org INT1addr      ; previous state
-000004 940c 0545                             jmp  int1_isr
+000004 940c 05c3                             jmp  int1_isr
                                              .org INT2addr      ; go home
-000006 940c 054f                             jmp  int2_isr
+000006 940c 05cd                             jmp  int2_isr
                                              .org INT3addr      ; doctor mode
-000008 940c 0551                             jmp  int3_isr
+000008 940c 05cf                             jmp  int3_isr
                                              .org OVF1addr      ; Timer-1 overflow
-00001c 940c 0556                             jmp  t1_isr
+00001c 940c 05d4                             jmp  t1_isr
                                  
                                  ;---------------------------------------------------------------------
                                  ;  Library / driver includes (after vectors)
@@ -4341,7 +4341,7 @@ Z:\medical_consol_atmega128\medical_thermo\medical_thermo\main.asm(86): Includin
                                  ;---------------------------------------------------------------------
                                              .include "home_state.asm"
                                  
-                                 ;  HOME  state
+                                 ;  HOME state  ‚Äî draw green background with ‚Äúholes‚Äù off
                                  ;----------------------------------------------------------------------
                                  
                                  home_init:
@@ -4355,16 +4355,16 @@ Z:\medical_consol_atmega128\medical_thermo\medical_thermo\main.asm(86): Includin
 000288 454d
 000289 0000                              .db     "HOME",0,0
                                  
-                                         ; green matrix
+                                         ; prepare green for fill (GRB = 0x0F,0x00,0x00)
 00028a e02f                              ldi     a0, 0x0F     ; G
 00028b e030                              ldi     a1, 0x00     ; R
 00028c e040                              ldi     a2, 0x00     ; B
-00028d dfd7                              rcall   matrix_solid
+00028d d019                              rcall   matrix_holes
                                  
                                  home_wait:
 00028e 2ce6                              mov     s, sel
 00028f e000
-000290 16e0                              _CPI     s, ST_HOME
+000290 16e0                              _CPI    s, ST_HOME
 000291 f4a1                              brne    home_done
 000292 e302
 000293 2e30
@@ -4388,8 +4388,177 @@ Z:\medical_consol_atmega128\medical_thermo\medical_thermo\main.asm(86): Includin
 0002a5 cfe8                              rjmp    home_wait
                                  
                                  home_done:
+0002a6 9508                              ret
+                                 
+                                 
+                                 ;======================================================================
+                                 ;  matrix_holes  ‚Äî fill 8√ó8 buffer green, then blank specified pixels
+                                 ;  clobbers: a0‚Äìa2, r0, r22, r24‚Äìr25, Z, w=r16  (all scratch)
+                                 ;======================================================================
+                                 matrix_holes:
+0002a7 936f                              push    r22
+0002a8 93ef                              push    ZL
+0002a9 93ff                              push    ZH
+                                 
+                                         ;--- 1) fill frame buffer 64√ó3=192 B with (a0,a1,a2) -----------
+0002aa e0e0                              ldi     ZL, low(WS_BUF_BASE)
+0002ab e0f4                              ldi     ZH, high(WS_BUF_BASE)
+0002ac e460                              ldi     r22, 64
+                                 mh_fill:
+0002ad 9321                              st      Z+, a0
+0002ae 9331                              st      Z+, a1
+0002af 9341                              st      Z+, a2
+0002b0 956a                              dec     r22
+0002b1 f7d9                              brne    mh_fill
+                                 
+                                         ;--- 2) blank out ‚Äúholes‚Äù by writing 0,0,0 at each coord --------
+                                         ; (1,1)
+0002b2 e081                              ldi     r24,1
+0002b3 e091                              ldi     r25,1
+0002b4 df65                              rcall   ws_idx_xy
+0002b5 df6a                              rcall   ws_offset_idx
+0002b6 9211                              st      Z+, r1
+0002b7 9211                              st      Z+, r1
+0002b8 8210                              st      Z,  r1
+                                 
+                                         ; (2,1)
+0002b9 e082                              ldi     r24,2
+0002ba e091                              ldi     r25,1
+0002bb df5e                              rcall   ws_idx_xy
+0002bc df63                              rcall   ws_offset_idx
+0002bd 9211                              st      Z+, r1
+0002be 9211                              st      Z+, r1
+0002bf 8210                              st      Z,  r1
+                                 
+                                         ; (5,1)
+0002c0 e085                              ldi     r24,5
+0002c1 e091                              ldi     r25,1
+0002c2 df57                              rcall   ws_idx_xy
+0002c3 df5c                              rcall   ws_offset_idx
+0002c4 9211                              st      Z+, r1
+0002c5 9211                              st      Z+, r1
+0002c6 8210                              st      Z,  r1
+                                 
+                                         ; (6,1)
+0002c7 e086                              ldi     r24,6
+0002c8 e091                              ldi     r25,1
+0002c9 df50                              rcall   ws_idx_xy
+0002ca df55                              rcall   ws_offset_idx
+0002cb 9211                              st      Z+, r1
+0002cc 9211                              st      Z+, r1
+0002cd 8210                              st      Z,  r1
+                                 
+                                         ; (1,2)
+0002ce e081                              ldi     r24,1
+0002cf e092                              ldi     r25,2
+0002d0 df49                              rcall   ws_idx_xy
+0002d1 df4e                              rcall   ws_offset_idx
+0002d2 9211                              st      Z+, r1
+0002d3 9211                              st      Z+, r1
+0002d4 8210                              st      Z,  r1
+                                 
+                                         ; (2,2)
+0002d5 e082                              ldi     r24,2
+0002d6 e092                              ldi     r25,2
+0002d7 df42                              rcall   ws_idx_xy
+0002d8 df47                              rcall   ws_offset_idx
+0002d9 9211                              st      Z+, r1
+0002da 9211                              st      Z+, r1
+0002db 8210                              st      Z,  r1
+                                 
+                                         ; (5,2)
+0002dc e085                              ldi     r24,5
+0002dd e092                              ldi     r25,2
+0002de df3b                              rcall   ws_idx_xy
+0002df df40                              rcall   ws_offset_idx
+0002e0 9211                              st      Z+, r1
+0002e1 9211                              st      Z+, r1
+0002e2 8210                              st      Z,  r1
+                                 
+                                         ; (6,2)
+0002e3 e086                              ldi     r24,6
+0002e4 e092                              ldi     r25,2
+0002e5 df34                              rcall   ws_idx_xy
+0002e6 df39                              rcall   ws_offset_idx
+0002e7 9211                              st      Z+, r1
+0002e8 9211                              st      Z+, r1
+0002e9 8210                              st      Z,  r1
+                                 
+                                         ; (1,4)
+0002ea e081                              ldi     r24,1
+0002eb e094                              ldi     r25,4
+0002ec df2d                              rcall   ws_idx_xy
+0002ed df32                              rcall   ws_offset_idx
+0002ee 9211                              st      Z+, r1
+0002ef 9211                              st      Z+, r1
+0002f0 8210                              st      Z,  r1
+                                 
+                                         ; (6,4)
+0002f1 e086                              ldi     r24,6
+0002f2 e094                              ldi     r25,4
+0002f3 df26                              rcall   ws_idx_xy
+0002f4 df2b                              rcall   ws_offset_idx
+0002f5 9211                              st      Z+, r1
+0002f6 9211                              st      Z+, r1
+0002f7 8210                              st      Z,  r1
+                                 
+                                         ; (2,5)
+0002f8 e082                              ldi     r24,2
+0002f9 e095                              ldi     r25,5
+0002fa df1f                              rcall   ws_idx_xy
+0002fb df24                              rcall   ws_offset_idx
+0002fc 9211                              st      Z+, r1
+0002fd 9211                              st      Z+, r1
+0002fe 8210                              st      Z,  r1
+                                 
+                                         ; (3,5)
+0002ff e083                              ldi     r24,3
+000300 e095                              ldi     r25,5
+000301 df18                              rcall   ws_idx_xy
+000302 df1d                              rcall   ws_offset_idx
+000303 9211                              st      Z+, r1
+000304 9211                              st      Z+, r1
+000305 8210                              st      Z,  r1
+                                 
+                                         ; (4,5)
+000306 e084                              ldi     r24,4
+000307 e095                              ldi     r25,5
+000308 df11                              rcall   ws_idx_xy
+000309 df16                              rcall   ws_offset_idx
+00030a 9211                              st      Z+, r1
+00030b 9211                              st      Z+, r1
+00030c 8210                              st      Z,  r1
+                                 
+                                         ; (5,5)
+00030d e085                              ldi     r24,5
+00030e e095                              ldi     r25,5
+00030f df0a                              rcall   ws_idx_xy
+000310 df0f                              rcall   ws_offset_idx
+000311 9211                              st      Z+, r1
+000312 9211                              st      Z+, r1
+000313 8210                              st      Z,  r1
+                                 
+                                         ;--- 3) transmit the frame to the LEDs ------------------------
+000314 e0e0                              ldi     ZL, low(WS_BUF_BASE)
+000315 e0f4                              ldi     ZH, high(WS_BUF_BASE)
+000316 e400
+000317 2e00                              _LDI    r0, 64
+                                 mh_send:
+000318 9121                              ld      a0, Z+
+000319 9131                              ld      a1, Z+
+00031a 9141                              ld      a2, Z+
+00031b 94f8                              cli
+00031c debe                              rcall   ws_byte3wr
+00031d 9478                              sei
+00031e 940a                              dec     r0
+00031f f7c1                              brne    mh_send
+000320 deef                              rcall   ws_reset
+                                 
+000321 91ff                              pop     ZH
+000322 91ef                              pop     ZL
+000323 916f                              pop     r22
                                              .include "snake_state.asm"
-0002a6 9508                      
+000324 9508                      
                                  ;  SNAKE state ‚Äì ST_GAME1 (cleaned up with constants)
                                  ;----------------------------------------------------------------------
                                  ;  ‚Ä¢ 8√ó8 WS2812 matrix
@@ -4456,800 +4625,800 @@ Z:\medical_consol_atmega128\medical_thermo\medical_thermo\main.asm(86): Includin
                                  ;  INITIALISATION
                                  ;=====================================================================
                                  snake_game_init:
-0002a7 dd8d                          rcall lcd_clear
-0002a8 e209
-0002a9 2e40
-0002aa e000
-0002ab 2e50
-0002ac ddba                          PRINTF LCD
-0002ad 4e53
-0002ae 4b41
-0002af 0045                          .db "SNAKE",0
+000325 dd0f                          rcall lcd_clear
+000326 e209
+000327 2e40
+000328 e000
+000329 2e50
+00032a dd3c                          PRINTF LCD
+00032b 4e53
+00032c 4b41
+00032d 0045                          .db "SNAKE",0
                                  
-0002b0 df79                          rcall encoder_init
-0002b1 d002                          rcall snake_init_data
-0002b2 d144                          rcall snake_draw
-0002b3 c029                          rjmp snake_wait
+00032e defb                          rcall encoder_init
+00032f d002                          rcall snake_init_data
+000330 d144                          rcall snake_draw
+000331 c029                          rjmp snake_wait
                                  
                                  snake_init_data:
                                      ; clear body buffer ‚Üí EMPTY_CELL
-0002b4 e0e5                          ldi ZL, low(snake_body)
-0002b5 e0f1                          ldi ZH, high(snake_body)
-0002b6 e460                          ldi r22, GRID_CELLS
+000332 e0e5                          ldi ZL, low(snake_body)
+000333 e0f1                          ldi ZH, high(snake_body)
+000334 e460                          ldi r22, GRID_CELLS
                                  clear_body:
-0002b7 ef0f                          ldi w, EMPTY_CELL
-0002b8 9301                          st  Z+, w
-0002b9 956a                          dec r22
-0002ba f7e1                          brne clear_body
+000335 ef0f                          ldi w, EMPTY_CELL
+000336 9301                          st  Z+, w
+000337 956a                          dec r22
+000338 f7e1                          brne clear_body
                                  
                                      ; seed snake at three positions
-0002bb e0e5                          ldi ZL, low(snake_body)
-0002bc e0f1                          ldi ZH, high(snake_body)
-0002bd e10a                          ldi w, SNAKE_INIT_POS1
-0002be 9301                          st  Z+, w
-0002bf e10b                          ldi w, SNAKE_INIT_POS2
-0002c0 9301                          st  Z+, w
-0002c1 e10c                          ldi w, SNAKE_INIT_POS3
-0002c2 8300                          st  Z , w
+000339 e0e5                          ldi ZL, low(snake_body)
+00033a e0f1                          ldi ZH, high(snake_body)
+00033b e10a                          ldi w, SNAKE_INIT_POS1
+00033c 9301                          st  Z+, w
+00033d e10b                          ldi w, SNAKE_INIT_POS2
+00033e 9301                          st  Z+, w
+00033f e10c                          ldi w, SNAKE_INIT_POS3
+000340 8300                          st  Z , w
                                  
                                      ; indices & length
-0002c3 e002                          ldi w, SNAKE_INIT_HEAD_IDX
-0002c4 9300 0145                     sts head_idx, w
-0002c6 2700                          clr w
-0002c7 9300 0146                     sts tail_idx, w
-0002c9 e003                          ldi w, SNAKE_INIT_LEN
-0002ca 9300 0147                     sts snake_len, w
+000341 e002                          ldi w, SNAKE_INIT_HEAD_IDX
+000342 9300 0145                     sts head_idx, w
+000344 2700                          clr w
+000345 9300 0146                     sts tail_idx, w
+000347 e003                          ldi w, SNAKE_INIT_LEN
+000348 9300 0147                     sts snake_len, w
                                  
                                      ; initial direction & apple
-0002cc e001                          ldi w, DIR_INITT
-0002cd 9300 0148                     sts direction, w
-0002cf e20d                          ldi w, Apple_INIT_POS
-0002d0 9300 0149                     sts apple_pos, w
+00034a e001                          ldi w, DIR_INITT
+00034b 9300 0148                     sts direction, w
+00034d e20d                          ldi w, Apple_INIT_POS
+00034e 9300 0149                     sts apple_pos, w
                                  
                                      ; queue pointers
-0002d2 2700                          clr w
-0002d3 9300 0152                     sts tq_head, w
-0002d5 9300 0153                     sts tq_tail, w
+000350 2700                          clr w
+000351 9300 0152                     sts tq_head, w
+000353 9300 0153                     sts tq_tail, w
                                  
                                      ; encoder state
-0002d7 2722                          clr a0
-0002d8 2766                          clr b0
-0002d9 b103                          in  w, ENCOD
-0002da 9300 0104                     sts enc_old, w
-0002dc 9508                          ret  ; Timer-0 prescaler untouched ‚Äì PRNG read only
+000355 2722                          clr a0
+000356 2766                          clr b0
+000357 b103                          in  w, ENCOD
+000358 9300 0104                     sts enc_old, w
+00035a 9508                          ret  ; Timer-0 prescaler untouched ‚Äì PRNG read only
                                  
                                  ;=====================================================================
                                  ;  MAIN LOOP (fixed FRAME_DELAY_MS frames)
                                  ;=====================================================================
                                  snake_wait:
                                      ; start-of-frame delay
-0002dd ef84                          ldi r24, low(FRAME_DELAY_MS)
-0002de e091                          ldi r25, high(FRAME_DELAY_MS)
+00035b ef84                          ldi r24, low(FRAME_DELAY_MS)
+00035c e091                          ldi r25, high(FRAME_DELAY_MS)
                                  frame_delay:
-0002df d01e                          rcall update_game
-0002e0 e001
-0002e1 2e30
-0002e2 e001
-0002e3 930f
-0002e4 923f
-0002e5 e300
-0002e6 2e30
-0002e7 e006
-0002e8 943a
-0002e9 f7f1
-0002ea 943a
-0002eb 950a
-0002ec f7d9
-0002ed 903f
-0002ee 910f
-0002ef 943a
-0002f0 f791
-0002f1 950a
-0002f2 f781                          WAIT_MS 1
-0002f3 9701                          sbiw r24, 1
-0002f4 f751                          brne frame_delay
+00035d d01e                          rcall update_game
+00035e e001
+00035f 2e30
+000360 e001
+000361 930f
+000362 923f
+000363 e300
+000364 2e30
+000365 e006
+000366 943a
+000367 f7f1
+000368 943a
+000369 950a
+00036a f7d9
+00036b 903f
+00036c 910f
+00036d 943a
+00036e f791
+00036f 950a
+000370 f781                          WAIT_MS 1
+000371 9701                          sbiw r24, 1
+000372 f751                          brne frame_delay
                                  
-0002f5 d056                          rcall move_snake
-0002f6 d100                          rcall snake_draw
+000373 d056                          rcall move_snake
+000374 d100                          rcall snake_draw
                                  
                                      ; prepare next frame
-0002f7 ef84                          ldi r24, low(FRAME_DELAY_MS)
-0002f8 e091                          ldi r25, high(FRAME_DELAY_MS)
-0002f9 2ce6                          mov s, sel
-0002fa e001
-0002fb 16e0                          _CPI s, ST_GAME1
-0002fc f311                          breq frame_delay
-0002fd 9508                          ret
+000375 ef84                          ldi r24, low(FRAME_DELAY_MS)
+000376 e091                          ldi r25, high(FRAME_DELAY_MS)
+000377 2ce6                          mov s, sel
+000378 e001
+000379 16e0                          _CPI s, ST_GAME1
+00037a f311                          breq frame_delay
+00037b 9508                          ret
                                  
                                  ;=====================================================================
                                  ;  update_game ‚Äì rotary encoder ‚Üí heading  (unchanged)
                                  ;=====================================================================
                                  update_game:
-0002fe 939f                          push r25
-0002ff 938f                          push r24
-000300 932f                          push r18
-000301 933f                          push r19
-000302 934f                          push r20
-000303 935f                          push r21
-000304 936f                          push r22
-000305 937f                          push r23
+00037c 939f                          push r25
+00037d 938f                          push r24
+00037e 932f                          push r18
+00037f 933f                          push r19
+000380 934f                          push r20
+000381 935f                          push r21
+000382 936f                          push r22
+000383 937f                          push r23
                                  
-000306 df53                          rcall encoder_update        ; r15 = ¬±1 or 0
-000307 2d3f                          mov  r19, r15
-000308 2333                          tst  r19
-000309 f409                          brne enc_move
-00030a c038                          rjmp enc_exit
+000384 ded5                          rcall encoder_update        ; r15 = ¬±1 or 0
+000385 2d3f                          mov  r19, r15
+000386 2333                          tst  r19
+000387 f409                          brne enc_move
+000388 c038                          rjmp enc_exit
                                  
                                  enc_move:
-00030b 9150 0148                     lds  r21, direction
-00030d 2333                          tst  r19
-00030e f032                          brmi enc_left
+000389 9150 0148                     lds  r21, direction
+00038b 2333                          tst  r19
+00038c f032                          brmi enc_left
                                  
                                  enc_right:
-00030f 2f45                          mov  r20, r21
-000310 9543                          inc  r20
-000311 3044                          cpi  r20, DIR_LEFTT+1
-000312 f040                          brlo enc_chk
-000313 2744                          clr  r20
-000314 c006                          rjmp enc_chk
+00038d 2f45                          mov  r20, r21
+00038e 9543                          inc  r20
+00038f 3044                          cpi  r20, DIR_LEFTT+1
+000390 f040                          brlo enc_chk
+000391 2744                          clr  r20
+000392 c006                          rjmp enc_chk
                                  
                                  enc_left:
-000315 2f45                          mov  r20, r21
-000316 2344                          tst  r20
-000317 f411                          brne enc_left_ok
-000318 e043                          ldi  r20, DIR_LEFTT
-000319 c001                          rjmp enc_chk
+000393 2f45                          mov  r20, r21
+000394 2344                          tst  r20
+000395 f411                          brne enc_left_ok
+000396 e043                          ldi  r20, DIR_LEFTT
+000397 c001                          rjmp enc_chk
                                  enc_left_ok:
-00031a 954a                          dec  r20
+000398 954a                          dec  r20
                                  
                                  enc_chk:                      ; reject 180¬∞
-00031b 2f65                          mov  r22, r21
-00031c 5f6e                          subi r22, -2
-00031d 7063                          andi r22, 0x03
-00031e 1746                          cp   r20, r22
-00031f f119                          breq enc_exit
+000399 2f65                          mov  r22, r21  ; r22 = old_direction
+00039a 5f6e                          subi r22, -2     ; r22 = old_direction + 2
+00039b 7063                          andi r22, 0x03  ; r22 = (old_direction + 2) & 0b11 = (old_direction + 2) mod 4
+00039c 1746                          cp   r20, r22    ; compare new_direction to the 180¬∞-opposite
+00039d f119                          breq enc_exit   ; if equal, reject the 180¬∞ turn
                                  
                                      ; enqueue
-000320 9170 0152                     lds  r23, tq_head
-000322 2f87                          mov  r24, r23
-000323 9583                          inc  r24
-000324 7087                          andi r24, QUEUE_MASK
-000325 9160 0153                     lds  r22, tq_tail
-000327 1786                          cp   r24, r22
-000328 f0d1                          breq enc_exit
+00039e 9170 0152                     lds  r23, tq_head
+0003a0 2f87                          mov  r24, r23
+0003a1 9583                          inc  r24
+0003a2 7087                          andi r24, QUEUE_MASK
+0003a3 9160 0153                     lds  r22, tq_tail
+0003a5 1786                          cp   r24, r22
+0003a6 f0d1                          breq enc_exit
                                  
-000329 e4ea                          ldi  ZL, low(turn_queue)
-00032a e0f1                          ldi  ZH, high(turn_queue)
-00032b 0fe7                          add  ZL, r23
-00032c f408                          brcc enc_store
-00032d 95f3                          inc  ZH
+0003a7 e4ea                          ldi  ZL, low(turn_queue)
+0003a8 e0f1                          ldi  ZH, high(turn_queue)
+0003a9 0fe7                          add  ZL, r23
+0003aa f408                          brcc enc_store
+0003ab 95f3                          inc  ZH
                                  enc_store:
-00032e 8340                          st   Z, r20
-00032f 9380 0152                     sts  tq_head, r24
+0003ac 8340                          st   Z, r20
+0003ad 9380 0152                     sts  tq_head, r24
                                  
                                      ; dequeue immediately
-000331 9160 0153                     lds  r22, tq_tail
-000333 9170 0152                     lds  r23, tq_head
-000335 1767                          cp   r22, r23
-000336 f061                          breq enc_exit
+0003af 9160 0153                     lds  r22, tq_tail
+0003b1 9170 0152                     lds  r23, tq_head
+0003b3 1767                          cp   r22, r23
+0003b4 f061                          breq enc_exit
                                  
-000337 e4ea                          ldi  ZL, low(turn_queue)
-000338 e0f1                          ldi  ZH, high(turn_queue)
-000339 0fe6                          add  ZL, r22
-00033a f408                          brcc enc_read
-00033b 95f3                          inc  ZH
+0003b5 e4ea                          ldi  ZL, low(turn_queue)
+0003b6 e0f1                          ldi  ZH, high(turn_queue)
+0003b7 0fe6                          add  ZL, r22
+0003b8 f408                          brcc enc_read
+0003b9 95f3                          inc  ZH
                                  enc_read:
-00033c 8140                          ld   r20, Z
-00033d 9563                          inc  r22
-00033e 7067                          andi r22, QUEUE_MASK
-00033f 9360 0153                     sts  tq_tail, r22
-000341 9340 0148                     sts  direction, r20
+0003ba 8140                          ld   r20, Z
+0003bb 9563                          inc  r22
+0003bc 7067                          andi r22, QUEUE_MASK
+0003bd 9360 0153                     sts  tq_tail, r22
+0003bf 9340 0148                     sts  direction, r20
                                  
                                  enc_exit:
-000343 917f                          pop  r23
-000344 916f                          pop  r22
-000345 915f                          pop  r21
-000346 914f                          pop  r20
-000347 913f                          pop  r19
-000348 912f                          pop  r18
-000349 918f                          pop  r24
-00034a 919f                          pop  r25
-00034b 9508                          ret
+0003c1 917f                          pop  r23
+0003c2 916f                          pop  r22
+0003c3 915f                          pop  r21
+0003c4 914f                          pop  r20
+0003c5 913f                          pop  r19
+0003c6 912f                          pop  r18
+0003c7 918f                          pop  r24
+0003c8 919f                          pop  r25
+0003c9 9508                          ret
                                  
                                  ;=====================================================================
                                  ;  move_snake ‚Äì borders, apple collision & growth
                                  ;=====================================================================
                                  move_snake:
-00034c 9120 0148                     lds  r18, direction
+0003ca 9120 0148                     lds  r18, direction
                                  
                                      ; fetch current head
-00034e 9130 0145                     lds  r19, head_idx
-000350 e0e5                          ldi  ZL, low(snake_body)
-000351 e0f1                          ldi  ZH, high(snake_body)
-000352 0fe3                          add  ZL, r19
-000353 f408                          brcc head_ptr
-000354 95f3                          inc  ZH
+0003cc 9130 0145                     lds  r19, head_idx
+0003ce e0e5                          ldi  ZL, low(snake_body)
+0003cf e0f1                          ldi  ZH, high(snake_body)
+0003d0 0fe3                          add  ZL, r19
+0003d1 f408                          brcc head_ptr
+0003d2 95f3                          inc  ZH
                                  head_ptr:
-000355 8140                          ld   r20, Z
+0003d3 8140                          ld   r20, Z
                                  
                                      ; unpack x,y
-000356 2f54                          mov  r21, r20
-000357 7057                          andi r21, COORD_MASK
-000358 2f64                          mov  r22, r20
-000359 9566                          lsr  r22
-00035a 9566                          lsr  r22
-00035b 9566                          lsr  r22
-00035c 7067                          andi r22, COORD_MASK
+0003d4 2f54                          mov  r21, r20
+0003d5 7057                          andi r21, COORD_MASK
+0003d6 2f64                          mov  r22, r20
+0003d7 9566                          lsr  r22
+0003d8 9566                          lsr  r22
+0003d9 9566                          lsr  r22
+0003da 7067                          andi r22, COORD_MASK
                                  
                                      ; border check & compute next cell
-00035d 3021                          cpi  r18, DIR_RIGHTT
-00035e f041                          breq dir_right
-00035f 3023                          cpi  r18, DIR_LEFTT
-000360 f051                          breq dir_left
-000361 3020                          cpi  r18, DIR_UPP
-000362 f061                          breq dir_up
-000363 9563                          inc  r22
-000364 3068                          cpi  r22, MATRIX_SIZE
-000365 f461                          brne pack_cell
-000366 c039                          rjmp hit_wall
+0003db 3021                          cpi  r18, DIR_RIGHTT
+0003dc f041                          breq dir_right
+0003dd 3023                          cpi  r18, DIR_LEFTT
+0003de f051                          breq dir_left
+0003df 3020                          cpi  r18, DIR_UPP
+0003e0 f061                          breq dir_up
+0003e1 9563                          inc  r22
+0003e2 3068                          cpi  r22, MATRIX_SIZE
+0003e3 f461                          brne pack_cell
+0003e4 c039                          rjmp hit_wall
                                  
                                  dir_right:
-000367 9553                          inc  r21
-000368 3058                          cpi  r21, MATRIX_SIZE
-000369 f441                          brne pack_cell
-00036a c035                          rjmp hit_wall
+0003e5 9553                          inc  r21
+0003e6 3058                          cpi  r21, MATRIX_SIZE
+0003e7 f441                          brne pack_cell
+0003e8 c035                          rjmp hit_wall
                                  
                                  dir_left:
-00036b 2355                          tst  r21
-00036c f199                          breq hit_wall
-00036d 955a                          dec  r21
-00036e c003                          rjmp pack_cell
+0003e9 2355                          tst  r21
+0003ea f199                          breq hit_wall
+0003eb 955a                          dec  r21
+0003ec c003                          rjmp pack_cell
                                  
                                  dir_up:
-00036f 2366                          tst  r22
-000370 f179                          breq hit_wall
-000371 956a                          dec  r22
+0003ed 2366                          tst  r22
+0003ee f179                          breq hit_wall
+0003ef 956a                          dec  r22
                                  
                                  pack_cell:
                                      ; pack new head
-000372 2f46                          mov  r20, r22
-000373 0f44                          lsl  r20
-000374 0f44                          lsl  r20
-000375 0f44                          lsl  r20
-000376 0f45                          add  r20, r21
+0003f0 2f46                          mov  r20, r22
+0003f1 0f44                          lsl  r20
+0003f2 0f44                          lsl  r20
+0003f3 0f44                          lsl  r20
+0003f4 0f45                          add  r20, r21
                                  
                                      ; apple collision?
-000377 9170 0149                     lds  r23, apple_pos
-000379 3f7f                          cpi  r23, EMPTY_CELL
-00037a f071                          breq write_head
-00037b 1747                          cp   r20, r23
-00037c f461                          brne write_head
+0003f5 9170 0149                     lds  r23, apple_pos
+0003f7 3f7f                          cpi  r23, EMPTY_CELL
+0003f8 f071                          breq write_head
+0003f9 1747                          cp   r20, r23
+0003fa f461                          brne write_head
                                  
                                      ; eat apple ‚Üí reposition & grow
-00037d ef7f                          ldi  r23, EMPTY_CELL
-00037e 9370 0149                     sts  apple_pos, r23
-000380 d02f                          rcall place_new_apple
-000381 9180 0147                     lds  r24, snake_len
-000383 3480                          cpi  r24, GRID_CELLS
-000384 f021                          breq write_head
-000385 9583                          inc  r24
-000386 9380 0147                     sts  snake_len, r24
-000388 c008                          rjmp write_head_no_tail
+0003fb ef7f                          ldi  r23, EMPTY_CELL
+0003fc 9370 0149                     sts  apple_pos, r23
+0003fe d02f                          rcall place_new_apple
+0003ff 9180 0147                     lds  r24, snake_len
+000401 3480                          cpi  r24, GRID_CELLS
+000402 f021                          breq write_head
+000403 9583                          inc  r24
+000404 9380 0147                     sts  snake_len, r24
+000406 c008                          rjmp write_head_no_tail
                                  
                                  write_head:
                                      ; advance tail normally
-000389 9150 0146                     lds  r21, tail_idx
-00038b 9553                          inc  r21
-00038c 3450                          cpi  r21, GRID_CELLS
-00038d f008                          brlo tail_ok
-00038e 2755                          clr  r21
+000407 9150 0146                     lds  r21, tail_idx
+000409 9553                          inc  r21
+00040a 3450                          cpi  r21, GRID_CELLS
+00040b f008                          brlo tail_ok
+00040c 2755                          clr  r21
                                  tail_ok:
-00038f 9350 0146                     sts  tail_idx, r21
+00040d 9350 0146                     sts  tail_idx, r21
                                  
                                  write_head_no_tail:
                                      ; advance head index & write new head
-000391 9130 0145                     lds  r19, head_idx
-000393 9533                          inc  r19
-000394 3430                          cpi  r19, GRID_CELLS
-000395 f008                          brlo idx_ok_write
-000396 2733                          clr  r19
+00040f 9130 0145                     lds  r19, head_idx
+000411 9533                          inc  r19
+000412 3430                          cpi  r19, GRID_CELLS
+000413 f008                          brlo idx_ok_write
+000414 2733                          clr  r19
                                  idx_ok_write:
-000397 9330 0145                     sts  head_idx, r19
-000399 e0e5                          ldi  ZL, low(snake_body)
-00039a e0f1                          ldi  ZH, high(snake_body)
-00039b 0fe3                          add  ZL, r19
-00039c f408                          brcc write_ptr
-00039d 95f3                          inc  ZH
+000415 9330 0145                     sts  head_idx, r19
+000417 e0e5                          ldi  ZL, low(snake_body)
+000418 e0f1                          ldi  ZH, high(snake_body)
+000419 0fe3                          add  ZL, r19
+00041a f408                          brcc write_ptr
+00041b 95f3                          inc  ZH
                                  write_ptr:
-00039e 8340                          st   Z, r20
-00039f 9508                          ret
+00041c 8340                          st   Z, r20
+00041d 9508                          ret
                                  
                                  hit_wall:
-0003a0 dc94                          rcall lcd_clear
-0003a1 e209
-0003a2 2e40
-0003a3 e000
-0003a4 2e50
-0003a5 dcc1                          PRINTF LCD
-0003a6 4147
-0003a7 454d
-0003a8 4f20
-0003a9 4556
-0003aa 0052                          .db "GAME OVER",0
+00041e dc16                          rcall lcd_clear
+00041f e209
+000420 2e40
+000421 e000
+000422 2e50
+000423 dc43                          PRINTF LCD
+000424 4147
+000425 454d
+000426 4f20
+000427 4556
+000428 0052                          .db "GAME OVER",0
                                  freeze_game:
-0003ab 2d26                          mov  r18, sel
-0003ac e001
-0003ad 1720                          _CPI r18, ST_GAME1
-0003ae f3e1                          breq freeze_game
-0003af 9508                          ret
+000429 2d26                          mov  r18, sel
+00042a e001
+00042b 1720                          _CPI r18, ST_GAME1
+00042c f3e1                          breq freeze_game
+00042d 9508                          ret
                                  
                                  ;=====================================================================
                                  ;  place_new_apple ‚Äì constant-time (8 passes)
                                  ;=====================================================================
                                  place_new_apple:
-0003b0 93af                          push r26
-0003b1 939f                          push r25
-0003b2 938f                          push r24
-0003b3 937f                          push r23
-0003b4 936f                          push r22
-0003b5 935f                          push r21
-0003b6 934f                          push r20
-0003b7 933f                          push r19
-0003b8 932f                          push r18
+00042e 93af                          push r26
+00042f 939f                          push r25
+000430 938f                          push r24
+000431 937f                          push r23
+000432 936f                          push r22
+000433 935f                          push r21
+000434 934f                          push r20
+000435 933f                          push r19
+000436 932f                          push r18
                                  
-0003b9 2722                          clr   r18                ; first free candidate marker
-0003ba e078                          ldi   r23, APPLE_PLACEMENT_TRIES
+000437 2722                          clr   r18                ; first free candidate marker
+000438 e078                          ldi   r23, APPLE_PLACEMENT_TRIES
                                  
                                  loop_iter:
                                      ; PRNG candidate
-0003bb b782                          in    r24, TCNT0
-0003bc b1a4                          in    r26, ADCL
-0003bd 278a                          eor   r24, r26
-0003be 9130 0145                     lds   r19, head_idx
-0003c0 0f83                          add   r24, r19
+000439 b782                          in    r24, TCNT0
+00043a b1a4                          in    r26, ADCL
+00043b 278a                          eor   r24, r26
+00043c 9130 0145                     lds   r19, head_idx
+00043e 0f83                          add   r24, r19
                                  
-0003c1 2f98                          mov   r25, r24
-0003c2 7087                          andi  r24, COORD_MASK
-0003c3 9596                          lsr   r25
-0003c4 9596                          lsr   r25
-0003c5 9596                          lsr   r25
-0003c6 7097                          andi  r25, COORD_MASK
+00043f 2f98                          mov   r25, r24
+000440 7087                          andi  r24, COORD_MASK
+000441 9596                          lsr   r25
+000442 9596                          lsr   r25
+000443 9596                          lsr   r25
+000444 7097                          andi  r25, COORD_MASK
                                  
-0003c7 2f49                          mov   r20, r25
-0003c8 0f44                          lsl   r20
-0003c9 0f44                          lsl   r20
-0003ca 0f44                          lsl   r20
-0003cb 0f48                          add   r20, r24
+000445 2f49                          mov   r20, r25
+000446 0f44                          lsl   r20
+000447 0f44                          lsl   r20
+000448 0f44                          lsl   r20
+000449 0f48                          add   r20, r24
                                  
                                      ; compare against all snake segments
-0003cc 9160 0146                     lds   r22, tail_idx
-0003ce 9180 0147                     lds   r24, snake_len
-0003d0 2755                          clr   r21               ; i = 0
+00044a 9160 0146                     lds   r22, tail_idx
+00044c 9180 0147                     lds   r24, snake_len
+00044e 2755                          clr   r21               ; i = 0
                                  scan_loop:
-0003d1 1758                          cp    r21, r24
-0003d2 f081                          breq  free_found
-0003d3 2f16                          mov   _w, r22
-0003d4 0f15                          add   _w, r21
-0003d5 3410                          cpi   _w, GRID_CELLS
-0003d6 f008                          brlo  idx_ok
-0003d7 5410                          subi  _w, GRID_CELLS
+00044f 1758                          cp    r21, r24
+000450 f081                          breq  free_found
+000451 2f16                          mov   _w, r22
+000452 0f15                          add   _w, r21
+000453 3410                          cpi   _w, GRID_CELLS
+000454 f008                          brlo  idx_ok
+000455 5410                          subi  _w, GRID_CELLS
                                  idx_ok:
-0003d8 e0e5                          ldi   ZL, low(snake_body)
-0003d9 e0f1                          ldi   ZH, high(snake_body)
-0003da 0fe1                          add   ZL, _w
-0003db f408                          brcc buf_ptr
-0003dc 95f3                          inc   ZH
+000456 e0e5                          ldi   ZL, low(snake_body)
+000457 e0f1                          ldi   ZH, high(snake_body)
+000458 0fe1                          add   ZL, _w
+000459 f408                          brcc buf_ptr
+00045a 95f3                          inc   ZH
                                  buf_ptr:
-0003dd 8110                          ld    _w, Z
-0003de 1714                          cp    _w, r20
-0003df f011                          breq clash_found
-0003e0 9553                          inc   r21
-0003e1 cfef                          rjmp  scan_loop
+00045b 8110                          ld    _w, Z
+00045c 1714                          cp    _w, r20
+00045d f011                          breq clash_found
+00045e 9553                          inc   r21
+00045f cfef                          rjmp  scan_loop
                                  
                                  clash_found:
                                      ; segment clash ‚Üí skip storing
-0003e2 c003                          rjmp loop_continue
+000460 c003                          rjmp loop_continue
                                  
                                  free_found:
-0003e3 2322                          tst   r18
-0003e4 f409                          brne loop_continue
-0003e5 2f24                          mov   r18, r20
+000461 2322                          tst   r18
+000462 f409                          brne loop_continue
+000463 2f24                          mov   r18, r20
                                  
                                  loop_continue:
-0003e6 957a                          dec   r23
-0003e7 f699                          brne  loop_iter
+000464 957a                          dec   r23
+000465 f699                          brne  loop_iter
                                  
                                      ; commit result
-0003e8 2322                          tst   r18
-0003e9 f409                          brne store_ok
-0003ea 2f24                          mov   r18, r20
+000466 2322                          tst   r18
+000467 f409                          brne store_ok
+000468 2f24                          mov   r18, r20
                                  store_ok:
-0003eb 9320 0149                     sts   apple_pos, r18
+000469 9320 0149                     sts   apple_pos, r18
                                  
-0003ed 912f                          pop   r18
-0003ee 913f                          pop   r19
-0003ef 914f                          pop   r20
-0003f0 915f                          pop   r21
-0003f1 916f                          pop   r22
-0003f2 917f                          pop   r23
-0003f3 918f                          pop   r24
-0003f4 919f                          pop   r25
-0003f5 91af                          pop   r26
-0003f6 9508                          ret
+00046b 912f                          pop   r18
+00046c 913f                          pop   r19
+00046d 914f                          pop   r20
+00046e 915f                          pop   r21
+00046f 916f                          pop   r22
+000470 917f                          pop   r23
+000471 918f                          pop   r24
+000472 919f                          pop   r25
+000473 91af                          pop   r26
+000474 9508                          ret
                                  
                                  ;=====================================================================
                                  ;  snake_draw ‚Äì render snake & apple
                                  ;=====================================================================
                                  snake_draw:
-0003f7 2722                          clr a0
-0003f8 2733                          clr a1
-0003f9 2744                          clr a2
-0003fa de6a                          rcall matrix_solid
+000475 2722                          clr a0
+000476 2733                          clr a1
+000477 2744                          clr a2
+000478 ddec                          rcall matrix_solid
                                  
-0003fb 9170 0146                     lds  r23, tail_idx
-0003fd 90e0 0147                     lds  s, snake_len
-0003ff e060                          ldi  r22, 0
+000479 9170 0146                     lds  r23, tail_idx
+00047b 90e0 0147                     lds  s, snake_len
+00047d e060                          ldi  r22, 0
                                  draw_loop:
-000400 156e                          cp   r22, s
-000401 f121                          breq draw_done
-000402 2f87                          mov  r24, r23
-000403 0f86                          add  r24, r22
-000404 3480                          cpi  r24, GRID_CELLS
-000405 f008                          brlo idx_ok3
-000406 5480                          subi r24, GRID_CELLS
+00047e 156e                          cp   r22, s
+00047f f121                          breq draw_done
+000480 2f87                          mov  r24, r23
+000481 0f86                          add  r24, r22
+000482 3480                          cpi  r24, GRID_CELLS
+000483 f008                          brlo idx_ok3
+000484 5480                          subi r24, GRID_CELLS
                                  idx_ok3:
-000407 e0e5                          ldi  ZL, low(snake_body)
-000408 e0f1                          ldi  ZH, high(snake_body)
-000409 0fe8                          add  ZL, r24
-00040a f408                          brcc buf_ok3
-00040b 95f3                          inc  ZH
+000485 e0e5                          ldi  ZL, low(snake_body)
+000486 e0f1                          ldi  ZH, high(snake_body)
+000487 0fe8                          add  ZL, r24
+000488 f408                          brcc buf_ok3
+000489 95f3                          inc  ZH
                                  buf_ok3:
-00040c 8100                          ld   w, Z
-00040d 2f80                          mov  r24, w
-00040e 7087                          andi r24, COORD_MASK
-00040f 2f90                          mov  r25, w
-000410 9596                          lsr  r25
-000411 9596                          lsr  r25
-000412 9596                          lsr  r25
-000413 7097                          andi r25, COORD_MASK
-000414 de05                          rcall ws_idx_xy
-000415 de0a                          rcall ws_offset_idx
-000416 2d1e                          mov  _w, s
-000417 951a                          dec  _w
-000418 1761                          cp   r22, _w
-000419 f021                          breq head_pix
+00048a 8100                          ld   w, Z
+00048b 2f80                          mov  r24, w
+00048c 7087                          andi r24, COORD_MASK
+00048d 2f90                          mov  r25, w
+00048e 9596                          lsr  r25
+00048f 9596                          lsr  r25
+000490 9596                          lsr  r25
+000491 7097                          andi r25, COORD_MASK
+000492 dd87                          rcall ws_idx_xy
+000493 dd8c                          rcall ws_offset_idx
+000494 2d1e                          mov  _w, s
+000495 951a                          dec  _w
+000496 1761                          cp   r22, _w
+000497 f021                          breq head_pix
                                  body_pix:
-00041a e02f                          ldi  a0, BODY_GREEN
-00041b 2733                          clr  a1
-00041c 2744                          clr  a2
-00041d c003                          rjmp store_px
+000498 e02f                          ldi  a0, BODY_GREEN
+000499 2733                          clr  a1
+00049a 2744                          clr  a2
+00049b c003                          rjmp store_px
                                  head_pix:
-00041e 2722                          clr  a0
-00041f 2733                          clr  a1
-000420 e04f                          ldi  a2, HEAD_BLUE
+00049c 2722                          clr  a0
+00049d 2733                          clr  a1
+00049e e04f                          ldi  a2, HEAD_BLUE
                                  store_px:
-000421 9321                          st   Z+, a0
-000422 9331                          st   Z+, a1
-000423 8340                          st   Z , a2
-000424 9563                          inc  r22
-000425 cfda                          rjmp draw_loop
+00049f 9321                          st   Z+, a0
+0004a0 9331                          st   Z+, a1
+0004a1 8340                          st   Z , a2
+0004a2 9563                          inc  r22
+0004a3 cfda                          rjmp draw_loop
                                  
                                  draw_done:
                                      ; apple
-000426 9100 0149                     lds  w, apple_pos
-000428 3f0f                          cpi  w, EMPTY_CELL
-000429 f079                          breq flush_frame
-00042a 2f80                          mov  r24, w
-00042b 7087                          andi r24, COORD_MASK
-00042c 2f90                          mov  r25, w
-00042d 9596                          lsr  r25
-00042e 9596                          lsr  r25
-00042f 9596                          lsr  r25
-000430 7097                          andi r25, COORD_MASK
-000431 dde8                          rcall ws_idx_xy
-000432 dded                          rcall ws_offset_idx
-000433 2722                          clr  a0
-000434 e03f                          ldi  a1, APPLE_RED
-000435 2744                          clr  a2
-000436 9321                          st   Z+, a0
-000437 9331                          st   Z+, a1
-000438 8340                          st   Z , a2
+0004a4 9100 0149                     lds  w, apple_pos
+0004a6 3f0f                          cpi  w, EMPTY_CELL
+0004a7 f079                          breq flush_frame
+0004a8 2f80                          mov  r24, w
+0004a9 7087                          andi r24, COORD_MASK
+0004aa 2f90                          mov  r25, w
+0004ab 9596                          lsr  r25
+0004ac 9596                          lsr  r25
+0004ad 9596                          lsr  r25
+0004ae 7097                          andi r25, COORD_MASK
+0004af dd6a                          rcall ws_idx_xy
+0004b0 dd6f                          rcall ws_offset_idx
+0004b1 2722                          clr  a0
+0004b2 e03f                          ldi  a1, APPLE_RED
+0004b3 2744                          clr  a2
+0004b4 9321                          st   Z+, a0
+0004b5 9331                          st   Z+, a1
+0004b6 8340                          st   Z , a2
                                  
                                  flush_frame:
-000439 e0e0                          ldi  ZL, low(WS_BUF_BASE)
-00043a e0f4                          ldi  ZH, high(WS_BUF_BASE)
-00043b e400
-00043c 2e00                          _LDI r0, GRID_CELLS
+0004b7 e0e0                          ldi  ZL, low(WS_BUF_BASE)
+0004b8 e0f4                          ldi  ZH, high(WS_BUF_BASE)
+0004b9 e400
+0004ba 2e00                          _LDI r0, GRID_CELLS
                                  flush_loop:
-00043d 9121                          ld   a0, Z+
-00043e 9131                          ld   a1, Z+
-00043f 9141                          ld   a2, Z+
-000440 94f8                          cli
-000441 dd99                          rcall ws_byte3wr
-000442 9478                          sei
-000443 940a                          dec  r0
-000444 f7c1                          brne flush_loop
-000445 ddca                          rcall ws_reset
+0004bb 9121                          ld   a0, Z+
+0004bc 9131                          ld   a1, Z+
+0004bd 9141                          ld   a2, Z+
+0004be 94f8                          cli
+0004bf dd1b                          rcall ws_byte3wr
+0004c0 9478                          sei
+0004c1 940a                          dec  r0
+0004c2 f7c1                          brne flush_loop
+0004c3 dd4c                          rcall ws_reset
                                              .include "game2_state.asm"
-000446 9508                      
+0004c4 9508                      
                                  ;  GAME 2  state
                                  ;----------------------------------------------------------------------
                                  
                                  gameTwoInit:
-000447 dbed                              rcall   lcd_clear
-000448 e209
-000449 2e40
-00044a e000
-00044b 2e50
-00044c dc1a                              PRINTF  LCD
-00044d 4147
-00044e 454d
-00044f 3220
-000450 0000                              .db     "GAME 2",0,0
+0004c5 db6f                              rcall   lcd_clear
+0004c6 e209
+0004c7 2e40
+0004c8 e000
+0004c9 2e50
+0004ca db9c                              PRINTF  LCD
+0004cb 4147
+0004cc 454d
+0004cd 3220
+0004ce 0000                              .db     "GAME 2",0,0
                                  
                                          ; blue matrix
-000451 e020                              ldi     a0, 0x00
-000452 e030                              ldi     a1, 0x00
-000453 e04f                              ldi     a2, 0x0F
-000454 de10                              rcall   matrix_solid
+0004cf e020                              ldi     a0, 0x00
+0004d0 e030                              ldi     a1, 0x00
+0004d1 e04f                              ldi     a2, 0x0F
+0004d2 dd92                              rcall   matrix_solid
                                  
                                  game2_wait:
-000455 2ce6                              mov     s, sel
-000456 e002
-000457 16e0                              _CPI     s, ST_GAME2
-000458 f4a1                              brne    game2_done
-000459 e302
-00045a 2e30
-00045b e001
-00045c 930f
-00045d 923f
-00045e e300
-00045f 2e30
-000460 e006
-000461 943a
-000462 f7f1
-000463 943a
-000464 950a
-000465 f7d9
-000466 903f
-000467 910f
-000468 943a
-000469 f791
-00046a 950a
-00046b f781                              WAIT_MS 50
-00046c cfe8                              rjmp    game2_wait
+0004d3 2ce6                              mov     s, sel
+0004d4 e002
+0004d5 16e0                              _CPI     s, ST_GAME2
+0004d6 f4a1                              brne    game2_done
+0004d7 e302
+0004d8 2e30
+0004d9 e001
+0004da 930f
+0004db 923f
+0004dc e300
+0004dd 2e30
+0004de e006
+0004df 943a
+0004e0 f7f1
+0004e1 943a
+0004e2 950a
+0004e3 f7d9
+0004e4 903f
+0004e5 910f
+0004e6 943a
+0004e7 f791
+0004e8 950a
+0004e9 f781                              WAIT_MS 50
+0004ea cfe8                              rjmp    game2_wait
                                  
                                  game2_done:
                                              .include "game3_state.asm"
-00046d 9508                      
+0004eb 9508                      
                                  ;  GAME 3  state
                                  ;----------------------------------------------------------------------
                                  
                                  gameThreeInit:
-00046e dbc6                              rcall   lcd_clear
-00046f e209
-000470 2e40
-000471 e000
-000472 2e50
-000473 dbf3                              PRINTF  LCD
-000474 4147
-000475 454d
-000476 3320
+0004ec db48                              rcall   lcd_clear
+0004ed e209
+0004ee 2e40
+0004ef e000
+0004f0 2e50
+0004f1 db75                              PRINTF  LCD
+0004f2 4147
+0004f3 454d
+0004f4 3320
 Z:\medical_consol_atmega128\medical_thermo\medical_thermo\game3_state.asm(8): warning: .cseg .db misalignment - padding zero byte
 Z:\medical_consol_atmega128\medical_thermo\medical_thermo\main.asm(85): 'Z:\medical_consol_atmega128\medical_thermo\medical_thermo\game3_state.asm' included form here
-000477 0000                              .db     "GAME 3",0
+0004f5 0000                              .db     "GAME 3",0
                                  
                                          ; yellow matrix  (R+G)
-000478 e028                              ldi     a0, 0x08
-000479 e038                              ldi     a1, 0x08
-00047a e040                              ldi     a2, 0x00
-00047b dde9                              rcall   matrix_solid
+0004f6 e028                              ldi     a0, 0x08
+0004f7 e038                              ldi     a1, 0x08
+0004f8 e040                              ldi     a2, 0x00
+0004f9 dd6b                              rcall   matrix_solid
                                  
                                  game3_wait:
-00047c 2ce6                              mov     s, sel
-00047d e003
-00047e 16e0                              _CPI     s, ST_GAME3
-00047f f4a1                              brne    game3_done
-000480 e302
-000481 2e30
-000482 e001
-000483 930f
-000484 923f
-000485 e300
-000486 2e30
-000487 e006
-000488 943a
-000489 f7f1
-00048a 943a
-00048b 950a
-00048c f7d9
-00048d 903f
-00048e 910f
-00048f 943a
-000490 f791
-000491 950a
-000492 f781                              WAIT_MS 50
-000493 cfe8                              rjmp    game3_wait
+0004fa 2ce6                              mov     s, sel
+0004fb e003
+0004fc 16e0                              _CPI     s, ST_GAME3
+0004fd f4a1                              brne    game3_done
+0004fe e302
+0004ff 2e30
+000500 e001
+000501 930f
+000502 923f
+000503 e300
+000504 2e30
+000505 e006
+000506 943a
+000507 f7f1
+000508 943a
+000509 950a
+00050a f7d9
+00050b 903f
+00050c 910f
+00050d 943a
+00050e f791
+00050f 950a
+000510 f781                              WAIT_MS 50
+000511 cfe8                              rjmp    game3_wait
                                  
                                  game3_done:
                                              .include "doctor_state.asm"
-000494 9508                      
+000512 9508                      
                                  ;  doctor_state.asm      ñ ST_DOCTOR diagnostic screen
                                  ;======================================================================
                                  
                                  
                                  doctorInit:
-000495 932f                              push    r18                    ; save callerís a0 slot
+000513 932f                              push    r18                    ; save callerís a0 slot
                                  
                                          ;ñññ 1. clear LCD and show header ññññññññññññññññññññññññññññ
-000496 db9e                              rcall   lcd_clear
-000497 e209
-000498 2e40
-000499 e000
-00049a 2e50
-00049b dbcb                              PRINTF  LCD
-00049c 6f44
-00049d 7463
-00049e 726f
-00049f 0000                              .db     "Doctor",0,0;removes annoying warning by alligning 
+000514 db20                              rcall   lcd_clear
+000515 e209
+000516 2e40
+000517 e000
+000518 2e50
+000519 db4d                              PRINTF  LCD
+00051a 6f44
+00051b 7463
+00051c 726f
+00051d 0000                              .db     "Doctor",0,0;removes annoying warning by alligning 
                                  
                                          ;ñññ 2. blank the LED matrix (all LEDs off) ññññññññññññññññññ
-0004a0 2722                              clr     a0                     ; G
-0004a1 2733                              clr     a1                     ; R
-0004a2 2744                              clr     a2                     ; B
-0004a3 ddc1                              rcall   matrix_solid           ; fills buffer & transmits
+00051e 2722                              clr     a0                     ; G
+00051f 2733                              clr     a1                     ; R
+000520 2744                              clr     a2                     ; B
+000521 dd43                              rcall   matrix_solid           ; fills buffer & transmits
                                  
                                  ;======================================================================
                                  ;  main refresh loop ñ runs until sel ? ST_DOCTOR
                                  ;======================================================================
                                  doctor_loop:
                                          ;---  temperature housekeeping  -------------------------------
-0004a4 9120 0100                         lds     r18, flags
-0004a6 fd20                              sbrc    r18, FLG_TEMP          ; if ready flag set Ö
-0004a7 d080                              rcall   temp_task              ; Ö service background task
+000522 9120 0100                         lds     r18, flags
+000524 fd20                              sbrc    r18, FLG_TEMP          ; if ready flag set Ö
+000525 d080                              rcall   temp_task              ; Ö service background task
                                  
                                          ;---  fetch last reading & print ------------------------------
-0004a8 9120 0101                         lds     a0, temp_lsb
-0004aa 9130 0102                         lds     a1, temp_msb
-0004ac db88                      		rcall   lcd_clear
-0004ad e209
-0004ae 2e40
-0004af e000
-0004b0 2e50
-0004b1 dbb5                              PRINTF  LCD
-0004b2 6f44
-0004b3 7463
-0004b4 726f
-0004b5 8b20
-0004b6 0412
-0004b7 4342
-0004b8 0000                              .db     "Doctor ", FFRAC2+FSIGN, a, 4, $42, "C", 0,0
+000526 9120 0101                         lds     a0, temp_lsb
+000528 9130 0102                         lds     a1, temp_msb
+00052a db0a                      		rcall   lcd_clear
+00052b e209
+00052c 2e40
+00052d e000
+00052e 2e50
+00052f db37                              PRINTF  LCD
+000530 6f44
+000531 7463
+000532 726f
+000533 8b20
+000534 0412
+000535 4342
+000536 0000                              .db     "Doctor ", FFRAC2+FSIGN, a, 4, $42, "C", 0,0
                                  
-0004b9 ef0a
-0004ba 2e30
-0004bb e001
-0004bc 930f
-0004bd 923f
-0004be e300
-0004bf 2e30
-0004c0 e006
-0004c1 943a
-0004c2 f7f1
-0004c3 943a
-0004c4 950a
-0004c5 f7d9
-0004c6 903f
-0004c7 910f
-0004c8 943a
-0004c9 f791
-0004ca 950a
-0004cb f781                              WAIT_MS 250                    ; ?4 Hz update rate
+000537 ef0a
+000538 2e30
+000539 e001
+00053a 930f
+00053b 923f
+00053c e300
+00053d 2e30
+00053e e006
+00053f 943a
+000540 f7f1
+000541 943a
+000542 950a
+000543 f7d9
+000544 903f
+000545 910f
+000546 943a
+000547 f791
+000548 950a
+000549 f781                              WAIT_MS 250                    ; ?4 Hz update rate
                                  
                                          ;---  stay only while we are still in Doctor ------------------
-0004cc 2d26                              mov     r18, sel
-0004cd 3024                              cpi     r18, ST_DOCTOR
-0004ce f2a9                              breq    doctor_loop
+00054a 2d26                              mov     r18, sel
+00054b 3024                              cpi     r18, ST_DOCTOR
+00054c f2a9                              breq    doctor_loop
                                  
                                          ;ñññ 3. leave state ññññññññññññññññññññññññññññññññññññññññññ
-0004cf 912f                              pop     r18
-0004d0 9508                      
+00054d 912f                              pop     r18
+00054e 9508                      
                                  ;======================================================================
                                  ;  RESET sequence
                                  ;======================================================================
                                  reset:
-0004d1 ef0f
-0004d2 bf0d
-0004d3 e100
-0004d4 bf0e                                  LDSP  RAMEND
-0004d5 db73                                  rcall LCD_init
-0004d6 dcab                                  rcall wire1_init
-0004d7 dd52                                  rcall encoder_init
+00054f ef0f
+000550 bf0d
+000551 e100
+000552 bf0e                                  LDSP  RAMEND
+000553 daf5                                  rcall LCD_init
+000554 dc2d                                  rcall wire1_init
+000555 dcd4                                  rcall encoder_init
                                  
                                  ; ÔøΩ Buttons PD0ÔøΩPD3: inputs with pull-ups ----------------------------
-0004d8 9888                                  cbi   DDRD,0
-0004d9 9889                                  cbi   DDRD,1
-0004da 988a                                  cbi   DDRD,2
-0004db 988b                                  cbi   DDRD,3
-0004dc 9a90                                  sbi   PORTD,0
-0004dd 9a91                                  sbi   PORTD,1
-0004de 9a92                                  sbi   PORTD,2
-0004df 9a93                                  sbi   PORTD,3
+000556 9888                                  cbi   DDRD,0
+000557 9889                                  cbi   DDRD,1
+000558 988a                                  cbi   DDRD,2
+000559 988b                                  cbi   DDRD,3
+00055a 9a90                                  sbi   PORTD,0
+00055b 9a91                                  sbi   PORTD,1
+00055c 9a92                                  sbi   PORTD,2
+00055d 9a93                                  sbi   PORTD,3
                                  
                                  ; ÔøΩ WS2812 driver init (sets PD7 output) -----------------------------
-0004e0 dcf7                                  rcall ws_init
+00055e dc79                                  rcall ws_init
                                  
                                  ; ÔøΩ Heartbeat LED on PF7 (active-low) --------------------------------
-0004e1 e800
-0004e2 9300 0061                             OUTEI DDRF,(1<<LED_BIT)    ; PF7 ? output (clobbers w)
-0004e4 e800
-0004e5 9300 0062                             OUTEI PORTF,(1<<LED_BIT)   ; drive high = LED off
+00055f e800
+000560 9300 0061                             OUTEI DDRF,(1<<LED_BIT)    ; PF7 ? output (clobbers w)
+000562 e800
+000563 9300 0062                             OUTEI PORTF,(1<<LED_BIT)   ; drive high = LED off
                                  
                                  
                                  
                                  ; ÔøΩ Ensure WS2812 line idle low until driver starts ------------------
-0004e7 9897                                  cbi   PORTD,7
+000565 9897                                  cbi   PORTD,7
                                  
                                  ; ÔøΩ Timer-1 one-second tick ------------------------------------------
-0004e8 ef00                                  ldi   w,T1_PREH
-0004e9 bd0d                                  out   TCNT1H,w
-0004ea eb0e                                  ldi   w,T1_PREL
-0004eb bd0c                                  out   TCNT1L,w
-0004ec e005                                  ldi   w,(1<<CS12)|(1<<CS10)
-0004ed bd0e                                  out   TCCR1B,w
-0004ee e004
-0004ef bf07                                  OUTI  TIMSK,(1<<TOIE1)
+000566 ef00                                  ldi   w,T1_PREH
+000567 bd0d                                  out   TCNT1H,w
+000568 eb0e                                  ldi   w,T1_PREL
+000569 bd0c                                  out   TCNT1L,w
+00056a e005                                  ldi   w,(1<<CS12)|(1<<CS10)
+00056b bd0e                                  out   TCCR1B,w
+00056c e004
+00056d bf07                                  OUTI  TIMSK,(1<<TOIE1)
                                  
                                  ; ÔøΩ INT0ÔøΩINT3 falling-edge config -----------------------------------
-0004f0 ea0a
-0004f1 9300 006a                             OUTEI EICRA,0b10101010
-0004f3 e00f
-0004f4 bf09                                  OUTI  EIMSK,0b00001111
+00056e ea0a
+00056f 9300 006a                             OUTEI EICRA,0b10101010
+000571 e00f
+000572 bf09                                  OUTI  EIMSK,0b00001111
                                  
-0004f5 9478                                  sei                         ; global IRQ enable
+000573 9478                                  sei                         ; global IRQ enable
                                  
                                  ; ÔøΩ Kick off first DS18B20 conversion --------------------------------
-0004f6 2700                                  clr   w                     ; w is volatile ÔøΩ fine here
-0004f7 9300 0103                             sts   phase,w
-0004f9 d018                                  rcall temp_convert
+000574 2700                                  clr   w                     ; w is volatile ÔøΩ fine here
+000575 9300 0103                             sts   phase,w
+000577 d018                                  rcall temp_convert
                                  
-0004fa 2466                                  clr   sel                   ; start in Home state
+000578 2466                                  clr   sel                   ; start in Home state
                                  
                                  ;======================================================================
                                  ;  MAIN LOOP ÔøΩ state dispatch
                                  ;======================================================================
                                  main_loop:
                                  switch:
-0004fb 2ce6                                  mov   s,sel                ; copy once, keep stable
-0004fc e000
-0004fd 16e0                                  _CPI   s,ST_HOME
-0004fe f411                                  brne  swSnake
-0004ff dd81                                  rcall home_init
-000500 cffa                                  rjmp  switch
+000579 2ce6                                  mov   s,sel                ; copy once, keep stable
+00057a e000
+00057b 16e0                                  _CPI   s,ST_HOME
+00057c f411                                  brne  swSnake
+00057d dd03                                  rcall home_init
+00057e cffa                                  rjmp  switch
                                  
                                  swSnake:
-000501 e001
-000502 16e0                                  _CPI   s,ST_GAME1
-000503 f411                                  brne  swGameTwo
-000504 dda2                                  rcall snake_game_init; changed nameeeee
-000505 cff5                                  rjmp  switch
+00057f e001
+000580 16e0                                  _CPI   s,ST_GAME1
+000581 f411                                  brne  swGameTwo
+000582 dda2                                  rcall snake_game_init; changed nameeeee
+000583 cff5                                  rjmp  switch
                                  
                                  swGameTwo:
-000506 e002
-000507 16e0                                  _CPI   s,ST_GAME2
-000508 f411                                  brne  swGameThree
-000509 df3d                                  rcall gameTwoInit
-00050a cff0                                  rjmp  switch
+000584 e002
+000585 16e0                                  _CPI   s,ST_GAME2
+000586 f411                                  brne  swGameThree
+000587 df3d                                  rcall gameTwoInit
+000588 cff0                                  rjmp  switch
                                  
                                  swGameThree:
-00050b e003
-00050c 16e0                                  _CPI   s,ST_GAME3
-00050d f411                                  brne  swDoctor
-00050e df5f                                  rcall gameThreeInit
-00050f cfeb                                  rjmp  switch
+000589 e003
+00058a 16e0                                  _CPI   s,ST_GAME3
+00058b f411                                  brne  swDoctor
+00058c df5f                                  rcall gameThreeInit
+00058d cfeb                                  rjmp  switch
                                  
                                  swDoctor:
-000510 df84                                  rcall doctorInit
-000511 cfe9                                  rjmp  switch
+00058e df84                                  rcall doctorInit
+00058f cfe9                                  rjmp  switch
                                  
                                  ;======================================================================
                                  ;  1-Wire helpers
@@ -5257,28 +5426,28 @@ Z:\medical_consol_atmega128\medical_thermo\medical_thermo\main.asm(85): 'Z:\medi
                                  ; Use s (r14) instead of w so we donÔøΩt depend on the volatile macro reg.
                                  
                                  temp_convert:
-000512 92ef                                  push  s
-000513 dc71                                  rcall wire1_reset
-000514 ec2c                                  ldi   a0,skipROM
-000515 dca3                                  rcall wire1_write
-000516 e424                                  ldi   a0,convertT
-000517 dca1                                  rcall wire1_write
-000518 90ef                                  pop   s
-000519 9508                                  ret
+000590 92ef                                  push  s
+000591 dbf3                                  rcall wire1_reset
+000592 ec2c                                  ldi   a0,skipROM
+000593 dc25                                  rcall wire1_write
+000594 e424                                  ldi   a0,convertT
+000595 dc23                                  rcall wire1_write
+000596 90ef                                  pop   s
+000597 9508                                  ret
                                  
                                  temp_fetch:
-00051a 92ef                                  push  s
-00051b dc69                                  rcall wire1_reset
-00051c ec2c                                  ldi   a0,skipROM
-00051d dc9b                                  rcall wire1_write
-00051e eb2e                                  ldi   a0,readScratchpad
-00051f dc99                                  rcall wire1_write
-000520 dca3                                  rcall wire1_read
-000521 9320 0101                             sts   temp_lsb,a0
-000523 dca0                                  rcall wire1_read
-000524 9320 0102                             sts   temp_msb,a0
-000526 90ef                                  pop   s
-000527 9508                                  ret
+000598 92ef                                  push  s
+000599 dbeb                                  rcall wire1_reset
+00059a ec2c                                  ldi   a0,skipROM
+00059b dc1d                                  rcall wire1_write
+00059c eb2e                                  ldi   a0,readScratchpad
+00059d dc1b                                  rcall wire1_write
+00059e dc25                                  rcall wire1_read
+00059f 9320 0101                             sts   temp_lsb,a0
+0005a1 dc22                                  rcall wire1_read
+0005a2 9320 0102                             sts   temp_msb,a0
+0005a4 90ef                                  pop   s
+0005a5 9508                                  ret
                                  
                                  ;---------------------------------------------------------------------
                                  ;  Background temperature task
@@ -5286,95 +5455,95 @@ Z:\medical_consol_atmega128\medical_thermo\medical_thermo\main.asm(85): 'Z:\medi
                                  ; Only s is used; w may change at macro calls we donÔøΩt care about here.
                                  
                                  temp_task:
-000528 90e0 0100                             lds   s,flags
-00052a ef0e
-00052b 22e0                                  _ANDI  s,~(1<<FLG_TEMP)
-00052c 92e0 0100                             sts   flags,s
+0005a6 90e0 0100                             lds   s,flags
+0005a8 ef0e
+0005a9 22e0                                  _ANDI  s,~(1<<FLG_TEMP)
+0005aa 92e0 0100                             sts   flags,s
                                  
-00052e 90e0 0103                             lds   s,phase
-000530 20ee                                  tst   s
-000531 f029                                  breq  temp_do_convert
+0005ac 90e0 0103                             lds   s,phase
+0005ae 20ee                                  tst   s
+0005af f029                                  breq  temp_do_convert
                                  
-000532 dfe7                                  rcall temp_fetch
-000533 24ee                                  clr   s
-000534 92e0 0103                             sts   phase,s
-000536 9508                                  ret
+0005b0 dfe7                                  rcall temp_fetch
+0005b1 24ee                                  clr   s
+0005b2 92e0 0103                             sts   phase,s
+0005b4 9508                                  ret
                                  
                                  temp_do_convert:
-000537 dfda                                  rcall temp_convert
-000538 e001
-000539 2ee0                                  _LDI   s,1
-00053a 92e0 0103                             sts   phase,s
-00053c 9508                                  ret
+0005b5 dfda                                  rcall temp_convert
+0005b6 e001
+0005b7 2ee0                                  _LDI   s,1
+0005b8 92e0 0103                             sts   phase,s
+0005ba 9508                                  ret
                                  
                                  ;======================================================================
                                  ;  Interrupt service routines
                                  ;======================================================================
                                  ;----------------------  INT0 ÔøΩ next state  ---------------------------
                                  int0_isr:
-00053d 930f                                  push  w                    ; save volatile macro reg
-00053e 9463                                  inc   sel
-00053f e004                                  ldi   w,REG_STATES
-000540 1660                                  cp    sel,w
-000541 f008                                  brlo  int0_done
-000542 2466                                  clr   sel                  ; wrap ? 0
+0005bb 930f                                  push  w                    ; save volatile macro reg
+0005bc 9463                                  inc   sel
+0005bd e004                                  ldi   w,REG_STATES
+0005be 1660                                  cp    sel,w
+0005bf f008                                  brlo  int0_done
+0005c0 2466                                  clr   sel                  ; wrap ? 0
                                  int0_done:
-000543 910f                                  pop   w
-000544 9518                                  reti
+0005c1 910f                                  pop   w
+0005c2 9518                                  reti
                                  
                                  ;----------------------  INT1 ÔøΩ previous state ------------------------
                                  int1_isr:
-000545 930f                                  push  w
-000546 2066                                  tst   sel
-000547 f421                                  brne  int1_dec
-000548 e003                                  ldi   w,REG_STATES-1       ; wrap ? 3
-000549 2e60                                  mov   sel,w
-00054a 910f                                  pop   w
-00054b 9518                                  reti
+0005c3 930f                                  push  w
+0005c4 2066                                  tst   sel
+0005c5 f421                                  brne  int1_dec
+0005c6 e003                                  ldi   w,REG_STATES-1       ; wrap ? 3
+0005c7 2e60                                  mov   sel,w
+0005c8 910f                                  pop   w
+0005c9 9518                                  reti
                                  int1_dec:
-00054c 946a                                  dec   sel
-00054d 910f                                  pop   w
-00054e 9518                                  reti
+0005ca 946a                                  dec   sel
+0005cb 910f                                  pop   w
+0005cc 9518                                  reti
                                  
                                  ;----------------------  INT2 ÔøΩ goto Home ----------------------------
                                  int2_isr:
-00054f 2466                                  clr   sel
-000550 9518                                  reti
+0005cd 2466                                  clr   sel
+0005ce 9518                                  reti
                                  
                                  ;----------------------  INT3 ÔøΩ Doctor mode --------------------------
                                  int3_isr:
-000551 930f                                  push  w
-000552 e004                                  ldi   w,ST_DOCTOR
-000553 2e60                                  mov   sel,w
-000554 910f                                  pop   w
-000555 9518                                  reti
+0005cf 930f                                  push  w
+0005d0 e004                                  ldi   w,ST_DOCTOR
+0005d1 2e60                                  mov   sel,w
+0005d2 910f                                  pop   w
+0005d3 9518                                  reti
                                  
                                  ;----------------------  Timer-1 overflow ----------------------------
                                  t1_isr:
-000556 930f                                  push  w                     ; save macro scratch
-000557 931f                                  push  _w                    ; save ISR scratch
+0005d4 930f                                  push  w                     ; save macro scratch
+0005d5 931f                                  push  _w                    ; save ISR scratch
                                  
                                              ; reload counter
-000558 ef00                                  ldi   w,T1_PREH
-000559 bd0d                                  out   TCNT1H,w
-00055a eb0e                                  ldi   w,T1_PREL
-00055b bd0c                                  out   TCNT1L,w
+0005d6 ef00                                  ldi   w,T1_PREH
+0005d7 bd0d                                  out   TCNT1H,w
+0005d8 eb0e                                  ldi   w,T1_PREL
+0005d9 bd0c                                  out   TCNT1L,w
                                  
                                              ; heartbeat LED on PF7 (toggle)
-00055c 90e0 0062                             lds   s,PORTF
-00055e e810                                  ldi   _w,(1<<LED_BIT)
-00055f 26e1                                  eor   s,_w
-000560 92e0 0062                             sts   PORTF,s
+0005da 90e0 0062                             lds   s,PORTF
+0005dc e810                                  ldi   _w,(1<<LED_BIT)
+0005dd 26e1                                  eor   s,_w
+0005de 92e0 0062                             sts   PORTF,s
                                  
                                              ; set temperature task flag
-000562 90e0 0100                             lds   s,flags
-000564 e001
-000565 2ae0                                  _ORI   s,(1<<FLG_TEMP)
-000566 92e0 0100                             sts   flags,s
+0005e0 90e0 0100                             lds   s,flags
+0005e2 e001
+0005e3 2ae0                                  _ORI   s,(1<<FLG_TEMP)
+0005e4 92e0 0100                             sts   flags,s
                                  
-000568 911f                                  pop   _w
-000569 910f                                  pop   w
-00056a 9518                                  reti
+0005e6 911f                                  pop   _w
+0005e7 910f                                  pop   w
+0005e8 9518                                  reti
                                  ;======================================================================
                                  ;TODO: increse the debounce time for the buttons 
 
@@ -5394,32 +5563,32 @@ counted separately from r26..r31 here.
 .dseg memory usage only counts static data declared with .byte
 
 "ATmega128" register use summary:
-x  :   6 y  :   0 z  :  25 r0 :  11 r1 :   0 r2 :   5 r3 :  57 r4 :   8 
+x  :   6 y  :   0 z  :  73 r0 :  13 r1 :  42 r2 :   5 r3 :  57 r4 :   8 
 r5 :   8 r6 :  16 r7 :   0 r8 :   5 r9 :   5 r10:   5 r11:   6 r12:  11 
-r13:   0 r14:  35 r15:   2 r16: 295 r17:  30 r18:  79 r19:  60 r20:  66 
-r21:  39 r22:  53 r23:  43 r24:  43 r25:  38 r26:   8 r27:   4 r28:   0 
-r29:   0 r30:  32 r31:  27 
-Registers used: 29 out of 35 (82.9%)
+r13:   0 r14:  35 r15:   2 r16: 297 r17:  30 r18:  81 r19:  62 r20:  68 
+r21:  39 r22:  57 r23:  43 r24:  57 r25:  52 r26:   8 r27:   4 r28:   0 
+r29:   0 r30:  36 r31:  31 
+Registers used: 30 out of 35 (85.7%)
 
 "ATmega128" instruction use summary:
 .lds  :   0 .sts  :   0 adc   :   1 add   :  16 adiw  :   5 and   :   1 
 andi  :  20 asr   :   2 bclr  :   0 bld   :   2 brbc  :   0 brbs  :   0 
 brcc  :   9 brcs  :   0 break :   0 breq  :  35 brge  :   0 brhc  :   0 
 brhs  :   0 brid  :   0 brie  :   0 brlo  :   7 brlt  :   0 brmi  :   2 
-brne  :  58 brpl  :   1 brsh  :   1 brtc  :   5 brts  :   0 brvc  :   0 
+brne  :  60 brpl  :   1 brsh  :   1 brtc  :   5 brts  :   0 brvc  :   0 
 brvs  :   0 bset  :   0 bst   :   6 call  :   0 cbi   :  15 cbr   :   0 
-clc   :   1 clh   :   0 cli   :   6 cln   :   0 clr   :  40 cls   :   0 
+clc   :   1 clh   :   0 cli   :   7 cln   :   0 clr   :  40 cls   :   0 
 clt   :   2 clv   :   0 clz   :   3 com   :   8 cp    :  20 cpc   :   3 
-cpi   :  24 cpse  :   0 dec   :  51 elpm  :   0 eor   :   4 fmul  :   0 
+cpi   :  24 cpse  :   0 dec   :  53 elpm  :   0 eor   :   4 fmul  :   0 
 fmuls :   0 fmulsu:   0 icall :   1 ijmp  :   1 in    :  11 inc   :  23 
-jmp   :   6 ld    :  16 ldd   :   0 ldi   : 178 lds   :  28 lpm   :  12 
-lsl   :  14 lsr   :  15 mov   :  81 movw  :   0 mul   :   0 muls  :   0 
+jmp   :   6 ld    :  19 ldd   :   0 ldi   : 212 lds   :  28 lpm   :  12 
+lsl   :  14 lsr   :  15 mov   :  82 movw  :   0 mul   :   0 muls  :   0 
 mulsu :   0 neg   :   0 nop   :  18 or    :   1 ori   :   3 out   :  16 
-pop   :  66 push  :  64 rcall :  94 ret   :  50 reti  :   6 rjmp  :  68 
+pop   :  69 push  :  67 rcall : 124 ret   :  51 reti  :   6 rjmp  :  68 
 rol   :  10 ror   :  17 sbc   :   3 sbci  :   0 sbi   :  14 sbic  :   0 
 sbis  :   0 sbiw  :   1 sbr   :   1 sbrc  :  21 sbrs  :   4 sec   :   0 
-seh   :   0 sei   :   7 sen   :   0 ser   :   0 ses   :   0 set   :   2 
-sev   :   0 sez   :   1 sleep :   0 spm   :   0 st    :  15 std   :   0 
+seh   :   0 sei   :   8 sen   :   0 ser   :   0 ses   :   0 set   :   2 
+sev   :   0 sez   :   1 sleep :   0 spm   :   0 st    :  60 std   :   0 
 sts   :  31 sub   :   4 subi  :  10 swap  :   4 tst   :  17 wdr   :   0 
 
 Instructions used: 67 out of 114 (58.8%)
@@ -5427,7 +5596,7 @@ Instructions used: 67 out of 114 (58.8%)
 "ATmega128" memory use summary [bytes]:
 Segment   Begin    End      Code   Data   Used    Size   Use%
 ---------------------------------------------------------------
-[.cseg] 0x000000 0x000ad6   2678     60   2738  131072   2.1%
+[.cseg] 0x000000 0x000bd2   2930     60   2990  131072   2.3%
 [.dseg] 0x000100 0x000154      0     84     84    4096   2.1%
 [.eseg] 0x000000 0x000000      0      0      0    4096   0.0%
 
