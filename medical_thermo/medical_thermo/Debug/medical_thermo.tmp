@@ -211,9 +211,12 @@
   <gameThreeInit><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\game3_state.asm</FILE><LINE>5</LINE></gameThreeInit>
   <game3_wait><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\game3_state.asm</FILE><LINE>16</LINE></game3_wait>
   <game3_done><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\game3_state.asm</FILE><LINE>23</LINE></game3_done>
-  <doctorInit><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\doctor_state.asm</FILE><LINE>6</LINE></doctorInit>
-  <doctor_loop><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\doctor_state.asm</FILE><LINE>23</LINE></doctor_loop>
+  <doctorInit><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\doctor_state.asm</FILE><LINE>5</LINE></doctorInit>
+  <matrix_doctor><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\doctor_state.asm</FILE><LINE>48</LINE></matrix_doctor>
+  <doctor_loop><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\doctor_state.asm</FILE><LINE>19</LINE></doctor_loop>
   <temp_task><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\main.asm</FILE><LINE>208</LINE></temp_task>
+  <md_fill><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\doctor_state.asm</FILE><LINE>62</LINE></md_fill>
+  <md_send><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\doctor_state.asm</FILE><LINE>262</LINE></md_send>
   <temp_convert><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\main.asm</FILE><LINE>179</LINE></temp_convert>
   <main_loop><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\main.asm</FILE><LINE>144</LINE></main_loop>
   <switch><FILE>Z:\medical_consol_atmega128\medical_thermo\medical_thermo\main.asm</FILE><LINE>145</LINE></switch>

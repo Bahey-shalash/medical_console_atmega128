@@ -1,5 +1,5 @@
 
-AVRASM ver. 2.2.6  Z:\medical_consol_atmega128\medical_thermo\medical_thermo\main.asm Sat May 24 17:53:28 2025
+AVRASM ver. 2.2.6  Z:\medical_consol_atmega128\medical_thermo\medical_thermo\main.asm Sat May 24 18:22:37 2025
 
 
 EQU  SIGNATURE_000 0000001e
@@ -955,12 +955,12 @@ DSEG flags        00000100
 DSEG temp_lsb     00000101
 DSEG temp_msb     00000102
 DSEG phase        00000103
-CSEG reset        0000054f
-CSEG int0_isr     000005bb
-CSEG int1_isr     000005c3
-CSEG int2_isr     000005cd
-CSEG int3_isr     000005cf
-CSEG t1_isr       000005d4
+CSEG reset        000005f8
+CSEG int0_isr     00000664
+CSEG int1_isr     0000066c
+CSEG int2_isr     00000676
+CSEG int3_isr     00000678
+CSEG t1_isr       0000067d
 EQU  LCD_IR       00008000
 EQU  LCD_DR       0000c000
 CSEG LCD_wr_ir    0000001e
@@ -1199,17 +1199,20 @@ CSEG game3_wait   000004fa
 CSEG game3_done   00000512
 CSEG WAIT_MS@WAIT_MS@6718 00000501
 CSEG doctorInit   00000513
-CSEG doctor_loop  00000522
-CSEG temp_task    000005a6
-CSEG WAIT_MS@WAIT_MS@6795 0000053a
-CSEG temp_convert 00000590
-CSEG main_loop    00000579
-CSEG switch       00000579
-CSEG swSnake      0000057f
-CSEG swGameTwo    00000584
-CSEG swGameThree  00000589
-CSEG swDoctor     0000058e
-CSEG temp_fetch   00000598
-CSEG temp_do_convert 000005b5
-CSEG int0_done    000005c1
-CSEG int1_dec     000005ca
+CSEG matrix_doctor 0000054c
+CSEG doctor_loop  0000051f
+CSEG temp_task    0000064f
+CSEG WAIT_MS@WAIT_MS@6791 00000537
+CSEG md_fill      00000555
+CSEG md_send      000005eb
+CSEG temp_convert 00000639
+CSEG main_loop    00000622
+CSEG switch       00000622
+CSEG swSnake      00000628
+CSEG swGameTwo    0000062d
+CSEG swGameThree  00000632
+CSEG swDoctor     00000637
+CSEG temp_fetch   00000641
+CSEG temp_do_convert 0000065e
+CSEG int0_done    0000066a
+CSEG int1_dec     00000673
