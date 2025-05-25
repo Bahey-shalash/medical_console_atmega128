@@ -1,37 +1,37 @@
 
-AVRASM ver. 2.2.6  Z:\medical_consol_atmega128\medical_thermo\medical_thermo\main.asm Sat May 24 18:22:37 2025
+AVRASM ver. 2.2.6  Z:\medical_consol_atmega128\medical_thermo\medical_thermo\main.asm Sun May 25 14:33:47 2025
 
 [builtin](2): Including file 'C:/Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.1.130\avrasm\inc\m128def.inc'
-Z:\medical_consol_atmega128\medical_thermo\medical_thermo\main.asm(19): Including file 'C:/Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.1.130\avrasm\inc\m128def.inc'
-Z:\medical_consol_atmega128\medical_thermo\medical_thermo\main.asm(20): Including file 'Z:\medical_consol_atmega128\medical_thermo\medical_thermo\definitions.asm'
-Z:\medical_consol_atmega128\medical_thermo\medical_thermo\main.asm(21): Including file 'Z:\medical_consol_atmega128\medical_thermo\medical_thermo\macros.asm'
-Z:\medical_consol_atmega128\medical_thermo\medical_thermo\main.asm(27): warning: Register r14 already defined by the .DEF directive
-Z:\medical_consol_atmega128\medical_thermo\medical_thermo\main.asm(72): Including file 'Z:\medical_consol_atmega128\medical_thermo\medical_thermo\lcd.asm'
-Z:\medical_consol_atmega128\medical_thermo\medical_thermo\main.asm(73): Including file 'Z:\medical_consol_atmega128\medical_thermo\medical_thermo\printf.asm'
-Z:\medical_consol_atmega128\medical_thermo\medical_thermo\main.asm(74): Including file 'Z:\medical_consol_atmega128\medical_thermo\medical_thermo\wire1.asm'
-Z:\medical_consol_atmega128\medical_thermo\medical_thermo\main.asm(75): Including file 'Z:\medical_consol_atmega128\medical_thermo\medical_thermo\ws2812_driver.asm'
-Z:\medical_consol_atmega128\medical_thermo\medical_thermo\main.asm(76): Including file 'Z:\medical_consol_atmega128\medical_thermo\medical_thermo\encoder.asm'
-Z:\medical_consol_atmega128\medical_thermo\medical_thermo\main.asm(77): Including file 'Z:\medical_consol_atmega128\medical_thermo\medical_thermo\ws2812_helpers.asm'
-Z:\medical_consol_atmega128\medical_thermo\medical_thermo\main.asm(82): Including file 'Z:\medical_consol_atmega128\medical_thermo\medical_thermo\home_state.asm'
-Z:\medical_consol_atmega128\medical_thermo\medical_thermo\main.asm(83): Including file 'Z:\medical_consol_atmega128\medical_thermo\medical_thermo\snake_state.asm'
-Z:\medical_consol_atmega128\medical_thermo\medical_thermo\main.asm(84): Including file 'Z:\medical_consol_atmega128\medical_thermo\medical_thermo\game2_state.asm'
-Z:\medical_consol_atmega128\medical_thermo\medical_thermo\main.asm(85): Including file 'Z:\medical_consol_atmega128\medical_thermo\medical_thermo\game3_state.asm'
-Z:\medical_consol_atmega128\medical_thermo\medical_thermo\main.asm(86): Including file 'Z:\medical_consol_atmega128\medical_thermo\medical_thermo\doctor_state.asm'
+Z:\medical_consol_atmega128\medical_thermo\medical_thermo\main.asm(21): Including file 'C:/Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.1.130\avrasm\inc\m128def.inc'
+Z:\medical_consol_atmega128\medical_thermo\medical_thermo\main.asm(22): Including file 'Z:\medical_consol_atmega128\medical_thermo\medical_thermo\definitions.asm'
+Z:\medical_consol_atmega128\medical_thermo\medical_thermo\main.asm(23): Including file 'Z:\medical_consol_atmega128\medical_thermo\medical_thermo\macros.asm'
+Z:\medical_consol_atmega128\medical_thermo\medical_thermo\main.asm(29): warning: Register r14 already defined by the .DEF directive
+Z:\medical_consol_atmega128\medical_thermo\medical_thermo\main.asm(81): Including file 'Z:\medical_consol_atmega128\medical_thermo\medical_thermo\lcd.asm'
+Z:\medical_consol_atmega128\medical_thermo\medical_thermo\main.asm(82): Including file 'Z:\medical_consol_atmega128\medical_thermo\medical_thermo\printf.asm'
+Z:\medical_consol_atmega128\medical_thermo\medical_thermo\main.asm(85): Including file 'Z:\medical_consol_atmega128\medical_thermo\medical_thermo\wire1.asm'
+Z:\medical_consol_atmega128\medical_thermo\medical_thermo\main.asm(86): Including file 'Z:\medical_consol_atmega128\medical_thermo\medical_thermo\ws2812_driver.asm'
+Z:\medical_consol_atmega128\medical_thermo\medical_thermo\main.asm(87): Including file 'Z:\medical_consol_atmega128\medical_thermo\medical_thermo\encoder.asm'
+Z:\medical_consol_atmega128\medical_thermo\medical_thermo\main.asm(88): Including file 'Z:\medical_consol_atmega128\medical_thermo\medical_thermo\ws2812_helpers.asm'
+Z:\medical_consol_atmega128\medical_thermo\medical_thermo\main.asm(94): Including file 'Z:\medical_consol_atmega128\medical_thermo\medical_thermo\home_state.asm'
+Z:\medical_consol_atmega128\medical_thermo\medical_thermo\main.asm(95): Including file 'Z:\medical_consol_atmega128\medical_thermo\medical_thermo\snake_state.asm'
+Z:\medical_consol_atmega128\medical_thermo\medical_thermo\main.asm(96): Including file 'Z:\medical_consol_atmega128\medical_thermo\medical_thermo\game2_state.asm'
+Z:\medical_consol_atmega128\medical_thermo\medical_thermo\main.asm(97): Including file 'Z:\medical_consol_atmega128\medical_thermo\medical_thermo\game3_state.asm'
+Z:\medical_consol_atmega128\medical_thermo\medical_thermo\main.asm(98): Including file 'Z:\medical_consol_atmega128\medical_thermo\medical_thermo\doctor_state.asm'
 [builtin](2): Including file 'C:/Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.1.130\avrasm\inc\m128def.inc'
-Z:\medical_consol_atmega128\medical_thermo\medical_thermo\main.asm(19): Including file 'C:/Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.1.130\avrasm\inc\m128def.inc'
-Z:\medical_consol_atmega128\medical_thermo\medical_thermo\main.asm(20): Including file 'Z:\medical_consol_atmega128\medical_thermo\medical_thermo\definitions.asm'
-Z:\medical_consol_atmega128\medical_thermo\medical_thermo\main.asm(21): Including file 'Z:\medical_consol_atmega128\medical_thermo\medical_thermo\macros.asm'
-Z:\medical_consol_atmega128\medical_thermo\medical_thermo\main.asm(72): Including file 'Z:\medical_consol_atmega128\medical_thermo\medical_thermo\lcd.asm'
-Z:\medical_consol_atmega128\medical_thermo\medical_thermo\main.asm(73): Including file 'Z:\medical_consol_atmega128\medical_thermo\medical_thermo\printf.asm'
-Z:\medical_consol_atmega128\medical_thermo\medical_thermo\main.asm(74): Including file 'Z:\medical_consol_atmega128\medical_thermo\medical_thermo\wire1.asm'
-Z:\medical_consol_atmega128\medical_thermo\medical_thermo\main.asm(75): Including file 'Z:\medical_consol_atmega128\medical_thermo\medical_thermo\ws2812_driver.asm'
-Z:\medical_consol_atmega128\medical_thermo\medical_thermo\main.asm(76): Including file 'Z:\medical_consol_atmega128\medical_thermo\medical_thermo\encoder.asm'
-Z:\medical_consol_atmega128\medical_thermo\medical_thermo\main.asm(77): Including file 'Z:\medical_consol_atmega128\medical_thermo\medical_thermo\ws2812_helpers.asm'
-Z:\medical_consol_atmega128\medical_thermo\medical_thermo\main.asm(82): Including file 'Z:\medical_consol_atmega128\medical_thermo\medical_thermo\home_state.asm'
-Z:\medical_consol_atmega128\medical_thermo\medical_thermo\main.asm(83): Including file 'Z:\medical_consol_atmega128\medical_thermo\medical_thermo\snake_state.asm'
-Z:\medical_consol_atmega128\medical_thermo\medical_thermo\main.asm(84): Including file 'Z:\medical_consol_atmega128\medical_thermo\medical_thermo\game2_state.asm'
-Z:\medical_consol_atmega128\medical_thermo\medical_thermo\main.asm(85): Including file 'Z:\medical_consol_atmega128\medical_thermo\medical_thermo\game3_state.asm'
-Z:\medical_consol_atmega128\medical_thermo\medical_thermo\main.asm(86): Including file 'Z:\medical_consol_atmega128\medical_thermo\medical_thermo\doctor_state.asm'
+Z:\medical_consol_atmega128\medical_thermo\medical_thermo\main.asm(21): Including file 'C:/Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.1.130\avrasm\inc\m128def.inc'
+Z:\medical_consol_atmega128\medical_thermo\medical_thermo\main.asm(22): Including file 'Z:\medical_consol_atmega128\medical_thermo\medical_thermo\definitions.asm'
+Z:\medical_consol_atmega128\medical_thermo\medical_thermo\main.asm(23): Including file 'Z:\medical_consol_atmega128\medical_thermo\medical_thermo\macros.asm'
+Z:\medical_consol_atmega128\medical_thermo\medical_thermo\main.asm(81): Including file 'Z:\medical_consol_atmega128\medical_thermo\medical_thermo\lcd.asm'
+Z:\medical_consol_atmega128\medical_thermo\medical_thermo\main.asm(82): Including file 'Z:\medical_consol_atmega128\medical_thermo\medical_thermo\printf.asm'
+Z:\medical_consol_atmega128\medical_thermo\medical_thermo\main.asm(85): Including file 'Z:\medical_consol_atmega128\medical_thermo\medical_thermo\wire1.asm'
+Z:\medical_consol_atmega128\medical_thermo\medical_thermo\main.asm(86): Including file 'Z:\medical_consol_atmega128\medical_thermo\medical_thermo\ws2812_driver.asm'
+Z:\medical_consol_atmega128\medical_thermo\medical_thermo\main.asm(87): Including file 'Z:\medical_consol_atmega128\medical_thermo\medical_thermo\encoder.asm'
+Z:\medical_consol_atmega128\medical_thermo\medical_thermo\main.asm(88): Including file 'Z:\medical_consol_atmega128\medical_thermo\medical_thermo\ws2812_helpers.asm'
+Z:\medical_consol_atmega128\medical_thermo\medical_thermo\main.asm(94): Including file 'Z:\medical_consol_atmega128\medical_thermo\medical_thermo\home_state.asm'
+Z:\medical_consol_atmega128\medical_thermo\medical_thermo\main.asm(95): Including file 'Z:\medical_consol_atmega128\medical_thermo\medical_thermo\snake_state.asm'
+Z:\medical_consol_atmega128\medical_thermo\medical_thermo\main.asm(96): Including file 'Z:\medical_consol_atmega128\medical_thermo\medical_thermo\game2_state.asm'
+Z:\medical_consol_atmega128\medical_thermo\medical_thermo\main.asm(97): Including file 'Z:\medical_consol_atmega128\medical_thermo\medical_thermo\game3_state.asm'
+Z:\medical_consol_atmega128\medical_thermo\medical_thermo\main.asm(98): Including file 'Z:\medical_consol_atmega128\medical_thermo\medical_thermo\doctor_state.asm'
                                  
                                  ;======================================================================
                                  
@@ -1252,24 +1252,26 @@ Z:\medical_consol_atmega128\medical_thermo\medical_thermo\main.asm(86): Includin
                                  
                                  ; ***** END OF FILE ******************************************************
                                  
-                                 ;  main.asm  � ATmega128L @ 4 MHz � STK-300
-                                 ;  Modular finite-state machine
-                                 ;   � WS2812 matrix on PD7  (driver)
-                                 ;   � LED-strip heartbeat on PF7 (active-low)
-                                 ;   � Buttons on PD0�PD3 (INT0�INT3)
+                                 ;  MEDICAL CONSOLE - Main Control Program
                                  ;======================================================================
+                                 ;  Target Hardware: ATmega128L @ 4 MHz on STK-300 Development Board
                                  ;
-                                 ;  Register policy ----------------------------------------------------
-                                 ;  r16 = w   : volatile scratch, clobbered by nearly every macro �
-                                 ;              do **not** rely on its value except right after you
-                                 ;              loaded it yourself and before the next macro call.
-                                 ;  r17 = _w  : scratch inside interrupt prologues only.
-                                 ;  r14 = s   : long-lived scratch for general calculations � never
-                                 ;              touched by macros.  Preserve if you call sub-routines
-                                 ;              that may use it.
-                                 ;---------------------------------------------------------------------
+                                 ;  Program Description:
+                                 ;  - Multi-state medical console with temperature monitoring
+                                 ;  - Implements a finite state machine with multiple operating modes
+                                 ;  - Includes games, diagnostic tools, and temperature monitoring
+                                 ;  - Uses DS18B20 digital temperature sensor via 1-Wire protocol
+                                 ;  - Features WS2812 RGB LED matrix for visual feedback
+                                 ;  - User input via rotary encoder and push buttons
+                                 ;
+                                 ;  Created By: Bahey Shalash
+                                 ;  Last Modified: May 25, 2025
+                                 ;======================================================================
                                  
-                                             .include "m128def.inc"
+                                 ;---------------------------------------------------------------------
+                                 ;  INCLUDES - Core system definitions and macros
+                                 ;---------------------------------------------------------------------
+                                             .include "m128def.inc"      ; ATmega128 register definitions
                                  
                                  ;***** Created: 2011-02-09 12:03 ******* Source: ATmega128.xml ***********
                                  ;*************************************************************************
@@ -1313,14 +1315,14 @@ Z:\medical_consol_atmega128\medical_thermo\medical_thermo\main.asm(86): Includin
                                  #endif  /* _M128DEF_INC_ */
                                  
                                  ; ***** END OF FILE ******************************************************
-                                             .include "definitions.asm"
+                                             .include "definitions.asm"  ; Global constants and registers
                                  
                                  ; purpose library, definition of addresses and constants
                                  ; 20171114 A.S.
                                  
                                  ; === definitions  ===
                                  .list
-                                             .include "macros.asm"
+                                             .include "macros.asm"       ; Utility macros for code simplification
                                  
                                  ; purpose library, general-purpose macros
                                  ; author (c) R.Holzer (adapted MICRO210/EE208 A.Schmid)
@@ -3162,55 +3164,62 @@ Z:\medical_consol_atmega128\medical_thermo\medical_thermo\main.asm(86): Includin
                                  .list
                                  
                                  ;---------------------------------------------------------------------
-                                 ;  Global registers / constants
+                                 ;  GLOBAL REGISTERS AND CONSTANTS
                                  ;---------------------------------------------------------------------
-                                             .def  sel = r6           ; current FSM state
-                                             .def  s   = r14          ; stable scratch register
+                                             .def  sel = r6           ; Current FSM state register
+                                             .def  s   = r14          ; Stable scratch register for operations
                                  
-                                             .equ  FLG_TEMP   = 0     ; bit0 of `flags`  � temperature-ready
-                                             .equ  REG_STATES = 4     ; valid game states 0�3
-                                             .equ  ST_HOME    = 0
-                                             .equ  ST_GAME1   = 1
-                                             .equ  ST_GAME2   = 2
-                                             .equ  ST_GAME3   = 3
-                                             .equ  ST_DOCTOR  = 4
+                                             ; System State Constants
+                                             .equ  FLG_TEMP   = 0     ; Bit0 of 'flags' - temperature-ready flag
+                                             .equ  REG_STATES = 4     ; Number of valid game states (0-3)
+                                             .equ  ST_HOME    = 0     ; Home/idle state
+                                             .equ  ST_GAME1   = 1     ; Snake game state
+                                             .equ  ST_GAME2   = 2     ; Game 2 state
+                                             .equ  ST_GAME3   = 3     ; Game 3 state
+                                             .equ  ST_DOCTOR  = 4     ; Diagnostic/doctor mode
                                  
-                                             .equ  T1_PREH    = 0xF0  ; Timer-1 preload (high)
-                                             .equ  T1_PREL    = 0xBE  ; Timer-1 preload (low)
-                                             .equ  LED_BIT    = 7     ; PF7 heartbeat (active-low)
+                                             ; Timer and Hardware Constants
+                                             .equ  T1_PREH    = 0xF0  ; Timer-1 preload high byte
+                                             .equ  T1_PREL    = 0xBE  ; Timer-1 preload low byte (approx 1s)
+                                             .equ  LED_BIT    = 7     ; PF7 heartbeat indicator (active-low)
                                              .equ  BTN_DEBOUNCE = 50  ; Button debounce time in milliseconds
+                                 
                                  ;---------------------------------------------------------------------
-                                 ;  SRAM allocation
+                                 ;  SRAM ALLOCATION - System variables
                                  ;---------------------------------------------------------------------
                                  .dseg
-000100                           flags:      .byte 1            ; bit-flags (0 = FLG_TEMP)
-000101                           temp_lsb:   .byte 1            ; DS18B20 LSB
-000102                           temp_msb:   .byte 1            ; DS18B20 MSB
-000103                           phase:      .byte 1            ; 0 = convert, 1 = read
+000100                           flags:      .byte 1            ; System flags (bit 0 = temperature ready)
+000101                           temp_lsb:   .byte 1            ; DS18B20 temperature LSB
+000102                           temp_msb:   .byte 1            ; DS18B20 temperature MSB
+000103                           phase:      .byte 1            ; Temperature sensor phase (0=convert, 1=read)
                                  
                                  ;---------------------------------------------------------------------
+                                 ;  CODE SEGMENT START
+                                 ;---------------------------------------------------------------------
                                  .cseg
+                                 
                                  ;======================================================================
-                                 ;  Interrupt vectors
+                                 ;  INTERRUPT VECTORS - Defines system interrupt handlers
                                  ;======================================================================
                                              .org 0
-000000 940c 05f8                             jmp  reset
+000000 940c 05f8                             jmp  reset         ; Reset vector - system startup
                                  
-                                             .org INT0addr      ; next state
+                                             .org INT0addr      ; Next state button (increment state)
 000002 940c 0664                             jmp  int0_isr
-                                             .org INT1addr      ; previous state
+                                             .org INT1addr      ; Previous state button (decrement state)
 000004 940c 066c                             jmp  int1_isr
-                                             .org INT2addr      ; go home
+                                             .org INT2addr      ; Home button (return to home state)
 000006 940c 0676                             jmp  int2_isr
-                                             .org INT3addr      ; doctor mode
+                                             .org INT3addr      ; Doctor mode button (diagnostic mode)
 000008 940c 0678                             jmp  int3_isr
-                                             .org OVF1addr      ; Timer-1 overflow
+                                             .org OVF1addr      ; Timer-1 overflow (1 second tick)
 00001c 940c 067d                             jmp  t1_isr
                                  
                                  ;---------------------------------------------------------------------
-                                 ;  Library / driver includes (after vectors)
+                                 ;  LIBRARY INCLUDES - External code modules
                                  ;---------------------------------------------------------------------
-                                             .include "lcd.asm"
+                                             ; User interface and IO modules
+                                             .include "lcd.asm"          ; LCD display driver
                                  
                                  ; purpose  LCD HD44780U library
                                  ; ATmega 128 and Atmel Studio 7.0 compliant
@@ -3308,7 +3317,7 @@ Z:\medical_consol_atmega128\medical_thermo\medical_thermo\main.asm(86): Includin
 000063 e420                      	ldi	a0,$40				; load position $40 (begin of line 2)
 000064 dff0                      	rcall	LCD_pos			; set cursor position
 000065 912f                      	pop	a0					; restore a0
-                                             .include "printf.asm"
+                                             .include "printf.asm"       ; Formatted text output
 000066 9508                      
                                  ; purpose library, formatted output generation
                                  ; v2019.02 20180821 supports SRAM input from 0x0260
@@ -3849,7 +3858,9 @@ Z:\medical_consol_atmega128\medical_thermo\medical_thermo\main.asm(86): Includin
 000177 9530
 000178 9520                      	COM4	a3,a2,a1,a0	; complement result
 000179 9508                      	ret
-                                             .include "wire1.asm"
+                                             
+                                             ; Sensor and hardware interface modules
+                                             .include "wire1.asm"        ; 1-Wire protocol for DS18B20
                                  
                                  ; purpose Dallas 1-wire(R) interface library
                                  
@@ -3997,37 +4008,48 @@ Z:\medical_consol_atmega128\medical_thermo\medical_thermo\main.asm(86): Includin
 0001d6 f7c1                      	DJNZ	a2,crc1
 0001d7 9508                      	ret
                                  
-                                             .include "ws2812_driver.asm"
+                                             .include "ws2812_driver.asm"  ; WS2812 RGB LED driver
                                  
-                                 ; purpose: reusable bit-bang driver + 8�8 XY helpers for WS2812B
+                                 ;  WS2812B RGB LED MATRIX DRIVER
+                                 ;======================================================================
+                                 ;  Target: ATmega128L @ 4MHz
                                  ;
-                                 ; ????? ROUTINE REGISTER-USAGE SUMMARY (after this patch) ?????????????
-                                 ;  routine         reads            clobbers (caller must save)       
-                                 ; ?????????????????????????????????????????????????????????????????????
-                                 ;  ws_init         �                �                                 
-                                 ;  ws_byte3wr      a0 a1 a2         a0 a1 a2          (u,w are saved) 
-                                 ;  ws_reset        �                �                                 
-                                 ;  ws_idx_xy       r24 r25          r24 u                            
-                                 ;  ws_offset_idx   r24              u w ZL ZH                        
-                                 ;  (SREG always changes as any normal arithmetic will.)               
-                                 ; ?????????????????????????????????????????????????????????????????????
-                                 ;� WS_PUSH_ALL   � push every register any of the public helpers
-                                 ;                    (ws_byte3wr, ws_idx_xy, ws_offset_idx) may change.
-                                 ;  � WS_POP_ALL    � restore them in reverse order.
+                                 ;  Description:
+                                 ;  This driver provides bit-banging control for WS2812B addressable RGB 
+                                 ;  LEDs arranged in an 8×8 matrix configuration. It handles precise timing
+                                 ;  requirements and provides helper functions for matrix addressing.
                                  ;
-                                 ;  Use pattern
-                                 ;       WS_PUSH_ALL
-                                 ;           ; � build / send frame here �
-                                 ;       WS_POP_ALL
-                                 ; If your code needs a0�a2 kept, push them before calling ws_byte3wr.
+                                 ;  WS2812B Protocol Specifications:
+                                 ;  - Single-wire interface using non-return-to-zero (NRZ) coding
+                                 ;  - Strict timing: "0" bit = 0.4μs high + 0.85μs low
+                                 ;                   "1" bit = 0.8μs high + 0.45μs low
+                                 ;  - Reset condition: >50μs low
+                                 ;  - Data sent in GRB order (not RGB)
+                                 ;  - 24 bits per LED (8 bits per color channel)
                                  ;
-                                 ; ????? pin configuration (override before .include if you wish) ?????
+                                 ;  Functions:
+                                 ;  - ws_init: Initialize WS2812 pin as output
+                                 ;  - ws_byte3wr: Transmit one RGB pixel (3 bytes)
+                                 ;  - ws_reset: Latch data to LEDs
+                                 ;  - ws_idx_xy: Convert X,Y coordinates to linear index
+                                 ;  - ws_offset_idx: Calculate buffer address from linear index
+                                 ;
+                                 ;  Last Modified: May 25, 2025
+                                 ;======================================================================
+                                 
+                                 ; file   ws2812_driver.asm          target ATmega128L-4 MHz
+                                 ; purpose: reusable bit-bang driver + 8×8 XY helpers for WS2812B
+                                 ;
                                  .equ WS_PORT_REG = PORTD
                                  .equ WS_DDR_REG  = DDRD
                                  .equ WS_PIN_IDX  = 7
                                  .equ WS_PIN_MASK = (1 << WS_PIN_IDX)
                                  
-                                 .equ WS_BUF_BASE = 0x0400          ; 8�8�3-byte frame buffer
+                                 .equ WS_BUF_BASE = 0x0400          ; 8×8×3-byte frame buffer
+                                 
+                                 ;---------------------------------------------------------------------
+                                 ;  REGISTER PRESERVATION - Save/restore registers during function calls
+                                 ;---------------------------------------------------------------------
                                          .macro WS_PUSH_ALL
                                              push    a0
                                              push    a1
@@ -4051,8 +4073,11 @@ Z:\medical_consol_atmega128\medical_thermo\medical_thermo\main.asm(86): Includin
                                              pop     a1
                                              pop     a0
                                          .endm
-                                 ; ????? timing-critical bit macros (4 MHz) ????????????????????????????
-                                 ; �0� bit total ? 5 cycles (T0H ? 0.40 �s, T0L ? 0.85 �s)
+                                 
+                                 ;---------------------------------------------------------------------
+                                 ;  BIT TRANSMISSION MACROS - Precisely timed bit patterns for WS2812B
+                                 ;---------------------------------------------------------------------
+                                 ; "0" bit total ≈ 5 cycles (T0H ≈ 0.40 μs, T0L ≈ 0.85 μs)
                                  .macro WS_WR0
                                      clr  u                          ; u = 0  (destroys u **inside** routine)
                                      sbi  WS_PORT_REG, WS_PIN_IDX    ; high     (2 cy)
@@ -4060,7 +4085,7 @@ Z:\medical_consol_atmega128\medical_thermo\medical_thermo\main.asm(86): Includin
                                      nop                              ; 1 cy
                                      nop                              ; 1 cy
                                  .endm
-                                 ; �1� bit total ? 8 cycles (T1H ? 0.80 �s, T1L ? 0.45 �s)
+                                 ; "1" bit total ≈ 8 cycles (T1H ≈ 0.80 μs, T1L ≈ 0.45 μs)
                                  .macro WS_WR1
                                      sbi  WS_PORT_REG, WS_PIN_IDX    ; high   (2 cy)
                                      nop                              ; 1 cy
@@ -4068,21 +4093,29 @@ Z:\medical_consol_atmega128\medical_thermo\medical_thermo\main.asm(86): Includin
                                      cbi  WS_PORT_REG, WS_PIN_IDX    ; low    (2 cy)
                                  .endm
                                  
-                                 ; ????????????????? PUBLIC ROUTINES ???????????????????????????????????
+                                 ;=====================================================================
+                                 ;  PUBLIC INTERFACE FUNCTIONS
+                                 ;=====================================================================
                                  
+                                 ;---------------------------------------------------------------------
+                                 ;  INITIALIZATION - Configure data pin for WS2812 control
+                                 ;---------------------------------------------------------------------
                                  ; set the data pin as output
                                  ws_init:
 0001d8 e800
 0001d9 bb01                          OUTI WS_DDR_REG, WS_PIN_MASK
 0001da 9508                          ret
                                  
+                                 ;---------------------------------------------------------------------
+                                 ;  DATA TRANSMISSION - Send color data to WS2812 LEDs
+                                 ;---------------------------------------------------------------------
                                  ; bit-bang three bytes  (G=a0, R=a1, B=a2)
                                  ; u & w pushed so the caller never sees them modified
                                  ws_byte3wr:
 0001db 923f                          push  u
 0001dc 930f                          push  w
                                  
-                                     ; ? byte G (a0) ?
+                                     ; — byte G (a0) —
 0001dd e008                          ldi   w, 8
                                  _b0:
 0001de fd27                          sbrc  a0, 7
@@ -4103,7 +4136,7 @@ Z:\medical_consol_atmega128\medical_thermo\medical_thermo\main.asm(86): Includin
 0001eb 950a                          dec   w
 0001ec f789                          brne  _b0
                                  
-                                     ; ? byte R (a1) ?
+                                     ; — byte R (a1) —
 0001ed e008                          ldi   w, 8
                                  _b1:
 0001ee fd37                          sbrc  a1, 7
@@ -4124,7 +4157,7 @@ Z:\medical_consol_atmega128\medical_thermo\medical_thermo\main.asm(86): Includin
 0001fb 950a                          dec   w
 0001fc f789                          brne  _b1
                                  
-                                     ; ? byte B (a2) ?
+                                     ; — byte B (a2) —
 0001fd e008                          ldi   w, 8
                                  _b2:
 0001fe fd47                          sbrc  a2, 7
@@ -4149,7 +4182,10 @@ Z:\medical_consol_atmega128\medical_thermo\medical_thermo\main.asm(86): Includin
 00020e 903f                          pop   u
 00020f 9508                          ret
                                  
-                                 ; hold the data line low ?50 �s to latch the frame
+                                 ;---------------------------------------------------------------------
+                                 ;  FRAME LATCHING - Signal end of frame to update LED display
+                                 ;---------------------------------------------------------------------
+                                 ; hold the data line low ≥50 μs to latch the frame
                                  ws_reset:
 000210 9897                          cbi  WS_PORT_REG, WS_PIN_IDX
 000211 e401
@@ -4162,7 +4198,10 @@ Z:\medical_consol_atmega128\medical_thermo\medical_thermo\main.asm(86): Includin
 000218 f7d9                          WAIT_US 50
 000219 9508                          ret
                                  
-                                 ; r24=x, r25=y  ? r24 = x + 8�y   (clobbers u, r24)
+                                 ;---------------------------------------------------------------------
+                                 ;  COORDINATE CONVERSION - Matrix addressing utilities
+                                 ;---------------------------------------------------------------------
+                                 ; r24=x, r25=y → r24 = x + 8×y   (clobbers u, r24)
                                  ws_idx_xy:
 00021a 2e39                          mov  u, r25
 00021b 0c33                          lsl  u
@@ -4171,18 +4210,18 @@ Z:\medical_consol_atmega128\medical_thermo\medical_thermo\main.asm(86): Includin
 00021e 0d83                          add  r24, u
 00021f 9508                          ret
                                  
-                                 ; r24=index ? Z = WS_BUF_BASE + 3�index  (clobbers u, w, ZL, ZH)
+                                 ; r24=index → Z = WS_BUF_BASE + 3×index  (clobbers u, w, ZL, ZH)
                                  ws_offset_idx:
 000220 2f08                          mov  w, r24                  ; w = idx
-000221 0f00                          lsl  w                       ; w = 2�idx
+000221 0f00                          lsl  w                       ; w = 2×idx
 000222 2e38                          mov  u, r24
-000223 0d03                          add  w, u                    ; w = 3�idx
+000223 0d03                          add  w, u                    ; w = 3×idx
 000224 e0e0                          ldi  ZL, low (WS_BUF_BASE)
 000225 e0f4                          ldi  ZH, high(WS_BUF_BASE)
 000226 0fe0                          add  ZL, w
 000227 2433                          clr  u
 000228 1df3                          adc  ZH, u                   ; add carry
-                                             .include "encoder.asm"
+                                             .include "encoder.asm"      ; Rotary encoder input handler
 000229 9508                      
                                  ; purpose library angular encoder operation
                                  
@@ -4294,54 +4333,116 @@ Z:\medical_consol_atmega128\medical_thermo\medical_thermo\main.asm(86): Includin
                                  	brne	PC+2
                                  	ldi	@0,@1
                                  .endmacro
-                                             .include "ws2812_helpers.asm"
+                                             .include "ws2812_helpers.asm" ; WS2812 utility functions
                                  
-                                 ;  ws2812_helpers.asm  � solid-colour helper for the WS2812 8�8 matrix
-                                 ;  call:  a0 = G  a1 = R  a2 = B   (GRB order)
-                                 ;  clobbers:  Z, r0, r22, w=r16  (all scratch according to policy)
+                                 ;  WS2812B RGB LED MATRIX HELPER FUNCTIONS
+                                 ;======================================================================
+                                 ;  Target: ATmega128L @ 4MHz
+                                 ;
+                                 ;  Description:
+                                 ;  This file provides higher-level helper functions for working with
+                                 ;  the WS2812B 8×8 RGB LED matrix. It implements common operations like
+                                 ;  filling the entire matrix with a single color, leveraging the lower-level
+                                 ;  driver functions from ws2812_driver.asm.
+                                 ;
+                                 ;  Dependencies:
+                                 ;  - ws2812_driver.asm must be included before this file
+                                 ;  - Requires the WS_BUF_BASE memory area defined in ws2812_driver.asm
+                                 ;  - Uses WAIT_US macro from macros.asm
+                                 ;
+                                 ;  Functions:
+                                 ;  - matrix_solid: Fill entire 8×8 matrix with a single RGB color
+                                 ;
+                                 ;  Register Usage:
+                                 ;  - Input: a0=Green, a1=Red, a2=Blue (GRB order to match WS2812B protocol)
+                                 ;  - Preserves: r22, ZL, ZH
+                                 ;  - Clobbers: Z, r0, w=r16 (all scratch registers per calling convention)
+                                 ;
+                                 ;  Author: Bahey Shalash
+                                 ;  Last Modified: May 25, 2025
                                  ;======================================================================
                                  matrix_solid:
 000265 936f                              push    r22
 000266 93ef                              push    ZL
 000267 93ff                              push    ZH
                                  
-                                         ;--- fill frame buffer with the requested colour -------------
+                                         ;---------------------------------------------------------------------
+                                         ;  BUFFER PREPARATION - Fill frame buffer with specified color
+                                         ;---------------------------------------------------------------------
 000268 e0e0                              ldi     ZL, low(WS_BUF_BASE)
 000269 e0f4                              ldi     ZH, high(WS_BUF_BASE)
-00026a e460                              ldi     r22, 64                    ; 64 pixels
+00026a e460                              ldi     r22, 64                    ; 64 pixels (8×8 matrix)
                                  m_fill_loop:
-00026b 9321                              st      Z+, a0
-00026c 9331                              st      Z+, a1
-00026d 9341                              st      Z+, a2
-00026e 956a                              dec     r22
-00026f f7d9                              brne    m_fill_loop
+00026b 9321                              st      Z+, a0                     ; Store Green component
+00026c 9331                              st      Z+, a1                     ; Store Red component
+00026d 9341                              st      Z+, a2                     ; Store Blue component
+00026e 956a                              dec     r22                        ; Decrement pixel counter
+00026f f7d9                              brne    m_fill_loop                ; Continue until all pixels filled
                                  
-                                         ;--- transmit the frame to the LEDs --------------------------
-000270 e0e0                              ldi     ZL, low(WS_BUF_BASE)
+                                         ;---------------------------------------------------------------------
+                                         ;  DATA TRANSMISSION - Send buffer contents to LED matrix
+                                         ;---------------------------------------------------------------------
+000270 e0e0                              ldi     ZL, low(WS_BUF_BASE)       ; Reset Z pointer to buffer start
 000271 e0f4                              ldi     ZH, high(WS_BUF_BASE)
 000272 e400
-000273 2e00                              _LDI    r0, 64
+000273 2e00                              _LDI    r0, 64                     ; 64 pixels to transmit
                                  m_send_loop:
-000274 9121                              ld      a0, Z+
-000275 9131                              ld      a1, Z+
-000276 9141                              ld      a2, Z+
-000277 94f8                              cli
-000278 df62                              rcall   ws_byte3wr
-000279 9478                              sei
-00027a 940a                              dec     r0
-00027b f7c1                              brne    m_send_loop
-00027c df93                              rcall   ws_reset
+000274 9121                              ld      a0, Z+                     ; Load Green component
+000275 9131                              ld      a1, Z+                     ; Load Red component
+000276 9141                              ld      a2, Z+                     ; Load Blue component
+000277 94f8                              cli                                ; Disable interrupts for precise timing
+000278 df62                              rcall   ws_byte3wr                 ; Transmit one RGB pixel
+000279 9478                              sei                                ; Re-enable interrupts
+00027a 940a                              dec     r0                         ; Decrement pixel counter
+00027b f7c1                              brne    m_send_loop                ; Continue until all pixels sent
+00027c df93                              rcall   ws_reset                   ; Send reset pulse to latch data
                                  
-00027d 91ff                              pop     ZH
+                                         ;---------------------------------------------------------------------
+                                         ;  CLEANUP - Restore preserved registers and return
+                                         ;---------------------------------------------------------------------
+00027d 91ff                              pop     ZH                         ; Restore Z pointer
 00027e 91ef                              pop     ZL
-00027f 916f                              pop     r22
+00027f 916f                              pop     r22                        ; Restore counter register
 000280 9508                      
                                  ;---------------------------------------------------------------------
-                                 ;  State modules
+                                 ;  STATE MODULES - Application state implementations
                                  ;---------------------------------------------------------------------
-                                             .include "home_state.asm"
+                                             ; Each state module implements a different console mode
+                                             .include "home_state.asm"    ; Home screen and temperature display
                                  
-                                 ;  HOME state  — draw green background with “holes” off
+                                 ;  HOME STATE - Main Menu Interface
+                                 ;======================================================================
+                                 ;  Target: ATmega128L @ 4MHz
+                                 ;
+                                 ;  Description:
+                                 ;  This file implements the HOME state, which serves as the main menu
+                                 ;  for the medical console. It displays "HOME" on the LCD screen and
+                                 ;  creates a green pattern with strategic "holes" (blank pixels) on the
+                                 ;  8×8 RGB LED matrix to create a recognizable visual pattern.
+                                 ;
+                                 ;  Functions:
+                                 ;  - home_init: Initialize the HOME state (LCD and LED matrix)
+                                 ;  - home_wait: Main polling loop that monitors the current state
+                                 ;  - matrix_holes: Helper function to create the patterned LED display
+                                 ;
+                                 ;  Register Usage:
+                                 ;  - s: Used to check current system state
+                                 ;  - a0-a2: RGB color components for LED matrix (GRB order)
+                                 ;  - r22: Counter for filling the buffer
+                                 ;  - r24, r25: X,Y coordinates for pixel addressing
+                                 ;  - Z: Memory pointer for frame buffer access
+                                 ;
+                                 ;  Dependencies:
+                                 ;  - Requires LCD driver for text display
+                                 ;  - Uses WS2812 driver for LED matrix control
+                                 ;  - Relies on ST_HOME constant from main.asm
+                                 ;
+                                 ;  Author: Bahey Shalash
+                                 ;  Last Modified: May 25, 2025
+                                 ;======================================================================
+                                 
+                                 ;----------------------------------------------------------------------
+                                 ;  HOME state  — draw green background with "holes" off(smiley face)
                                  ;----------------------------------------------------------------------
                                  
                                  home_init:
@@ -4361,6 +4462,9 @@ Z:\medical_consol_atmega128\medical_thermo\medical_thermo\main.asm(86): Includin
 00028c e040                              ldi     a2, 0x00     ; B
 00028d d019                              rcall   matrix_holes
                                  
+                                 ;---------------------------------------------------------------------
+                                 ;  MAIN LOOP - Wait until user changes state
+                                 ;---------------------------------------------------------------------
                                  home_wait:
 00028e 2ce6                              mov     s, sel
 00028f e000
@@ -4387,6 +4491,9 @@ Z:\medical_consol_atmega128\medical_thermo\medical_thermo\main.asm(86): Includin
 0002a4 f781                              WAIT_MS 50
 0002a5 cfe8                              rjmp    home_wait
                                  
+                                 ;---------------------------------------------------------------------
+                                 ;  CLEANUP - Return to main state handler
+                                 ;---------------------------------------------------------------------
                                  home_done:
 0002a6 9508                              ret
                                  
@@ -4400,7 +4507,9 @@ Z:\medical_consol_atmega128\medical_thermo\medical_thermo\main.asm(86): Includin
 0002a8 93ef                              push    ZL
 0002a9 93ff                              push    ZH
                                  
-                                         ;--- 1) fill frame buffer 64×3=192 B with (a0,a1,a2) -----------
+                                         ;---------------------------------------------------------------------
+                                         ;  BUFFER PREPARATION - Fill entire matrix with green color
+                                         ;---------------------------------------------------------------------
 0002aa e0e0                              ldi     ZL, low(WS_BUF_BASE)
 0002ab e0f4                              ldi     ZH, high(WS_BUF_BASE)
 0002ac e460                              ldi     r22, 64
@@ -4411,7 +4520,9 @@ Z:\medical_consol_atmega128\medical_thermo\medical_thermo\main.asm(86): Includin
 0002b0 956a                              dec     r22
 0002b1 f7d9                              brne    mh_fill
                                  
-                                         ;--- 2) blank out “holes” by writing 0,0,0 at each coord --------
+                                         ;---------------------------------------------------------------------
+                                         ;  PATTERN CREATION - Turn off specific pixels to create pattern
+                                         ;---------------------------------------------------------------------
                                          ; (1,1)
 0002b2 e081                              ldi     r24,1
 0002b3 e091                              ldi     r25,1
@@ -4538,7 +4649,9 @@ Z:\medical_consol_atmega128\medical_thermo\medical_thermo\main.asm(86): Includin
 000312 9211                              st      Z+, r1
 000313 8210                              st      Z,  r1
                                  
-                                         ;--- 3) transmit the frame to the LEDs ------------------------
+                                         ;---------------------------------------------------------------------
+                                         ;  DATA TRANSMISSION - Send pattern to LED matrix
+                                         ;---------------------------------------------------------------------
 000314 e0e0                              ldi     ZL, low(WS_BUF_BASE)
 000315 e0f4                              ldi     ZH, high(WS_BUF_BASE)
 000316 e400
@@ -4554,25 +4667,48 @@ Z:\medical_consol_atmega128\medical_thermo\medical_thermo\main.asm(86): Includin
 00031f f7c1                              brne    mh_send
 000320 deef                              rcall   ws_reset
                                  
+                                         ;---------------------------------------------------------------------
+                                         ;  CLEANUP - Restore saved registers and return
+                                         ;---------------------------------------------------------------------
 000321 91ff                              pop     ZH
 000322 91ef                              pop     ZL
 000323 916f                              pop     r22
-                                             .include "snake_state.asm"
+                                             .include "snake_state.asm"   ; Snake game implementation
 000324 9508                      
-                                 ;  SNAKE state – ST_GAME1 (cleaned up with constants)
-                                 ;----------------------------------------------------------------------
-                                 ;  • 8×8 WS2812 matrix
-                                 ;  • Growing snake – blue head / green body
-                                 ;  • Apple: red, re-spawns instantly at a random free cell when eaten
-                                 ;  • Walls: collision → “GAME OVER” (freeze until sel ≠ ST_GAME1)
-                                 ;  • Control: rotary encoder (turns queued @ QUEUE_SIZE)
-                                 ;  • PRNG: read Timer-0 + ADC LSB (prescaler untouched)
-                                 ;----------------------------------------------------------------------
-                                 ;  Snake grows by +1 each time it eats an apple
+                                 ;  SNAKE GAME IMPLEMENTATION - Classic Snake Game for LED Matrix
+                                 ;======================================================================
+                                 ;  Target: ATmega128L @ 4MHz
+                                 ;
+                                 ;  Game Description:
+                                 ;  This file implements a classic Snake game that runs on an 8×8 RGB LED
+                                 ;  matrix. The player controls a snake that grows in length each time it
+                                 ;  eats an apple. The game ends if the snake collides with the walls.
+                                 ;
+                                 ;  Features:
+                                 ;  - Blue snake head with green body segments
+                                 ;  - Red apple that randomly respawns when eaten
+                                 ;  - Rotary encoder control with direction queue
+                                 ;  - Growing snake length when eating apples
+                                 ;  - Wall collision detection (game over condition)
+                                 ;
+                                 ;  Technical Implementation:
+                                 ;  - Uses WS2812B RGB LED matrix for display
+                                 ;  - Snake stored as positions in SRAM buffer
+                                 ;  - Circular queue for processing direction changes
+                                 ;  - Pseudo-random number generation for apple placement
+                                 ;  - Fixed frame rate gameplay (configurable delay)
+                                 ;
+                                 ;  Register Usage:
+                                 ;  - r18-r26: Used for game state calculations
+                                 ;  - ZL,ZH: Memory pointers for accessing snake data
+                                 ;  - a0-a2: RGB color components for LED matrix
+                                 ;
+                                 ;  Author: Bahey Shalash
+                                 ;  Last Modified: May 25, 2025
                                  ;======================================================================
                                  
                                  ;---------------------------------------------------------------------
-                                 ;  Symbolic constants
+                                 ;  SYMBOLIC CONSTANTS - Game parameters and configuration
                                  ;---------------------------------------------------------------------
                                  .equ DIR_UPP              = 0
                                  .equ DIR_RIGHTT           = 1
@@ -4580,7 +4716,7 @@ Z:\medical_consol_atmega128\medical_thermo\medical_thermo\main.asm(86): Includin
                                  .equ DIR_LEFTT            = 3
                                  .equ DIR_INITT            = DIR_RIGHTT
                                  
-                                 .equ Apple_INIT_POS       = 45
+                                 .equ Apple_INIT_POS       = 45 ; (5,5) in 8x8 matrix
                                  
                                  .equ SNAKE_INIT_POS1      = 26
                                  .equ SNAKE_INIT_POS2      = 27
@@ -4605,7 +4741,7 @@ Z:\medical_consol_atmega128\medical_thermo\medical_thermo\main.asm(86): Includin
                                  .equ APPLE_RED            = 0x0F
                                  
                                  ;---------------------------------------------------------------------
-                                 ;  SRAM layout
+                                 ;  SRAM LAYOUT - Game state variables
                                  ;---------------------------------------------------------------------
                                  .dseg
 000105                           snake_body:   .byte GRID_CELLS      ; packed x + MATRIX_SIZE*y
@@ -4622,8 +4758,14 @@ Z:\medical_consol_atmega128\medical_thermo\medical_thermo\main.asm(86): Includin
                                  .cseg
                                  
                                  ;=====================================================================
-                                 ;  INITIALISATION
+                                 ;  INITIALIZATION - Game setup and data initialization
                                  ;=====================================================================
+                                 ; This section initializes the game by:
+                                 ; - Clearing the LCD and displaying "SNAKE"
+                                 ; - Initializing the rotary encoder
+                                 ; - Setting up the initial snake data
+                                 ; - Drawing the initial game state
+                                 ;---------------------------------------------------------------------
                                  snake_game_init:
 000325 dd0f                          rcall lcd_clear
 000326 e209
@@ -4640,6 +4782,13 @@ Z:\medical_consol_atmega128\medical_thermo\medical_thermo\main.asm(86): Includin
 000330 d144                          rcall snake_draw
 000331 c029                          rjmp snake_wait
                                  
+                                 ;---------------------------------------------------------------------
+                                 ;  DATA INITIALIZATION - Setup initial game state
+                                 ;---------------------------------------------------------------------
+                                 ; Sets up the initial snake position, direction, apple placement,
+                                 ; and other game parameters. Clears the entire play field and places
+                                 ; the snake in its starting position.
+                                 ;---------------------------------------------------------------------
                                  snake_init_data:
                                      ; clear body buffer → EMPTY_CELL
 000332 e0e5                          ldi ZL, low(snake_body)
@@ -4688,8 +4837,15 @@ Z:\medical_consol_atmega128\medical_thermo\medical_thermo\main.asm(86): Includin
 00035a 9508                          ret  ; Timer-0 prescaler untouched – PRNG read only
                                  
                                  ;=====================================================================
-                                 ;  MAIN LOOP (fixed FRAME_DELAY_MS frames)
+                                 ;  MAIN LOOP - Game cycle with fixed frame rate
                                  ;=====================================================================
+                                 ; Controls the main game timing loop. Each frame consists of:
+                                 ; - A fixed delay period (FRAME_DELAY_MS)
+                                 ; - Processing user input during the delay
+                                 ; - Moving the snake
+                                 ; - Drawing the updated game state
+                                 ; - Checking if player has exited the game
+                                 ;---------------------------------------------------------------------
                                  snake_wait:
                                      ; start-of-frame delay
 00035b ef84                          ldi r24, low(FRAME_DELAY_MS)
@@ -4731,8 +4887,12 @@ Z:\medical_consol_atmega128\medical_thermo\medical_thermo\main.asm(86): Includin
 00037b 9508                          ret
                                  
                                  ;=====================================================================
-                                 ;  update_game – rotary encoder → heading  (unchanged)
+                                 ;  USER INPUT HANDLING - Process rotary encoder movements
                                  ;=====================================================================
+                                 ; Reads the rotary encoder and updates the snake's direction based
+                                 ; on encoder rotation. Implements a queue system to store direction
+                                 ; changes that haven't been processed yet. Prevents 180° turns.
+                                 ;---------------------------------------------------------------------
                                  update_game:
 00037c 939f                          push r25
 00037d 938f                          push r24
@@ -4826,8 +4986,12 @@ Z:\medical_consol_atmega128\medical_thermo\medical_thermo\main.asm(86): Includin
 0003c9 9508                          ret
                                  
                                  ;=====================================================================
-                                 ;  move_snake – borders, apple collision & growth
+                                 ;  SNAKE MOVEMENT - Update snake position and handle collisions
                                  ;=====================================================================
+                                 ; Calculates the snake's new head position based on current direction
+                                 ; Checks for collisions with walls and handles apple eating
+                                 ; Updates the snake's length and position data
+                                 ;---------------------------------------------------------------------
                                  move_snake:
 0003ca 9120 0148                     lds  r18, direction
                                  
@@ -4953,8 +5117,12 @@ Z:\medical_consol_atmega128\medical_thermo\medical_thermo\main.asm(86): Includin
 00042d 9508                          ret
                                  
                                  ;=====================================================================
-                                 ;  place_new_apple – constant-time (8 passes)
+                                 ;  APPLE PLACEMENT - Generate random position for new apple
                                  ;=====================================================================
+                                 ; Places a new apple at a random position that doesn't overlap with 
+                                 ; the snake. Uses a pseudo-random number generator with a fixed 
+                                 ; number of placement attempts for consistent timing.
+                                 ;---------------------------------------------------------------------
                                  place_new_apple:
 00042e 93af                          push r26
 00042f 939f                          push r25
@@ -5006,22 +5174,22 @@ Z:\medical_consol_atmega128\medical_thermo\medical_thermo\main.asm(86): Includin
 000456 e0e5                          ldi   ZL, low(snake_body)
 000457 e0f1                          ldi   ZH, high(snake_body)
 000458 0fe1                          add   ZL, _w
-000459 f408                          brcc buf_ptr
+000459 f408                          brcc  buf_ptr
 00045a 95f3                          inc   ZH
                                  buf_ptr:
 00045b 8110                          ld    _w, Z
 00045c 1714                          cp    _w, r20
-00045d f011                          breq clash_found
+00045d f011                          breq  clash_found
 00045e 9553                          inc   r21
 00045f cfef                          rjmp  scan_loop
                                  
                                  clash_found:
                                      ; segment clash → skip storing
-000460 c003                          rjmp loop_continue
+000460 c003                          rjmp  loop_continue
                                  
                                  free_found:
 000461 2322                          tst   r18
-000462 f409                          brne loop_continue
+000462 f409                          brne  loop_continue
 000463 2f24                          mov   r18, r20
                                  
                                  loop_continue:
@@ -5030,7 +5198,7 @@ Z:\medical_consol_atmega128\medical_thermo\medical_thermo\main.asm(86): Includin
                                  
                                      ; commit result
 000466 2322                          tst   r18
-000467 f409                          brne store_ok
+000467 f409                          brne  store_ok
 000468 2f24                          mov   r18, r20
                                  store_ok:
 000469 9320 0149                     sts   apple_pos, r18
@@ -5047,8 +5215,14 @@ Z:\medical_consol_atmega128\medical_thermo\medical_thermo\main.asm(86): Includin
 000474 9508                          ret
                                  
                                  ;=====================================================================
-                                 ;  snake_draw – render snake & apple
+                                 ;  RENDERING - Draw the snake and apple on the LED matrix
                                  ;=====================================================================
+                                 ; Renders the current game state to the LED matrix:
+                                 ; - Draws the snake body in green
+                                 ; - Draws the snake head in blue
+                                 ; - Draws the apple in red
+                                 ; - Transmits the frame buffer to the physical LED matrix
+                                 ;---------------------------------------------------------------------
                                  snake_draw:
 000475 2722                          clr a0
 000476 2733                          clr a1
@@ -5139,12 +5313,44 @@ Z:\medical_consol_atmega128\medical_thermo\medical_thermo\main.asm(86): Includin
 0004c1 940a                          dec  r0
 0004c2 f7c1                          brne flush_loop
 0004c3 dd4c                          rcall ws_reset
-                                             .include "game2_state.asm"
+                                             .include "game2_state.asm"   ; Second game implementation
 0004c4 9508                      
-                                 ;  GAME 2  state
+                                 ;  GAME 2 STATE - Placeholder for Future Game Implementation
+                                 ;======================================================================
+                                 ;  Target: ATmega128L @ 4MHz
+                                 ;
+                                 ;  Description:
+                                 ;  This file implements a placeholder state for a future game (Game 2).
+                                 ;  It currently provides a basic template with a blue LED matrix display
+                                 ;  and "GAME 2" text on the LCD. The implementation loops until the user
+                                 ;  changes to a different state.
+                                 ;
+                                 ;  Functions:
+                                 ;  - gameTwoInit: Initialize Game 2 state (LCD and LED matrix)
+                                 ;  - game2_wait: Main loop that monitors the current state
+                                 ;
+                                 ;  Register Usage:
+                                 ;  - s: Used to check current system state
+                                 ;  - a0-a2: RGB color components for LED matrix (GRB order)
+                                 ;  - sel: System state register (defined in main.asm)
+                                 ;
+                                 ;  Dependencies:
+                                 ;  - Requires LCD driver for text display
+                                 ;  - Uses WS2812 helper functions for LED matrix control
+                                 ;  - Relies on ST_GAME2 constant from main.asm
+                                 ;
+                                 ;  Author: Bahey Shalash
+                                 ;  Last Modified: May 25, 2025
+                                 ;======================================================================
+                                 
+                                 ;----------------------------------------------------------------------
+                                 ;  GAME 2  state (placeholder for a future game)
                                  ;----------------------------------------------------------------------
                                  
                                  gameTwoInit:
+                                         ;---------------------------------------------------------------------
+                                         ;  INITIALIZATION - Setup LCD display with game title
+                                         ;---------------------------------------------------------------------
 0004c5 db6f                              rcall   lcd_clear
 0004c6 e209
 0004c7 2e40
@@ -5156,17 +5362,26 @@ Z:\medical_consol_atmega128\medical_thermo\medical_thermo\main.asm(86): Includin
 0004cd 3220
 0004ce 0000                              .db     "GAME 2",0,0
                                  
-                                         ; blue matrix
+                                         ;---------------------------------------------------------------------
+                                         ;  VISUAL INDICATOR - Set LED matrix to solid blue
+                                         ;---------------------------------------------------------------------
+                                         ; Set color to blue (GRB order: a0=G, a1=R, a2=B)
 0004cf e020                              ldi     a0, 0x00
 0004d0 e030                              ldi     a1, 0x00
 0004d1 e04f                              ldi     a2, 0x0F
 0004d2 dd92                              rcall   matrix_solid
                                  
+                                 ;---------------------------------------------------------------------
+                                 ;  MAIN LOOP - Wait until user changes the state
+                                 ;---------------------------------------------------------------------
                                  game2_wait:
+                                         ;---------------------------------------------------------------------
+                                         ;  STATE CHECKING - Monitor if current state is still Game 2
+                                         ;---------------------------------------------------------------------
 0004d3 2ce6                              mov     s, sel
 0004d4 e002
 0004d5 16e0                              _CPI     s, ST_GAME2
-0004d6 f4a1                              brne    game2_done
+0004d6 f4a1                              brne    game2_done            ; Exit if state has changed
 0004d7 e302
 0004d8 2e30
 0004d9 e001
@@ -5185,16 +5400,51 @@ Z:\medical_consol_atmega128\medical_thermo\medical_thermo\main.asm(86): Includin
 0004e6 943a
 0004e7 f791
 0004e8 950a
-0004e9 f781                              WAIT_MS 50
-0004ea cfe8                              rjmp    game2_wait
+0004e9 f781                              WAIT_MS 50                    ; Short delay for polling
+0004ea cfe8                              rjmp    game2_wait            ; Continue waiting
                                  
+                                 ;---------------------------------------------------------------------
+                                 ;  CLEANUP - Return to main state handler when done
+                                 ;---------------------------------------------------------------------
                                  game2_done:
-                                             .include "game3_state.asm"
+                                             .include "game3_state.asm"   ; Third game implementation 
 0004eb 9508                      
+                                 ;  GAME 3 STATE - Placeholder for Future Game Implementation
+                                 ;======================================================================
+                                 ;  Target: ATmega128L @ 4MHz
+                                 ;
+                                 ;  Description:
+                                 ;  This file implements a placeholder state for a future game (Game 3).
+                                 ;  It currently provides a basic template with a yellow LED matrix display
+                                 ;  and "GAME 3" text on the LCD. The implementation loops until the user
+                                 ;  changes to a different state.
+                                 ;
+                                 ;  Functions:
+                                 ;  - gameThreeInit: Initialize Game 3 state (LCD and LED matrix)
+                                 ;  - game3_wait: Main loop that monitors the current state
+                                 ;
+                                 ;  Register Usage:
+                                 ;  - s: Used to check current system state
+                                 ;  - a0-a2: RGB color components for LED matrix (GRB order)
+                                 ;  - sel: System state register (defined in main.asm)
+                                 ;
+                                 ;  Dependencies:
+                                 ;  - Requires LCD driver for text display
+                                 ;  - Uses WS2812 helper functions for LED matrix control
+                                 ;  - Relies on ST_GAME3 constant from main.asm
+                                 ;
+                                 ;  Author: Bahey Shalash
+                                 ;  Last Modified: May 25, 2025
+                                 ;======================================================================
+                                 
+                                 ;----------------------------------------------------------------------
                                  ;  GAME 3  state
                                  ;----------------------------------------------------------------------
                                  
                                  gameThreeInit:
+                                         ;---------------------------------------------------------------------
+                                         ;  INITIALIZATION - Setup LCD display with game title
+                                         ;---------------------------------------------------------------------
 0004ec db48                              rcall   lcd_clear
 0004ed e209
 0004ee 2e40
@@ -5204,21 +5454,30 @@ Z:\medical_consol_atmega128\medical_thermo\medical_thermo\main.asm(86): Includin
 0004f2 4147
 0004f3 454d
 0004f4 3320
-Z:\medical_consol_atmega128\medical_thermo\medical_thermo\game3_state.asm(8): warning: .cseg .db misalignment - padding zero byte
-Z:\medical_consol_atmega128\medical_thermo\medical_thermo\main.asm(85): 'Z:\medical_consol_atmega128\medical_thermo\medical_thermo\game3_state.asm' included form here
+Z:\medical_consol_atmega128\medical_thermo\medical_thermo\game3_state.asm(40): warning: .cseg .db misalignment - padding zero byte
+Z:\medical_consol_atmega128\medical_thermo\medical_thermo\main.asm(97): 'Z:\medical_consol_atmega128\medical_thermo\medical_thermo\game3_state.asm' included form here
 0004f5 0000                              .db     "GAME 3",0
                                  
-                                         ; yellow matrix  (R+G)
+                                         ;---------------------------------------------------------------------
+                                         ;  VISUAL INDICATOR - Set LED matrix to solid yellow (R+G)
+                                         ;---------------------------------------------------------------------
+                                         ; Set color to yellow (GRB order: a0=G, a1=R, a2=B)
 0004f6 e028                              ldi     a0, 0x08
 0004f7 e038                              ldi     a1, 0x08
 0004f8 e040                              ldi     a2, 0x00
 0004f9 dd6b                              rcall   matrix_solid
                                  
+                                 ;---------------------------------------------------------------------
+                                 ;  MAIN LOOP - Wait until user changes the state
+                                 ;---------------------------------------------------------------------
                                  game3_wait:
+                                         ;---------------------------------------------------------------------
+                                         ;  STATE CHECKING - Monitor if current state is still Game 3
+                                         ;---------------------------------------------------------------------
 0004fa 2ce6                              mov     s, sel
 0004fb e003
 0004fc 16e0                              _CPI     s, ST_GAME3
-0004fd f4a1                              brne    game3_done
+0004fd f4a1                              brne    game3_done            ; Exit if state has changed
 0004fe e302
 0004ff 2e30
 000500 e001
@@ -5237,19 +5496,45 @@ Z:\medical_consol_atmega128\medical_thermo\medical_thermo\main.asm(85): 'Z:\medi
 00050d 943a
 00050e f791
 00050f 950a
-000510 f781                              WAIT_MS 50
-000511 cfe8                              rjmp    game3_wait
+000510 f781                              WAIT_MS 50                    ; Short delay for polling
+000511 cfe8                              rjmp    game3_wait            ; Continue waiting
                                  
+                                 ;---------------------------------------------------------------------
+                                 ;  CLEANUP - Return to main state handler when done
+                                 ;---------------------------------------------------------------------
                                  game3_done:
-                                             .include "doctor_state.asm"
+                                             .include "doctor_state.asm"  ; Diagnostic/doctor mode
 000512 9508                      
-                                 ;  doctor_state.asm      � ST_DOCTOR diagnostic screen (patched)
+                                 ;  DOCTOR MODE - Medical Diagnostic State (ST_DOCTOR)
+                                 ;======================================================================
+                                 ;  Purpose:
+                                 ;  - Implements a diagnostic mode with temperature display
+                                 ;  - Shows a red Swiss cross on the 8×8 RGB LED matrix
+                                 ;  - Provides continuous temperature monitoring at 4Hz update rate
+                                 ;
+                                 ;  Functions:
+                                 ;  - doctorInit: Initialize doctor mode (LCD and LED matrix)
+                                 ;  - doctor_loop: Main refresh loop for temperature monitoring
+                                 ;  - matrix_doctor: Draw Swiss cross pattern on LED matrix
+                                 ;
+                                 ;  Register Usage:
+                                 ;  - r18: Saves caller's a0, temporary for flags and temperature
+                                 ;  - a0, a1: Used for temperature values (LSB/MSB)
+                                 ;  - a0-a2, r0-r1, r22-r25, Z: Used for LED matrix operations
+                                 ;
+                                 ;  Dependencies:
+                                 ;  - Requires LCD driver for text display
+                                 ;  - Requires WS2812 drivers for LED matrix control
+                                 ;  - Uses temperature sensor via temp_task function
+                                 ;  - Uses PRINTF macro for formatted temperature output
                                  ;======================================================================
                                  
                                  doctorInit:
-000513 932f                              push    r18                    ; save caller’s a0 slot
+000513 932f                              push    r18                    ; save caller's a0 slot
                                  
-                                         ;── 1. clear LCD and show header ────────────────────────────────
+                                         ;---------------------------------------------------------------------
+                                         ;  INITIALIZATION - Clear LCD and show doctor mode header
+                                         ;---------------------------------------------------------------------
 000514 db20                              rcall   lcd_clear
 000515 e209
 000516 2e40
@@ -5261,19 +5546,25 @@ Z:\medical_consol_atmega128\medical_thermo\medical_thermo\main.asm(85): 'Z:\medi
 00051c 726f
 00051d 0000                              .db     "Doctor",0,0
                                  
-                                         ;── 2. draw red Swiss-cross background on the LED matrix ────────
+                                         ;---------------------------------------------------------------------
+                                         ;  VISUAL INDICATOR - Display red Swiss cross on LED matrix
+                                         ;---------------------------------------------------------------------
 00051e d02d                              rcall   matrix_doctor         ; fills buffer & transmits
                                  
                                  ;======================================================================
-                                 ;  main refresh loop � runs until sel ≠ ST_DOCTOR
+                                 ;  MAIN LOOP - Temperature monitoring with 4Hz refresh rate
                                  ;======================================================================
                                  doctor_loop:
-                                         ;---  temperature housekeeping  ---------------------------------
+                                         ;---------------------------------------------------------------------
+                                         ;  TEMPERATURE PROCESSING - Handle sensor conversion and reading
+                                         ;---------------------------------------------------------------------
 00051f 9120 0100                         lds     r18, flags
 000521 fd20                              sbrc    r18, FLG_TEMP
 000522 d12c                              rcall   temp_task
                                  
-                                         ;---  fetch last reading & print -------------------------------
+                                         ;---------------------------------------------------------------------
+                                         ;  DISPLAY UPDATE - Show current temperature reading on LCD
+                                         ;---------------------------------------------------------------------
 000523 9120 0101                         lds     a0, temp_lsb
 000525 9130 0102                         lds     a1, temp_msb
 000527 db0d                              rcall   lcd_clear
@@ -5290,6 +5581,9 @@ Z:\medical_consol_atmega128\medical_thermo\medical_thermo\main.asm(85): 'Z:\medi
 000532 4342
 000533 0000                              .db     "Doctor ", FFRAC2+FSIGN, a, 4, $42, "C", 0,0
                                  
+                                         ;---------------------------------------------------------------------
+                                         ;  TIMING CONTROL - Maintain 4Hz update rate (250ms per cycle)
+                                         ;---------------------------------------------------------------------
 000534 ef0a
 000535 2e30
 000536 e001
@@ -5310,31 +5604,50 @@ Z:\medical_consol_atmega128\medical_thermo\medical_thermo\main.asm(85): 'Z:\medi
 000545 950a
 000546 f781                              WAIT_MS 250                    ; ≈4 Hz update
                                  
-                                         ;---  stay only while we are still in Doctor -------------------
+                                         ;---------------------------------------------------------------------
+                                         ;  STATE CHECKING - Exit when no longer in Doctor mode
+                                         ;---------------------------------------------------------------------
 000547 2d26                              mov     r18, sel
 000548 3024                              cpi     r18, ST_DOCTOR
 000549 f2a9                              breq    doctor_loop
                                  
-                                         ;── 3. leave state ──────────────────────────────────────────────
+                                         ;---------------------------------------------------------------------
+                                         ;  CLEANUP - Restore saved register and return to caller
+                                         ;---------------------------------------------------------------------
 00054a 912f                              pop     r18
 00054b 9508                              ret
                                  
                                  
                                  ;======================================================================
-                                 ;  matrix_doctor  — fill 8×8 buffer red, then blank specified pixels
-                                 ;  clobbers: a0–a2, r0, r18–r22, r24–r25, Z, w=r16 (all scratch)
+                                 ;  MATRIX_DOCTOR - Create Swiss cross pattern on LED matrix
+                                 ;======================================================================
+                                 ;  Description:
+                                 ;  - Fills the entire 8×8 matrix with red color
+                                 ;  - Blanks out specific pixels to form a Swiss cross pattern
+                                 ;  - Transmits the resulting pattern to the LED matrix
+                                 ;
+                                 ;  Register Usage:
+                                 ;  - a0-a2: RGB color components (G,R,B in WS2812B order)
+                                 ;  - r1: Zero value for blanking pixels
+                                 ;  - r22: Counter for filling the buffer
+                                 ;  - r24, r25: X,Y coordinates for pixel addressing
+                                 ;  - Z: Memory pointer for frame buffer access
                                  ;======================================================================
                                  matrix_doctor:
 00054c 936f                              push    r22
 00054d 93ef                              push    ZL
 00054e 93ff                              push    ZH
                                  
-                                         ;--- set fill colour to red (GRB = 0x00,0x0F,0x00) -------------
+                                         ;---------------------------------------------------------------------
+                                         ;  COLOR SETUP - Set fill color to red (GRB format)
+                                         ;---------------------------------------------------------------------
 00054f e020                              ldi     a0, 0x00            ; G
 000550 e03f                              ldi     a1, 0x0F            ; R
 000551 e040                              ldi     a2, 0x00            ; B
                                  
-                                         ;--- 1) fill frame buffer (64 pixels) --------------------------
+                                         ;---------------------------------------------------------------------
+                                         ;  BUFFER FILLING - Fill entire matrix with red color
+                                         ;---------------------------------------------------------------------
 000552 e0e0                              ldi     ZL, low(WS_BUF_BASE)
 000553 e0f4                              ldi     ZH, high(WS_BUF_BASE)
 000554 e460                              ldi     r22, 64
@@ -5345,7 +5658,9 @@ Z:\medical_consol_atmega128\medical_thermo\medical_thermo\main.asm(85): 'Z:\medi
 000558 956a                              dec     r22
 000559 f7d9                              brne    md_fill
                                  
-                                         ;--- 2) blank out “holes” by writing 0,0,0 at each coord --------
+                                         ;---------------------------------------------------------------------
+                                         ;  CROSS PATTERN - Blank out pixels to form Swiss cross shape
+                                         ;---------------------------------------------------------------------
                                          ; list of pixels to turn off:
                                          ; (3,1),(4,1),(3,2),(4,2),(3,3),(4,3),(3,4),(4,4),
                                          ; (3,5),(4,5),(3,6),(4,6),
@@ -5534,7 +5849,9 @@ Z:\medical_consol_atmega128\medical_thermo\medical_thermo\main.asm(85): 'Z:\medi
 0005e5 9211                              st      Z+, r1
 0005e6 8210                              st      Z,   r1
                                  
-                                         ;--- 3) transmit the frame to the LEDs ------------------------
+                                         ;---------------------------------------------------------------------
+                                         ;  DATA TRANSMISSION - Send pattern data to LED matrix
+                                         ;---------------------------------------------------------------------
 0005e7 e0e0                              ldi     ZL, low(WS_BUF_BASE)
 0005e8 e0f4                              ldi     ZH, high(WS_BUF_BASE)
 0005e9 e400
@@ -5550,234 +5867,251 @@ Z:\medical_consol_atmega128\medical_thermo\medical_thermo\main.asm(85): 'Z:\medi
 0005f2 f7c1                              brne    md_send
 0005f3 dc1c                              rcall   ws_reset
                                  
+                                         ;---------------------------------------------------------------------
+                                         ;  CLEANUP - Restore saved registers and return
+                                         ;---------------------------------------------------------------------
 0005f4 91ff                              pop     ZH
 0005f5 91ef                              pop     ZL
 0005f6 916f                              pop     r22
 0005f7 9508                      
                                  ;======================================================================
-                                 ;  RESET sequence
+                                 ;  SYSTEM INITIALIZATION - Hardware and peripherals setup
                                  ;======================================================================
                                  reset:
+                                             ; Initialize stack and core peripherals
 0005f8 ef0f
 0005f9 bf0d
 0005fa e100
-0005fb bf0e                                  LDSP  RAMEND
-0005fc da4c                                  rcall LCD_init
-0005fd db84                                  rcall wire1_init
-0005fe dc2b                                  rcall encoder_init
+0005fb bf0e                                  LDSP  RAMEND               ; Set stack pointer to top of RAM
+0005fc da4c                                  rcall LCD_init             ; Initialize LCD display
+0005fd db84                                  rcall wire1_init           ; Initialize 1-Wire interface
+0005fe dc2b                                  rcall encoder_init         ; Initialize rotary encoder
                                  
-                                 ; � Buttons PD0�PD3: inputs with pull-ups ----------------------------
-0005ff 9888                                  cbi   DDRD,0
-000600 9889                                  cbi   DDRD,1
-000601 988a                                  cbi   DDRD,2
-000602 988b                                  cbi   DDRD,3
-000603 9a90                                  sbi   PORTD,0
-000604 9a91                                  sbi   PORTD,1
-000605 9a92                                  sbi   PORTD,2
-000606 9a93                                  sbi   PORTD,3
+                                             ; Configure buttons (PD0-PD3) as inputs with pull-ups
+0005ff 9888                                  cbi   DDRD,0               ; Set as input (next state)
+000600 9889                                  cbi   DDRD,1               ; Set as input (prev state)
+000601 988a                                  cbi   DDRD,2               ; Set as input (home)
+000602 988b                                  cbi   DDRD,3               ; Set as input (doctor mode)
+000603 9a90                                  sbi   PORTD,0              ; Enable pull-up
+000604 9a91                                  sbi   PORTD,1              ; Enable pull-up
+000605 9a92                                  sbi   PORTD,2              ; Enable pull-up
+000606 9a93                                  sbi   PORTD,3              ; Enable pull-up
                                  
-                                 ; � WS2812 driver init (sets PD7 output) -----------------------------
-000607 dbd0                                  rcall ws_init
+                                             ; Initialize WS2812 RGB LED matrix
+000607 dbd0                                  rcall ws_init              ; Sets PD7 as output for LED data
                                  
-                                 ; � Heartbeat LED on PF7 (active-low) --------------------------------
+                                             ; Configure heartbeat LED on PF7 (active-low)
 000608 e800
-000609 9300 0061                             OUTEI DDRF,(1<<LED_BIT)    ; PF7 ? output (clobbers w)
+000609 9300 0061                             OUTEI DDRF,(1<<LED_BIT)    ; Set PF7 as output
 00060b e800
-00060c 9300 0062                             OUTEI PORTF,(1<<LED_BIT)   ; drive high = LED off
+00060c 9300 0062                             OUTEI PORTF,(1<<LED_BIT)   ; Turn LED off initially
                                  
-                                 
-                                 
-                                 ; � Ensure WS2812 line idle low until driver starts ------------------
+                                             ; Ensure WS2812 line is idle low until driver activates
 00060e 9897                                  cbi   PORTD,7
                                  
-                                 ; � Timer-1 one-second tick ------------------------------------------
-00060f ef00                                  ldi   w,T1_PREH
+                                             ; Configure Timer-1 for 1-second periodic interrupt
+00060f ef00                                  ldi   w,T1_PREH            ; Load high byte of preload value
 000610 bd0d                                  out   TCNT1H,w
-000611 eb0e                                  ldi   w,T1_PREL
+000611 eb0e                                  ldi   w,T1_PREL            ; Load low byte of preload value
 000612 bd0c                                  out   TCNT1L,w
-000613 e005                                  ldi   w,(1<<CS12)|(1<<CS10)
+000613 e005                                  ldi   w,(1<<CS12)|(1<<CS10); Set prescaler to clk/1024
 000614 bd0e                                  out   TCCR1B,w
 000615 e004
-000616 bf07                                  OUTI  TIMSK,(1<<TOIE1)
+000616 bf07                                  OUTI  TIMSK,(1<<TOIE1)     ; Enable Timer-1 overflow interrupt
                                  
-                                 ; � INT0�INT3 falling-edge config -----------------------------------
+                                             ; Configure external interrupts (INT0-INT3) for falling edge
 000617 ea0a
-000618 9300 006a                             OUTEI EICRA,0b10101010
+000618 9300 006a                             OUTEI EICRA,0b10101010     ; Set falling edge for all interrupts
 00061a e00f
-00061b bf09                                  OUTI  EIMSK,0b00001111
+00061b bf09                                  OUTI  EIMSK,0b00001111     ; Enable INT0-INT3
                                  
-00061c 9478                                  sei                         ; global IRQ enable
+00061c 9478                                  sei                        ; Enable global interrupts
                                  
-                                 ; � Kick off first DS18B20 conversion --------------------------------
-00061d 2700                                  clr   w                     ; w is volatile � fine here
+                                             ; Initialize temperature sensing
+00061d 2700                                  clr   w                    ; Set phase to 0 (conversion mode)
 00061e 9300 0103                             sts   phase,w
-000620 d018                                  rcall temp_convert
+000620 d018                                  rcall temp_convert         ; Start first temperature conversion
                                  
-000621 2466                                  clr   sel                   ; start in Home state
+000621 2466                                  clr   sel                  ; Start in Home state (ST_HOME)
                                  
                                  ;======================================================================
-                                 ;  MAIN LOOP � state dispatch
+                                 ;  MAIN PROGRAM LOOP - State machine implementation
                                  ;======================================================================
                                  main_loop:
                                  switch:
-000622 2ce6                                  mov   s,sel                ; copy once, keep stable
+                                             ; Copy current state to stable register for comparison
+000622 2ce6                                  mov   s,sel                
+                                             
+                                             ; State dispatch - select appropriate handler based on current state
 000623 e000
-000624 16e0                                  _CPI   s,ST_HOME
-000625 f411                                  brne  swSnake
-000626 dc5a                                  rcall home_init
-000627 cffa                                  rjmp  switch
+000624 16e0                                  _CPI  s,ST_HOME
+000625 f411                                  brne  swSnake              ; If not HOME state, check next state
+000626 dc5a                                  rcall home_init            ; Initialize HOME state
+000627 cffa                                  rjmp  switch               ; Return to state check
                                  
-                                 swSnake:
+                                 swSnake:    ; Snake game state handler
 000628 e001
-000629 16e0                                  _CPI   s,ST_GAME1
-00062a f411                                  brne  swGameTwo
-00062b dcf9                                  rcall snake_game_init; changed nameeeee
-00062c cff5                                  rjmp  switch
+000629 16e0                                  _CPI  s,ST_GAME1
+00062a f411                                  brne  swGameTwo            ; If not GAME1 state, check next state
+00062b dcf9                                  rcall snake_game_init      ; Initialize Snake game
+00062c cff5                                  rjmp  switch               ; Return to state check
                                  
-                                 swGameTwo:
+                                 swGameTwo:  ; Game 2 state handler
 00062d e002
-00062e 16e0                                  _CPI   s,ST_GAME2
-00062f f411                                  brne  swGameThree
-000630 de94                                  rcall gameTwoInit
-000631 cff0                                  rjmp  switch
+00062e 16e0                                  _CPI  s,ST_GAME2
+00062f f411                                  brne  swGameThree          ; If not GAME2 state, check next state
+000630 de94                                  rcall gameTwoInit          ; Initialize Game 2
+000631 cff0                                  rjmp  switch               ; Return to state check
                                  
-                                 swGameThree:
+                                 swGameThree: ; Game 3 state handler
 000632 e003
-000633 16e0                                  _CPI   s,ST_GAME3
-000634 f411                                  brne  swDoctor
-000635 deb6                                  rcall gameThreeInit
-000636 cfeb                                  rjmp  switch
+000633 16e0                                  _CPI  s,ST_GAME3
+000634 f411                                  brne  swDoctor             ; If not GAME3 state, must be DOCTOR state
+000635 deb6                                  rcall gameThreeInit        ; Initialize Game 3
+000636 cfeb                                  rjmp  switch               ; Return to state check
                                  
-                                 swDoctor:
-000637 dedb                                  rcall doctorInit
-000638 cfe9                                  rjmp  switch
+                                 swDoctor:   ; Doctor/diagnostic mode handler
+000637 dedb                                  rcall doctorInit           ; Initialize Doctor mode
+000638 cfe9                                  rjmp  switch               ; Return to state check
                                  
                                  ;======================================================================
-                                 ;  1-Wire helpers
+                                 ;  TEMPERATURE SENSING - DS18B20 interface functions
                                  ;======================================================================
-                                 ; Use s (r14) instead of w so we don�t depend on the volatile macro reg.
+                                 ; These routines handle the temperature sensor communication
+                                 ; using the 1-Wire protocol with the DS18B20 sensor.
+                                 ;----------------------------------------------------------------------
                                  
+                                 ; Initiates a temperature conversion on the DS18B20 sensor
                                  temp_convert:
-000639 92ef                                  push  s
-00063a db4a                                  rcall wire1_reset
-00063b ec2c                                  ldi   a0,skipROM
+000639 92ef                                  push  s                   ; Save scratch register
+00063a db4a                                  rcall wire1_reset         ; Reset 1-Wire bus
+00063b ec2c                                  ldi   a0,skipROM          ; Skip ROM command (address all devices)
 00063c db7c                                  rcall wire1_write
-00063d e424                                  ldi   a0,convertT
+00063d e424                                  ldi   a0,convertT         ; Start temperature conversion
 00063e db7a                                  rcall wire1_write
-00063f 90ef                                  pop   s
+00063f 90ef                                  pop   s                   ; Restore scratch register
 000640 9508                                  ret
                                  
+                                 ; Reads temperature data from the DS18B20 sensor
                                  temp_fetch:
-000641 92ef                                  push  s
-000642 db42                                  rcall wire1_reset
-000643 ec2c                                  ldi   a0,skipROM
+000641 92ef                                  push  s                   ; Save scratch register
+000642 db42                                  rcall wire1_reset         ; Reset 1-Wire bus
+000643 ec2c                                  ldi   a0,skipROM          ; Skip ROM command
 000644 db74                                  rcall wire1_write
-000645 eb2e                                  ldi   a0,readScratchpad
+000645 eb2e                                  ldi   a0,readScratchpad   ; Read scratchpad command
 000646 db72                                  rcall wire1_write
-000647 db7c                                  rcall wire1_read
+000647 db7c                                  rcall wire1_read          ; Read LSB of temperature
 000648 9320 0101                             sts   temp_lsb,a0
-00064a db79                                  rcall wire1_read
+00064a db79                                  rcall wire1_read          ; Read MSB of temperature
 00064b 9320 0102                             sts   temp_msb,a0
-00064d 90ef                                  pop   s
+00064d 90ef                                  pop   s                   ; Restore scratch register
 00064e 9508                                  ret
                                  
                                  ;---------------------------------------------------------------------
-                                 ;  Background temperature task
+                                 ;  TEMPERATURE BACKGROUND TASK - Periodic temperature monitoring
                                  ;---------------------------------------------------------------------
-                                 ; Only s is used; w may change at macro calls we don�t care about here.
+                                 ; This routine handles the background temperature monitoring process
+                                 ; which alternates between conversion and reading phases.
+                                 ;----------------------------------------------------------------------
                                  
                                  temp_task:
+                                             ; Clear temperature ready flag
 00064f 90e0 0100                             lds   s,flags
 000651 ef0e
-000652 22e0                                  _ANDI  s,~(1<<FLG_TEMP)
+000652 22e0                                  _ANDI s,~(1<<FLG_TEMP)    ; Clear temperature ready flag
 000653 92e0 0100                             sts   flags,s
                                  
+                                             ; Check current phase and handle accordingly
 000655 90e0 0103                             lds   s,phase
-000657 20ee                                  tst   s
-000658 f029                                  breq  temp_do_convert
+000657 20ee                                  tst   s                   ; Check if phase = 0 (convert) or 1 (read)
+000658 f029                                  breq  temp_do_convert     ; If phase=0, start conversion
                                  
-000659 dfe7                                  rcall temp_fetch
-00065a 24ee                                  clr   s
+                                             ; Phase 1: Read temperature data
+000659 dfe7                                  rcall temp_fetch          ; Read temperature from sensor
+00065a 24ee                                  clr   s                   ; Set phase back to 0 (convert)
 00065b 92e0 0103                             sts   phase,s
 00065d 9508                                  ret
                                  
                                  temp_do_convert:
-00065e dfda                                  rcall temp_convert
+                                             ; Phase 0: Start temperature conversion
+00065e dfda                                  rcall temp_convert        ; Start temperature conversion
 00065f e001
-000660 2ee0                                  _LDI   s,1
+000660 2ee0                                  _LDI  s,1                 ; Set phase to 1 (read)
 000661 92e0 0103                             sts   phase,s
 000663 9508                                  ret
                                  
                                  ;======================================================================
-                                 ;  Interrupt service routines
+                                 ;  INTERRUPT SERVICE ROUTINES - Button and timer handlers
                                  ;======================================================================
-                                 ;----------------------  INT0 � next state  ---------------------------
-                                 int0_isr:
-000664 930f                                  push  w                    ; save volatile macro reg
-000665 9463                                  inc   sel
-000666 e004                                  ldi   w,REG_STATES
-000667 1660                                  cp    sel,w
-000668 f008                                  brlo  int0_done
-000669 2466                                  clr   sel                  ; wrap ? 0
-                                 int0_done:
-00066a 910f                                  pop   w
-00066b 9518                                  reti
                                  
-                                 ;----------------------  INT1 � previous state ------------------------
+                                 ;----------------------  INT0 - Next state button  --------------------
+                                 int0_isr:
+000664 930f                                  push  w                    ; Save working register
+000665 9463                                  inc   sel                  ; Increment state
+000666 e004                                  ldi   w,REG_STATES         ; Load maximum state number
+000667 1660                                  cp    sel,w                ; Compare current state with max
+000668 f008                                  brlo  int0_done            ; If less, we're good
+000669 2466                                  clr   sel                  ; Otherwise wrap around to 0
+                                 int0_done:
+                                             ; WAIT_MS BTN_DEBOUNCE     ; Optional: Add debounce delay
+00066a 910f                                  pop   w                    ; Restore working register
+00066b 9518                                  reti                       ; Return from interrupt
+                                 
+                                 ;----------------------  INT1 - Previous state button  ----------------
                                  int1_isr:
-00066c 930f                                  push  w
-00066d 2066                                  tst   sel
-00066e f421                                  brne  int1_dec
-00066f e003                                  ldi   w,REG_STATES-1       ; wrap ? 3
+00066c 930f                                  push  w                    ; Save working register
+00066d 2066                                  tst   sel                  ; Test if current state is 0
+00066e f421                                  brne  int1_dec             ; If not 0, simply decrement
+00066f e003                                  ldi   w,REG_STATES-1       ; Otherwise wrap to highest state
 000670 2e60                                  mov   sel,w
-000671 910f                                  pop   w
+                                             ; WAIT_MS BTN_DEBOUNCE     ; Optional: Add debounce delay
+000671 910f                                  pop   w                    ; Restore working register
 000672 9518                                  reti
                                  int1_dec:
-000673 946a                                  dec   sel
-000674 910f                                  pop   w
+000673 946a                                  dec   sel                  ; Decrement state
+000674 910f                                  pop   w                    ; Restore working register
+                                             ; WAIT_MS BTN_DEBOUNCE     ; Optional: Add debounce delay
 000675 9518                                  reti
                                  
-                                 ;----------------------  INT2 � goto Home ----------------------------
+                                 ;----------------------  INT2 - Home button  -------------------------
                                  int2_isr:
-000676 2466                                  clr   sel
-000677 9518                                  reti
+000676 2466                                  clr   sel                  ; Set state to home (0)
+000677 9518                                  reti                       ; Return from interrupt
                                  
-                                 ;----------------------  INT3 � Doctor mode --------------------------
+                                 ;----------------------  INT3 - Doctor mode button  ------------------
                                  int3_isr:
-000678 930f                                  push  w
-000679 e004                                  ldi   w,ST_DOCTOR
-00067a 2e60                                  mov   sel,w
-00067b 910f                                  pop   w
-00067c 9518                                  reti
+000678 930f                                  push  w                    ; Save working register
+000679 e004                                  ldi   w,ST_DOCTOR          ; Load doctor mode state number
+00067a 2e60                                  mov   sel,w                ; Set current state to doctor mode
+00067b 910f                                  pop   w                    ; Restore working register
+00067c 9518                                  reti                       ; Return from interrupt
                                  
-                                 ;----------------------  Timer-1 overflow ----------------------------
+                                 ;----------------------  Timer-1 overflow (1 second tick)  -----------
                                  t1_isr:
-00067d 930f                                  push  w                     ; save macro scratch
-00067e 931f                                  push  _w                    ; save ISR scratch
+00067d 930f                                  push  w                    ; Save working register
+00067e 931f                                  push  _w                   ; Save ISR scratch register
                                  
-                                             ; reload counter
-00067f ef00                                  ldi   w,T1_PREH
+                                             ; Reload timer for next 1-second interval
+00067f ef00                                  ldi   w,T1_PREH            ; Load high byte of preload
 000680 bd0d                                  out   TCNT1H,w
-000681 eb0e                                  ldi   w,T1_PREL
+000681 eb0e                                  ldi   w,T1_PREL            ; Load low byte of preload
 000682 bd0c                                  out   TCNT1L,w
                                  
-                                             ; heartbeat LED on PF7 (toggle)
-000683 90e0 0062                             lds   s,PORTF
-000685 e810                                  ldi   _w,(1<<LED_BIT)
-000686 26e1                                  eor   s,_w
-000687 92e0 0062                             sts   PORTF,s
+                                             ; Toggle heartbeat LED on PF7
+000683 90e0 0062                             lds   s,PORTF              ; Get current port state
+000685 e810                                  ldi   _w,(1<<LED_BIT)      ; Prepare bit mask
+000686 26e1                                  eor   s,_w                 ; Toggle LED bit
+000687 92e0 0062                             sts   PORTF,s              ; Update port
                                  
-                                             ; set temperature task flag
-000689 90e0 0100                             lds   s,flags
+                                             ; Set temperature task flag for background processing
+000689 90e0 0100                             lds   s,flags              ; Get current flags
 00068b e001
-00068c 2ae0                                  _ORI   s,(1<<FLG_TEMP)
-00068d 92e0 0100                             sts   flags,s
+00068c 2ae0                                  _ORI  s,(1<<FLG_TEMP)      ; Set temperature ready flag
+00068d 92e0 0100                             sts   flags,s              ; Update flags
                                  
-00068f 911f                                  pop   _w
-000690 910f                                  pop   w
-000691 9518                                  reti
-                                 ;======================================================================
-                                 ;TODO: increse the debounce time for the buttons 
+00068f 911f                                  pop   _w                   ; Restore ISR scratch register
+000690 910f                                  pop   w                    ; Restore working register
+000691 9518                                  reti                       ; Return from interrupt
 
 
 RESOURCE USE INFORMATION

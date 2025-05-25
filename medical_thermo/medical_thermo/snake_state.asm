@@ -1,18 +1,37 @@
 ;======================================================================
-;  SNAKE state – ST_GAME1 (cleaned up with constants)
-;----------------------------------------------------------------------
-;  • 8×8 WS2812 matrix
-;  • Growing snake – blue head / green body
-;  • Apple: red, re-spawns instantly at a random free cell when eaten
-;  • Walls: collision → “GAME OVER” (freeze until sel ≠ ST_GAME1)
-;  • Control: rotary encoder (turns queued @ QUEUE_SIZE)
-;  • PRNG: read Timer-0 + ADC LSB (prescaler untouched)
-;----------------------------------------------------------------------
-;  Snake grows by +1 each time it eats an apple
+;  SNAKE GAME IMPLEMENTATION - Classic Snake Game for LED Matrix
+;======================================================================
+;  Target: ATmega128L @ 4MHz
+;
+;  Game Description:
+;  This file implements a classic Snake game that runs on an 8×8 RGB LED
+;  matrix. The player controls a snake that grows in length each time it
+;  eats an apple. The game ends if the snake collides with the walls.
+;
+;  Features:
+;  - Blue snake head with green body segments
+;  - Red apple that randomly respawns when eaten
+;  - Rotary encoder control with direction queue
+;  - Growing snake length when eating apples
+;  - Wall collision detection (game over condition)
+;
+;  Technical Implementation:
+;  - Uses WS2812B RGB LED matrix for display
+;  - Snake stored as positions in SRAM buffer
+;  - Circular queue for processing direction changes
+;  - Pseudo-random number generation for apple placement
+;  - Fixed frame rate gameplay (configurable delay)
+;
+;  Register Usage:
+;  - r18-r26: Used for game state calculations
+;  - ZL,ZH: Memory pointers for accessing snake data
+;  - a0-a2: RGB color components for LED matrix
+;
+;  Last Modified: May 25, 2025
 ;======================================================================
 
 ;---------------------------------------------------------------------
-;  Symbolic constants
+;  SYMBOLIC CONSTANTS - Game parameters and configuration
 ;---------------------------------------------------------------------
 .equ DIR_UPP              = 0
 .equ DIR_RIGHTT           = 1
@@ -20,7 +39,7 @@
 .equ DIR_LEFTT            = 3
 .equ DIR_INITT            = DIR_RIGHTT
 
-.equ Apple_INIT_POS       = 45
+.equ Apple_INIT_POS       = 45 ; (5,5) in 8x8 matrix
 
 .equ SNAKE_INIT_POS1      = 26
 .equ SNAKE_INIT_POS2      = 27
@@ -45,7 +64,7 @@
 .equ APPLE_RED            = 0x0F
 
 ;---------------------------------------------------------------------
-;  SRAM layout
+;  SRAM LAYOUT - Game state variables
 ;---------------------------------------------------------------------
 .dseg
 snake_body:   .byte GRID_CELLS      ; packed x + MATRIX_SIZE*y
@@ -62,8 +81,14 @@ tq_tail:      .byte 1
 .cseg
 
 ;=====================================================================
-;  INITIALISATION
+;  INITIALIZATION - Game setup and data initialization
 ;=====================================================================
+; This section initializes the game by:
+; - Clearing the LCD and displaying "SNAKE"
+; - Initializing the rotary encoder
+; - Setting up the initial snake data
+; - Drawing the initial game state
+;---------------------------------------------------------------------
 snake_game_init:
     rcall lcd_clear
     PRINTF LCD
@@ -74,6 +99,13 @@ snake_game_init:
     rcall snake_draw
     rjmp snake_wait
 
+;---------------------------------------------------------------------
+;  DATA INITIALIZATION - Setup initial game state
+;---------------------------------------------------------------------
+; Sets up the initial snake position, direction, apple placement,
+; and other game parameters. Clears the entire play field and places
+; the snake in its starting position.
+;---------------------------------------------------------------------
 snake_init_data:
     ; clear body buffer → EMPTY_CELL
     ldi ZL, low(snake_body)
@@ -122,8 +154,15 @@ clear_body:
     ret  ; Timer-0 prescaler untouched – PRNG read only
 
 ;=====================================================================
-;  MAIN LOOP (fixed FRAME_DELAY_MS frames)
+;  MAIN LOOP - Game cycle with fixed frame rate
 ;=====================================================================
+; Controls the main game timing loop. Each frame consists of:
+; - A fixed delay period (FRAME_DELAY_MS)
+; - Processing user input during the delay
+; - Moving the snake
+; - Drawing the updated game state
+; - Checking if player has exited the game
+;---------------------------------------------------------------------
 snake_wait:
     ; start-of-frame delay
     ldi r24, low(FRAME_DELAY_MS)
@@ -146,8 +185,12 @@ frame_delay:
     ret
 
 ;=====================================================================
-;  update_game – rotary encoder → heading  (unchanged)
+;  USER INPUT HANDLING - Process rotary encoder movements
 ;=====================================================================
+; Reads the rotary encoder and updates the snake's direction based
+; on encoder rotation. Implements a queue system to store direction
+; changes that haven't been processed yet. Prevents 180° turns.
+;---------------------------------------------------------------------
 update_game:
     push r25
     push r24
@@ -241,8 +284,12 @@ enc_exit:
     ret
 
 ;=====================================================================
-;  move_snake – borders, apple collision & growth
+;  SNAKE MOVEMENT - Update snake position and handle collisions
 ;=====================================================================
+; Calculates the snake's new head position based on current direction
+; Checks for collisions with walls and handles apple eating
+; Updates the snake's length and position data
+;---------------------------------------------------------------------
 move_snake:
     lds  r18, direction
 
@@ -359,8 +406,12 @@ freeze_game:
     ret
 
 ;=====================================================================
-;  place_new_apple – constant-time (8 passes)
+;  APPLE PLACEMENT - Generate random position for new apple
 ;=====================================================================
+; Places a new apple at a random position that doesn't overlap with 
+; the snake. Uses a pseudo-random number generator with a fixed 
+; number of placement attempts for consistent timing.
+;---------------------------------------------------------------------
 place_new_apple:
     push r26
     push r25
@@ -412,22 +463,22 @@ idx_ok:
     ldi   ZL, low(snake_body)
     ldi   ZH, high(snake_body)
     add   ZL, _w
-    brcc buf_ptr
+    brcc  buf_ptr
     inc   ZH
 buf_ptr:
     ld    _w, Z
     cp    _w, r20
-    breq clash_found
+    breq  clash_found
     inc   r21
     rjmp  scan_loop
 
 clash_found:
     ; segment clash → skip storing
-    rjmp loop_continue
+    rjmp  loop_continue
 
 free_found:
     tst   r18
-    brne loop_continue
+    brne  loop_continue
     mov   r18, r20
 
 loop_continue:
@@ -436,7 +487,7 @@ loop_continue:
 
     ; commit result
     tst   r18
-    brne store_ok
+    brne  store_ok
     mov   r18, r20
 store_ok:
     sts   apple_pos, r18
@@ -453,8 +504,14 @@ store_ok:
     ret
 
 ;=====================================================================
-;  snake_draw – render snake & apple
+;  RENDERING - Draw the snake and apple on the LED matrix
 ;=====================================================================
+; Renders the current game state to the LED matrix:
+; - Draws the snake body in green
+; - Draws the snake head in blue
+; - Draws the apple in red
+; - Transmits the frame buffer to the physical LED matrix
+;---------------------------------------------------------------------
 snake_draw:
     clr a0
     clr a1

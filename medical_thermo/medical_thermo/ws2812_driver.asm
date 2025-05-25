@@ -1,33 +1,44 @@
+;======================================================================
+;  WS2812B RGB LED MATRIX DRIVER
+;======================================================================
+;  Target: ATmega128L @ 4MHz
+;
+;  Description:
+;  This driver provides bit-banging control for WS2812B addressable RGB 
+;  LEDs arranged in an 8Ã—8 matrix configuration. It handles precise timing
+;  requirements and provides helper functions for matrix addressing.
+;
+;  WS2812B Protocol Specifications:
+;  - Single-wire interface using non-return-to-zero (NRZ) coding
+;  - Strict timing: "0" bit = 0.4Î¼s high + 0.85Î¼s low
+;                   "1" bit = 0.8Î¼s high + 0.45Î¼s low
+;  - Reset condition: >50Î¼s low
+;  - Data sent in GRB order (not RGB)
+;  - 24 bits per LED (8 bits per color channel)
+;
+;  Functions:
+;  - ws_init: Initialize WS2812 pin as output
+;  - ws_byte3wr: Transmit one RGB pixel (3 bytes)
+;  - ws_reset: Latch data to LEDs
+;  - ws_idx_xy: Convert X,Y coordinates to linear index
+;  - ws_offset_idx: Calculate buffer address from linear index
+;
+;  Last Modified: May 25, 2025
+;======================================================================
+
 ; file   ws2812_driver.asm          target ATmega128L-4 MHz
-; purpose: reusable bit-bang driver + 8×8 XY helpers for WS2812B
+; purpose: reusable bit-bang driver + 8Ã—8 XY helpers for WS2812B
 ;
-; ????? ROUTINE REGISTER-USAGE SUMMARY (after this patch) ?????????????
-;  routine         reads            clobbers (caller must save)       
-; ?????????????????????????????????????????????????????????????????????
-;  ws_init         —                —                                 
-;  ws_byte3wr      a0 a1 a2         a0 a1 a2          (u,w are saved) 
-;  ws_reset        —                —                                 
-;  ws_idx_xy       r24 r25          r24 u                            
-;  ws_offset_idx   r24              u w ZL ZH                        
-;  (SREG always changes as any normal arithmetic will.)               
-; ?????????????????????????????????????????????????????????????????????
-;• WS_PUSH_ALL   – push every register any of the public helpers
-;                    (ws_byte3wr, ws_idx_xy, ws_offset_idx) may change.
-;  • WS_POP_ALL    – restore them in reverse order.
-;
-;  Use pattern
-;       WS_PUSH_ALL
-;           ; — build / send frame here —
-;       WS_POP_ALL
-; If your code needs a0–a2 kept, push them before calling ws_byte3wr.
-;
-; ????? pin configuration (override before .include if you wish) ?????
 .equ WS_PORT_REG = PORTD
 .equ WS_DDR_REG  = DDRD
 .equ WS_PIN_IDX  = 7
 .equ WS_PIN_MASK = (1 << WS_PIN_IDX)
 
-.equ WS_BUF_BASE = 0x0400          ; 8×8×3-byte frame buffer
+.equ WS_BUF_BASE = 0x0400          ; 8Ã—8Ã—3-byte frame buffer
+
+;---------------------------------------------------------------------
+;  REGISTER PRESERVATION - Save/restore registers during function calls
+;---------------------------------------------------------------------
         .macro WS_PUSH_ALL
             push    a0
             push    a1
@@ -51,8 +62,11 @@
             pop     a1
             pop     a0
         .endm
-; ????? timing-critical bit macros (4 MHz) ????????????????????????????
-; “0” bit total ? 5 cycles (T0H ? 0.40 µs, T0L ? 0.85 µs)
+
+;---------------------------------------------------------------------
+;  BIT TRANSMISSION MACROS - Precisely timed bit patterns for WS2812B
+;---------------------------------------------------------------------
+; "0" bit total â‰ˆ 5 cycles (T0H â‰ˆ 0.40 Î¼s, T0L â‰ˆ 0.85 Î¼s)
 .macro WS_WR0
     clr  u                          ; u = 0  (destroys u **inside** routine)
     sbi  WS_PORT_REG, WS_PIN_IDX    ; high     (2 cy)
@@ -60,7 +74,7 @@
     nop                              ; 1 cy
     nop                              ; 1 cy
 .endm
-; “1” bit total ? 8 cycles (T1H ? 0.80 µs, T1L ? 0.45 µs)
+; "1" bit total â‰ˆ 8 cycles (T1H â‰ˆ 0.80 Î¼s, T1L â‰ˆ 0.45 Î¼s)
 .macro WS_WR1
     sbi  WS_PORT_REG, WS_PIN_IDX    ; high   (2 cy)
     nop                              ; 1 cy
@@ -68,20 +82,28 @@
     cbi  WS_PORT_REG, WS_PIN_IDX    ; low    (2 cy)
 .endm
 
-; ????????????????? PUBLIC ROUTINES ???????????????????????????????????
+;=====================================================================
+;  PUBLIC INTERFACE FUNCTIONS
+;=====================================================================
 
+;---------------------------------------------------------------------
+;  INITIALIZATION - Configure data pin for WS2812 control
+;---------------------------------------------------------------------
 ; set the data pin as output
 ws_init:
     OUTI WS_DDR_REG, WS_PIN_MASK
     ret
 
+;---------------------------------------------------------------------
+;  DATA TRANSMISSION - Send color data to WS2812 LEDs
+;---------------------------------------------------------------------
 ; bit-bang three bytes  (G=a0, R=a1, B=a2)
 ; u & w pushed so the caller never sees them modified
 ws_byte3wr:
     push  u
     push  w
 
-    ; ? byte G (a0) ?
+    ; â€” byte G (a0) â€”
     ldi   w, 8
 _b0:
     sbrc  a0, 7
@@ -95,7 +117,7 @@ _b0_next:
     dec   w
     brne  _b0
 
-    ; ? byte R (a1) ?
+    ; â€” byte R (a1) â€”
     ldi   w, 8
 _b1:
     sbrc  a1, 7
@@ -109,7 +131,7 @@ _b1_next:
     dec   w
     brne  _b1
 
-    ; ? byte B (a2) ?
+    ; â€” byte B (a2) â€”
     ldi   w, 8
 _b2:
     sbrc  a2, 7
@@ -127,13 +149,19 @@ _b2_next:
     pop   u
     ret
 
-; hold the data line low ?50 µs to latch the frame
+;---------------------------------------------------------------------
+;  FRAME LATCHING - Signal end of frame to update LED display
+;---------------------------------------------------------------------
+; hold the data line low â‰¥50 Î¼s to latch the frame
 ws_reset:
     cbi  WS_PORT_REG, WS_PIN_IDX
     WAIT_US 50
     ret
 
-; r24=x, r25=y  ? r24 = x + 8·y   (clobbers u, r24)
+;---------------------------------------------------------------------
+;  COORDINATE CONVERSION - Matrix addressing utilities
+;---------------------------------------------------------------------
+; r24=x, r25=y â†’ r24 = x + 8Ã—y   (clobbers u, r24)
 ws_idx_xy:
     mov  u, r25
     lsl  u
@@ -142,12 +170,12 @@ ws_idx_xy:
     add  r24, u
     ret
 
-; r24=index ? Z = WS_BUF_BASE + 3·index  (clobbers u, w, ZL, ZH)
+; r24=index â†’ Z = WS_BUF_BASE + 3Ã—index  (clobbers u, w, ZL, ZH)
 ws_offset_idx:
     mov  w, r24                  ; w = idx
-    lsl  w                       ; w = 2·idx
+    lsl  w                       ; w = 2Ã—idx
     mov  u, r24
-    add  w, u                    ; w = 3·idx
+    add  w, u                    ; w = 3Ã—idx
     ldi  ZL, low (WS_BUF_BASE)
     ldi  ZH, high(WS_BUF_BASE)
     add  ZL, w

@@ -1,5 +1,36 @@
+;======================================================================
+;  HOME STATE - Main Menu Interface
+;======================================================================
+;  Target: ATmega128L @ 4MHz
+;
+;  Description:
+;  This file implements the HOME state, which serves as the main menu
+;  for the medical console. It displays "HOME" on the LCD screen and
+;  creates a green pattern with strategic "holes" (blank pixels) on the
+;  8×8 RGB LED matrix to create a recognizable visual pattern.
+;
+;  Functions:
+;  - home_init: Initialize the HOME state (LCD and LED matrix)
+;  - home_wait: Main polling loop that monitors the current state
+;  - matrix_holes: Helper function to create the patterned LED display
+;
+;  Register Usage:
+;  - s: Used to check current system state
+;  - a0-a2: RGB color components for LED matrix (GRB order)
+;  - r22: Counter for filling the buffer
+;  - r24, r25: X,Y coordinates for pixel addressing
+;  - Z: Memory pointer for frame buffer access
+;
+;  Dependencies:
+;  - Requires LCD driver for text display
+;  - Uses WS2812 driver for LED matrix control
+;  - Relies on ST_HOME constant from main.asm
+;
+;  Last Modified: May 25, 2025
+;======================================================================
+
 ;----------------------------------------------------------------------
-;  HOME state  — draw green background with “holes” off
+;  HOME state  — draw green background with "holes" off(smiley face)
 ;----------------------------------------------------------------------
 
 home_init:
@@ -13,6 +44,9 @@ home_init:
         ldi     a2, 0x00     ; B
         rcall   matrix_holes
 
+;---------------------------------------------------------------------
+;  MAIN LOOP - Wait until user changes state
+;---------------------------------------------------------------------
 home_wait:
         mov     s, sel
         _CPI    s, ST_HOME
@@ -20,6 +54,9 @@ home_wait:
         WAIT_MS 50
         rjmp    home_wait
 
+;---------------------------------------------------------------------
+;  CLEANUP - Return to main state handler
+;---------------------------------------------------------------------
 home_done:
         ret
 
@@ -33,7 +70,9 @@ matrix_holes:
         push    ZL
         push    ZH
 
-        ;--- 1) fill frame buffer 64×3=192 B with (a0,a1,a2) -----------
+        ;---------------------------------------------------------------------
+        ;  BUFFER PREPARATION - Fill entire matrix with green color
+        ;---------------------------------------------------------------------
         ldi     ZL, low(WS_BUF_BASE)
         ldi     ZH, high(WS_BUF_BASE)
         ldi     r22, 64
@@ -44,7 +83,9 @@ mh_fill:
         dec     r22
         brne    mh_fill
 
-        ;--- 2) blank out “holes” by writing 0,0,0 at each coord --------
+        ;---------------------------------------------------------------------
+        ;  PATTERN CREATION - Turn off specific pixels to create pattern
+        ;---------------------------------------------------------------------
         ; (1,1)
         ldi     r24,1
         ldi     r25,1
@@ -171,7 +212,9 @@ mh_fill:
         st      Z+, r1
         st      Z,  r1
 
-        ;--- 3) transmit the frame to the LEDs ------------------------
+        ;---------------------------------------------------------------------
+        ;  DATA TRANSMISSION - Send pattern to LED matrix
+        ;---------------------------------------------------------------------
         ldi     ZL, low(WS_BUF_BASE)
         ldi     ZH, high(WS_BUF_BASE)
         _LDI    r0, 64
@@ -186,6 +229,9 @@ mh_send:
         brne    mh_send
         rcall   ws_reset
 
+        ;---------------------------------------------------------------------
+        ;  CLEANUP - Restore saved registers and return
+        ;---------------------------------------------------------------------
         pop     ZH
         pop     ZL
         pop     r22

@@ -1,5 +1,5 @@
 
-AVRASM ver. 2.2.6  Z:\medical_consol_atmega128\medical_thermo\medical_thermo\main.asm Sat May 24 18:22:37 2025
+AVRASM ver. 2.2.6  Z:\medical_consol_atmega128\medical_thermo\medical_thermo\main.asm Sun May 25 14:33:47 2025
 
 
 EQU  SIGNATURE_000 0000001e
@@ -1109,7 +1109,7 @@ CSEG home_init    00000281
 CSEG matrix_holes 000002a7
 CSEG home_wait    0000028e
 CSEG home_done    000002a6
-CSEG WAIT_MS@WAIT_MS@5834 00000295
+CSEG WAIT_MS@WAIT_MS@5938 00000295
 CSEG mh_fill      000002ad
 CSEG mh_send      00000318
 EQU  DIR_UPP      00000000
@@ -1150,7 +1150,7 @@ CSEG snake_wait   0000035b
 CSEG clear_body   00000335
 CSEG frame_delay  0000035d
 CSEG update_game  0000037c
-CSEG WAIT_MS@WAIT_MS@6173 00000361
+CSEG WAIT_MS@WAIT_MS@6329 00000361
 CSEG move_snake   000003ca
 CSEG enc_move     00000389
 CSEG enc_exit     000003c1
@@ -1193,16 +1193,16 @@ CSEG flush_loop   000004bb
 CSEG gameTwoInit  000004c5
 CSEG game2_wait   000004d3
 CSEG game2_done   000004eb
-CSEG WAIT_MS@WAIT_MS@6660 000004da
+CSEG WAIT_MS@WAIT_MS@6875 000004da
 CSEG gameThreeInit 000004ec
 CSEG game3_wait   000004fa
 CSEG game3_done   00000512
-CSEG WAIT_MS@WAIT_MS@6718 00000501
+CSEG WAIT_MS@WAIT_MS@6977 00000501
 CSEG doctorInit   00000513
 CSEG matrix_doctor 0000054c
 CSEG doctor_loop  0000051f
 CSEG temp_task    0000064f
-CSEG WAIT_MS@WAIT_MS@6791 00000537
+CSEG WAIT_MS@WAIT_MS@7085 00000537
 CSEG md_fill      00000555
 CSEG md_send      000005eb
 CSEG temp_convert 00000639

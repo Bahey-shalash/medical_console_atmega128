@@ -81,22 +81,70 @@
     <Compile Include="definitions.asm">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="encoder_led.asm">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="game3_state.asm">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="test_lcd_matrix_again.asm">
+    <Compile Include="matrix_testing\encoder_led.asm">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="ws2812_test_xy_with_lcd_loop.asm">
+    <Compile Include="matrix_testing\i2cx.asm">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="matrix_testing\menu.asm">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="matrix_testing\menu1.asm">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="matrix_testing\music.asm">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="matrix_testing\pixel_scroller.asm">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="matrix_testing\test_lcd_matrix_again.asm">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="matrix_testing\ws2812_driver_working_u.asm">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="matrix_testing\ws2812_test_xy.asm">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="matrix_testing\ws2812_test_xy_with_lcd_loop.asm">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="tests\encoder_led.asm">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="tests\i2cx.asm">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="tests\menu.asm">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="tests\menu1.asm">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="tests\music.asm">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="tests\pixel_scroller.asm">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="tests\sound.asm">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="tests\test_lcd_matrix_again.asm">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="tests\ws2812_test_xy.asm">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="tests\ws2812_test_xy_with_lcd_loop.asm">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="encoder.asm">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="i2cx.asm">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="lcd.asm">
@@ -135,15 +183,6 @@
     <Compile Include="matrix_testing\ws2812_driver_unit_test.asm">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="menu.asm">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="menu1.asm">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="music.asm">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="old_mains\maim4.asm">
       <SubType>Code</SubType>
     </Compile>
@@ -153,13 +192,7 @@
     <Compile Include="old_mains\main6.asm">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="pixel_scroller.asm">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="printf.asm">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="sound.asm">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="doctor_state.asm">
@@ -180,20 +213,15 @@
     <Compile Include="ws2812_driver.asm">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="ws2812_driver_working_u.asm">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="ws2812_test_xy.asm">
-      <SubType>Code</SubType>
-    </Compile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="i2c_eeprom2017.hex">
+    <None Include="tests\i2c_eeprom2017.hex">
       <SubType>Code</SubType>
     </None>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="matrix_testing" />
+    <Folder Include="tests" />
     <Folder Include="old_mains" />
   </ItemGroup>
   <Import Project="$(AVRSTUDIO_EXE_PATH)\\Vs\\Assembler.targets" />

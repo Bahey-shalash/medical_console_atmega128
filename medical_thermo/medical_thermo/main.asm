@@ -1,296 +1,322 @@
 ;======================================================================
-;  main.asm  � ATmega128L @ 4 MHz � STK-300
-;  Modular finite-state machine
-;   � WS2812 matrix on PD7  (driver)
-;   � LED-strip heartbeat on PF7 (active-low)
-;   � Buttons on PD0�PD3 (INT0�INT3)
+;  MEDICAL CONSOLE - Main Control Program
 ;======================================================================
+;  Target Hardware: ATmega128L @ 4 MHz on STK-300 Development Board
 ;
-;  Register policy ----------------------------------------------------
-;  r16 = w   : volatile scratch, clobbered by nearly every macro �
-;              do **not** rely on its value except right after you
-;              loaded it yourself and before the next macro call.
-;  r17 = _w  : scratch inside interrupt prologues only.
-;  r14 = s   : long-lived scratch for general calculations � never
-;              touched by macros.  Preserve if you call sub-routines
-;              that may use it.
-;---------------------------------------------------------------------
-
-            .include "m128def.inc"
-            .include "definitions.asm"
-            .include "macros.asm"
+;  Program Description:
+;  - Multi-state medical console with temperature monitoring
+;  - Implements a finite state machine with multiple operating modes
+;  - Includes games, diagnostic tools, and temperature monitoring
+;  - Uses DS18B20 digital temperature sensor via 1-Wire protocol
+;  - Features WS2812 RGB LED matrix for visual feedback
+;  - User input via rotary encoder and push buttons
+;
+;  Last Modified: May 25, 2025
+;======================================================================
 
 ;---------------------------------------------------------------------
-;  Global registers / constants
+;  INCLUDES - Core system definitions and macros
 ;---------------------------------------------------------------------
-            .def  sel = r6           ; current FSM state
-            .def  s   = r14          ; stable scratch register
+            .include "m128def.inc"      ; ATmega128 register definitions
+            .include "definitions.asm"  ; Global constants and registers
+            .include "macros.asm"       ; Utility macros for code simplification
 
-            .equ  FLG_TEMP   = 0     ; bit0 of `flags`  � temperature-ready
-            .equ  REG_STATES = 4     ; valid game states 0�3
-            .equ  ST_HOME    = 0
-            .equ  ST_GAME1   = 1
-            .equ  ST_GAME2   = 2
-            .equ  ST_GAME3   = 3
-            .equ  ST_DOCTOR  = 4
+;---------------------------------------------------------------------
+;  GLOBAL REGISTERS AND CONSTANTS
+;---------------------------------------------------------------------
+            .def  sel = r6           ; Current FSM state register
+            .def  s   = r14          ; Stable scratch register for operations
 
-            .equ  T1_PREH    = 0xF0  ; Timer-1 preload (high)
-            .equ  T1_PREL    = 0xBE  ; Timer-1 preload (low)
-            .equ  LED_BIT    = 7     ; PF7 heartbeat (active-low)
+            ; System State Constants
+            .equ  FLG_TEMP   = 0     ; Bit0 of 'flags' - temperature-ready flag
+            .equ  REG_STATES = 4     ; Number of valid game states (0-3)
+            .equ  ST_HOME    = 0     ; Home/idle state
+            .equ  ST_GAME1   = 1     ; Snake game state
+            .equ  ST_GAME2   = 2     ; Game 2 state
+            .equ  ST_GAME3   = 3     ; Game 3 state
+            .equ  ST_DOCTOR  = 4     ; Diagnostic/doctor mode
+
+            ; Timer and Hardware Constants
+            .equ  T1_PREH    = 0xF0  ; Timer-1 preload high byte
+            .equ  T1_PREL    = 0xBE  ; Timer-1 preload low byte (approx 1s)
+            .equ  LED_BIT    = 7     ; PF7 heartbeat indicator (active-low)
             .equ  BTN_DEBOUNCE = 50  ; Button debounce time in milliseconds
+
 ;---------------------------------------------------------------------
-;  SRAM allocation
+;  SRAM ALLOCATION - System variables
 ;---------------------------------------------------------------------
 .dseg
-flags:      .byte 1            ; bit-flags (0 = FLG_TEMP)
-temp_lsb:   .byte 1            ; DS18B20 LSB
-temp_msb:   .byte 1            ; DS18B20 MSB
-phase:      .byte 1            ; 0 = convert, 1 = read
+flags:      .byte 1            ; System flags (bit 0 = temperature ready)
+temp_lsb:   .byte 1            ; DS18B20 temperature LSB
+temp_msb:   .byte 1            ; DS18B20 temperature MSB
+phase:      .byte 1            ; Temperature sensor phase (0=convert, 1=read)
 
 ;---------------------------------------------------------------------
+;  CODE SEGMENT START
+;---------------------------------------------------------------------
 .cseg
+
 ;======================================================================
-;  Interrupt vectors
+;  INTERRUPT VECTORS - Defines system interrupt handlers
 ;======================================================================
             .org 0
-            jmp  reset
+            jmp  reset         ; Reset vector - system startup
 
-            .org INT0addr      ; next state
+            .org INT0addr      ; Next state button (increment state)
             jmp  int0_isr
-            .org INT1addr      ; previous state
+            .org INT1addr      ; Previous state button (decrement state)
             jmp  int1_isr
-            .org INT2addr      ; go home
+            .org INT2addr      ; Home button (return to home state)
             jmp  int2_isr
-            .org INT3addr      ; doctor mode
+            .org INT3addr      ; Doctor mode button (diagnostic mode)
             jmp  int3_isr
-            .org OVF1addr      ; Timer-1 overflow
+            .org OVF1addr      ; Timer-1 overflow (1 second tick)
             jmp  t1_isr
 
 ;---------------------------------------------------------------------
-;  Library / driver includes (after vectors)
+;  LIBRARY INCLUDES - External code modules
 ;---------------------------------------------------------------------
-            .include "lcd.asm"
-            .include "printf.asm"
-            .include "wire1.asm"
-            .include "ws2812_driver.asm"
-            .include "encoder.asm"
-            .include "ws2812_helpers.asm"
+            ; User interface and IO modules
+            .include "lcd.asm"          ; LCD display driver
+            .include "printf.asm"       ; Formatted text output
+            
+            ; Sensor and hardware interface modules
+            .include "wire1.asm"        ; 1-Wire protocol for DS18B20
+            .include "ws2812_driver.asm"  ; WS2812 RGB LED driver
+            .include "encoder.asm"      ; Rotary encoder input handler
+            .include "ws2812_helpers.asm" ; WS2812 utility functions
 
 ;---------------------------------------------------------------------
-;  State modules
+;  STATE MODULES - Application state implementations
 ;---------------------------------------------------------------------
-            .include "home_state.asm"
-            .include "snake_state.asm"
-            .include "game2_state.asm"
-            .include "game3_state.asm"
-            .include "doctor_state.asm"
+            ; Each state module implements a different console mode
+            .include "home_state.asm"    ; Home screen and temperature display
+            .include "snake_state.asm"   ; Snake game implementation
+            .include "game2_state.asm"   ; Second game implementation
+            .include "game3_state.asm"   ; Third game implementation 
+            .include "doctor_state.asm"  ; Diagnostic/doctor mode
 
 ;======================================================================
-;  RESET sequence
+;  SYSTEM INITIALIZATION - Hardware and peripherals setup
 ;======================================================================
 reset:
-            LDSP  RAMEND
-            rcall LCD_init
-            rcall wire1_init
-            rcall encoder_init
+            ; Initialize stack and core peripherals
+            LDSP  RAMEND               ; Set stack pointer to top of RAM
+            rcall LCD_init             ; Initialize LCD display
+            rcall wire1_init           ; Initialize 1-Wire interface
+            rcall encoder_init         ; Initialize rotary encoder
 
-; � Buttons PD0�PD3: inputs with pull-ups ----------------------------
-            cbi   DDRD,0
-            cbi   DDRD,1
-            cbi   DDRD,2
-            cbi   DDRD,3
-            sbi   PORTD,0
-            sbi   PORTD,1
-            sbi   PORTD,2
-            sbi   PORTD,3
+            ; Configure buttons (PD0-PD3) as inputs with pull-ups
+            cbi   DDRD,0               ; Set as input (next state)
+            cbi   DDRD,1               ; Set as input (prev state)
+            cbi   DDRD,2               ; Set as input (home)
+            cbi   DDRD,3               ; Set as input (doctor mode)
+            sbi   PORTD,0              ; Enable pull-up
+            sbi   PORTD,1              ; Enable pull-up
+            sbi   PORTD,2              ; Enable pull-up
+            sbi   PORTD,3              ; Enable pull-up
 
-; � WS2812 driver init (sets PD7 output) -----------------------------
-            rcall ws_init
+            ; Initialize WS2812 RGB LED matrix
+            rcall ws_init              ; Sets PD7 as output for LED data
 
-; � Heartbeat LED on PF7 (active-low) --------------------------------
-            OUTEI DDRF,(1<<LED_BIT)    ; PF7 ? output (clobbers w)
-            OUTEI PORTF,(1<<LED_BIT)   ; drive high = LED off
+            ; Configure heartbeat LED on PF7 (active-low)
+            OUTEI DDRF,(1<<LED_BIT)    ; Set PF7 as output
+            OUTEI PORTF,(1<<LED_BIT)   ; Turn LED off initially
 
-
-
-; � Ensure WS2812 line idle low until driver starts ------------------
+            ; Ensure WS2812 line is idle low until driver activates
             cbi   PORTD,7
 
-; � Timer-1 one-second tick ------------------------------------------
-            ldi   w,T1_PREH
+            ; Configure Timer-1 for 1-second periodic interrupt
+            ldi   w,T1_PREH            ; Load high byte of preload value
             out   TCNT1H,w
-            ldi   w,T1_PREL
+            ldi   w,T1_PREL            ; Load low byte of preload value
             out   TCNT1L,w
-            ldi   w,(1<<CS12)|(1<<CS10)
+            ldi   w,(1<<CS12)|(1<<CS10); Set prescaler to clk/1024
             out   TCCR1B,w
-            OUTI  TIMSK,(1<<TOIE1)
+            OUTI  TIMSK,(1<<TOIE1)     ; Enable Timer-1 overflow interrupt
 
-; � INT0�INT3 falling-edge config -----------------------------------
-            OUTEI EICRA,0b10101010
-            OUTI  EIMSK,0b00001111
+            ; Configure external interrupts (INT0-INT3) for falling edge
+            OUTEI EICRA,0b10101010     ; Set falling edge for all interrupts
+            OUTI  EIMSK,0b00001111     ; Enable INT0-INT3
 
-            sei                         ; global IRQ enable
+            sei                        ; Enable global interrupts
 
-; � Kick off first DS18B20 conversion --------------------------------
-            clr   w                     ; w is volatile � fine here
+            ; Initialize temperature sensing
+            clr   w                    ; Set phase to 0 (conversion mode)
             sts   phase,w
-            rcall temp_convert
+            rcall temp_convert         ; Start first temperature conversion
 
-            clr   sel                   ; start in Home state
+            clr   sel                  ; Start in Home state (ST_HOME)
 
 ;======================================================================
-;  MAIN LOOP � state dispatch
+;  MAIN PROGRAM LOOP - State machine implementation
 ;======================================================================
 main_loop:
 switch:
-            mov   s,sel                ; copy once, keep stable
-            _CPI   s,ST_HOME
-            brne  swSnake
-            rcall home_init
-            rjmp  switch
+            ; Copy current state to stable register for comparison
+            mov   s,sel                
+            
+            ; State dispatch - select appropriate handler based on current state
+            _CPI  s,ST_HOME
+            brne  swSnake              ; If not HOME state, check next state
+            rcall home_init            ; Initialize HOME state
+            rjmp  switch               ; Return to state check
 
-swSnake:
-            _CPI   s,ST_GAME1
-            brne  swGameTwo
-            rcall snake_game_init; changed nameeeee
-            rjmp  switch
+swSnake:    ; Snake game state handler
+            _CPI  s,ST_GAME1
+            brne  swGameTwo            ; If not GAME1 state, check next state
+            rcall snake_game_init      ; Initialize Snake game
+            rjmp  switch               ; Return to state check
 
-swGameTwo:
-            _CPI   s,ST_GAME2
-            brne  swGameThree
-            rcall gameTwoInit
-            rjmp  switch
+swGameTwo:  ; Game 2 state handler
+            _CPI  s,ST_GAME2
+            brne  swGameThree          ; If not GAME2 state, check next state
+            rcall gameTwoInit          ; Initialize Game 2
+            rjmp  switch               ; Return to state check
 
-swGameThree:
-            _CPI   s,ST_GAME3
-            brne  swDoctor
-            rcall gameThreeInit
-            rjmp  switch
+swGameThree: ; Game 3 state handler
+            _CPI  s,ST_GAME3
+            brne  swDoctor             ; If not GAME3 state, must be DOCTOR state
+            rcall gameThreeInit        ; Initialize Game 3
+            rjmp  switch               ; Return to state check
 
-swDoctor:
-            rcall doctorInit
-            rjmp  switch
+swDoctor:   ; Doctor/diagnostic mode handler
+            rcall doctorInit           ; Initialize Doctor mode
+            rjmp  switch               ; Return to state check
 
 ;======================================================================
-;  1-Wire helpers
+;  TEMPERATURE SENSING - DS18B20 interface functions
 ;======================================================================
-; Use s (r14) instead of w so we don�t depend on the volatile macro reg.
+; These routines handle the temperature sensor communication
+; using the 1-Wire protocol with the DS18B20 sensor.
+;----------------------------------------------------------------------
 
+; Initiates a temperature conversion on the DS18B20 sensor
 temp_convert:
-            push  s
-            rcall wire1_reset
-            ldi   a0,skipROM
+            push  s                   ; Save scratch register
+            rcall wire1_reset         ; Reset 1-Wire bus
+            ldi   a0,skipROM          ; Skip ROM command (address all devices)
             rcall wire1_write
-            ldi   a0,convertT
+            ldi   a0,convertT         ; Start temperature conversion
             rcall wire1_write
-            pop   s
+            pop   s                   ; Restore scratch register
             ret
 
+; Reads temperature data from the DS18B20 sensor
 temp_fetch:
-            push  s
-            rcall wire1_reset
-            ldi   a0,skipROM
+            push  s                   ; Save scratch register
+            rcall wire1_reset         ; Reset 1-Wire bus
+            ldi   a0,skipROM          ; Skip ROM command
             rcall wire1_write
-            ldi   a0,readScratchpad
+            ldi   a0,readScratchpad   ; Read scratchpad command
             rcall wire1_write
-            rcall wire1_read
+            rcall wire1_read          ; Read LSB of temperature
             sts   temp_lsb,a0
-            rcall wire1_read
+            rcall wire1_read          ; Read MSB of temperature
             sts   temp_msb,a0
-            pop   s
+            pop   s                   ; Restore scratch register
             ret
 
 ;---------------------------------------------------------------------
-;  Background temperature task
+;  TEMPERATURE BACKGROUND TASK - Periodic temperature monitoring
 ;---------------------------------------------------------------------
-; Only s is used; w may change at macro calls we don�t care about here.
+; This routine handles the background temperature monitoring process
+; which alternates between conversion and reading phases.
+;----------------------------------------------------------------------
 
 temp_task:
+            ; Clear temperature ready flag
             lds   s,flags
-            _ANDI  s,~(1<<FLG_TEMP)
+            _ANDI s,~(1<<FLG_TEMP)    ; Clear temperature ready flag
             sts   flags,s
 
+            ; Check current phase and handle accordingly
             lds   s,phase
-            tst   s
-            breq  temp_do_convert
+            tst   s                   ; Check if phase = 0 (convert) or 1 (read)
+            breq  temp_do_convert     ; If phase=0, start conversion
 
-            rcall temp_fetch
-            clr   s
+            ; Phase 1: Read temperature data
+            rcall temp_fetch          ; Read temperature from sensor
+            clr   s                   ; Set phase back to 0 (convert)
             sts   phase,s
             ret
 
 temp_do_convert:
-            rcall temp_convert
-            _LDI   s,1
+            ; Phase 0: Start temperature conversion
+            rcall temp_convert        ; Start temperature conversion
+            _LDI  s,1                 ; Set phase to 1 (read)
             sts   phase,s
             ret
 
 ;======================================================================
-;  Interrupt service routines
+;  INTERRUPT SERVICE ROUTINES - Button and timer handlers
 ;======================================================================
-;----------------------  INT0 � next state  ---------------------------
-int0_isr:
-            push  w                    ; save volatile macro reg
-            inc   sel
-            ldi   w,REG_STATES
-            cp    sel,w
-            brlo  int0_done
-            clr   sel                  ; wrap ? 0
-int0_done:
-            pop   w
-            reti
 
-;----------------------  INT1 � previous state ------------------------
+;----------------------  INT0 - Next state button  --------------------
+int0_isr:
+            push  w                    ; Save working register
+            inc   sel                  ; Increment state
+            ldi   w,REG_STATES         ; Load maximum state number
+            cp    sel,w                ; Compare current state with max
+            brlo  int0_done            ; If less, we're good
+            clr   sel                  ; Otherwise wrap around to 0
+int0_done:
+            ; WAIT_MS BTN_DEBOUNCE     ; Optional: Add debounce delay
+            pop   w                    ; Restore working register
+            reti                       ; Return from interrupt
+
+;----------------------  INT1 - Previous state button  ----------------
 int1_isr:
-            push  w
-            tst   sel
-            brne  int1_dec
-            ldi   w,REG_STATES-1       ; wrap ? 3
+            push  w                    ; Save working register
+            tst   sel                  ; Test if current state is 0
+            brne  int1_dec             ; If not 0, simply decrement
+            ldi   w,REG_STATES-1       ; Otherwise wrap to highest state
             mov   sel,w
-            pop   w
+            ; WAIT_MS BTN_DEBOUNCE     ; Optional: Add debounce delay
+            pop   w                    ; Restore working register
             reti
 int1_dec:
-            dec   sel
-            pop   w
+            dec   sel                  ; Decrement state
+            pop   w                    ; Restore working register
+            ; WAIT_MS BTN_DEBOUNCE     ; Optional: Add debounce delay
             reti
 
-;----------------------  INT2 � goto Home ----------------------------
+;----------------------  INT2 - Home button  -------------------------
 int2_isr:
-            clr   sel
-            reti
+            clr   sel                  ; Set state to home (0)
+            reti                       ; Return from interrupt
 
-;----------------------  INT3 � Doctor mode --------------------------
+;----------------------  INT3 - Doctor mode button  ------------------
 int3_isr:
-            push  w
-            ldi   w,ST_DOCTOR
-            mov   sel,w
-            pop   w
-            reti
+            push  w                    ; Save working register
+            ldi   w,ST_DOCTOR          ; Load doctor mode state number
+            mov   sel,w                ; Set current state to doctor mode
+            pop   w                    ; Restore working register
+            reti                       ; Return from interrupt
 
-;----------------------  Timer-1 overflow ----------------------------
+;----------------------  Timer-1 overflow (1 second tick)  -----------
 t1_isr:
-            push  w                     ; save macro scratch
-            push  _w                    ; save ISR scratch
+            push  w                    ; Save working register
+            push  _w                   ; Save ISR scratch register
 
-            ; reload counter
-            ldi   w,T1_PREH
+            ; Reload timer for next 1-second interval
+            ldi   w,T1_PREH            ; Load high byte of preload
             out   TCNT1H,w
-            ldi   w,T1_PREL
+            ldi   w,T1_PREL            ; Load low byte of preload
             out   TCNT1L,w
 
-            ; heartbeat LED on PF7 (toggle)
-            lds   s,PORTF
-            ldi   _w,(1<<LED_BIT)
-            eor   s,_w
-            sts   PORTF,s
+            ; Toggle heartbeat LED on PF7
+            lds   s,PORTF              ; Get current port state
+            ldi   _w,(1<<LED_BIT)      ; Prepare bit mask
+            eor   s,_w                 ; Toggle LED bit
+            sts   PORTF,s              ; Update port
 
-            ; set temperature task flag
-            lds   s,flags
-            _ORI   s,(1<<FLG_TEMP)
-            sts   flags,s
+            ; Set temperature task flag for background processing
+            lds   s,flags              ; Get current flags
+            _ORI  s,(1<<FLG_TEMP)      ; Set temperature ready flag
+            sts   flags,s              ; Update flags
 
-            pop   _w
-            pop   w
-            reti
+            pop   _w                   ; Restore ISR scratch register
+            pop   w                    ; Restore working register
+            reti                       ; Return from interrupt
 ;======================================================================
-;TODO: increse the debounce time for the buttons 
