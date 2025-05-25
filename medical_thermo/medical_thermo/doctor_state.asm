@@ -19,7 +19,7 @@
 ;  Dependencies:
 ;  - Requires LCD driver for text display
 ;  - Requires WS2812 drivers for LED matrix control
-;  - Uses temperature sensor via temp_task function
+;  - Uses temperature sensor DS18B20 via temp_task function
 ;  - Uses PRINTF macro for formatted temperature output
 ;======================================================================
 
