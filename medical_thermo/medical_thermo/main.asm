@@ -261,7 +261,7 @@ int0_isr:
             brlo  int0_done            ; If less, we're good
             clr   sel                  ; Otherwise wrap around to 0
 int0_done:
-            ; WAIT_MS BTN_DEBOUNCE     ; Optional: Add debounce delay
+            ;WAIT_MS BTN_DEBOUNCE     ; Optional: Add debounce delay
             pop   w                    ; Restore working register
             reti                       ; Return from interrupt
 
@@ -272,13 +272,13 @@ int1_isr:
             brne  int1_dec             ; If not 0, simply decrement
             ldi   w,REG_STATES-1       ; Otherwise wrap to highest state
             mov   sel,w
-            ; WAIT_MS BTN_DEBOUNCE     ; Optional: Add debounce delay
+            ;WAIT_MS BTN_DEBOUNCE     ; Optional: Add debounce delay
             pop   w                    ; Restore working register
             reti
 int1_dec:
             dec   sel                  ; Decrement state
             pop   w                    ; Restore working register
-            ; WAIT_MS BTN_DEBOUNCE     ; Optional: Add debounce delay
+            ;WAIT_MS BTN_DEBOUNCE     ; Optional: Add debounce delay
             reti
 
 ;----------------------  INT2 - Home button  -------------------------
