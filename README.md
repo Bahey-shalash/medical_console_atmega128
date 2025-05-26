@@ -56,7 +56,11 @@ Contributions are welcome! If you extend the sensor suite (e.g., heart rate, SpO
 
 
 
-https://github.com/user-attachments/assets/da5c4081-875a-4d4d-93f4-4a6e6261ba07
+
+https://github.com/user-attachments/assets/3ee7c1c4-c0f4-48b2-98c5-80e053a8acb8
+
+
+
 
 ## License
 
