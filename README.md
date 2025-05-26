@@ -1,6 +1,7 @@
 # Medical Console Prototype
 
-This is a **pre-prototype** developed for the EE208 (Spring 2025). The goal is to create a user-friendly medical console for doctors working with autistic children, where vital signs are measured unobtrusively during play. While the current implementation only includes a DS18B20 temperature sensor, the design can be extended to other sensors (e.g., heart rate, oxygen saturation).
+This is a **pre-prototype** developed for the EE208 (Spring 2025) [EE208-MICRO210_ESP-2025-v1.1-3.pdf](https://github.com/user-attachments/files/20438062/EE208-MICRO210_ESP-2025-v1.1-3.pdf). The goal is to create a user-friendly medical console for doctors working with autistic children, where vital signs are measured unobtrusively during play. While the current implementation only includes a DS18B20 temperature sensor, the design can be extended to other sensors (e.g., heart rate, oxygen saturation).
+
 
 ## Features
 
@@ -35,7 +36,19 @@ Contributions are welcome! If you extend the sensor suite (e.g., heart rate, SpO
 
 ## Contributions
 
-* Code by **Bahey**
+* Code by **Bahey Shalash**
 * Project report & video filming assistance by **Ramzy Rafla**
 
-## License
+## Images
+
+![IMG_1539](https://github.com/user-attachments/assets/23c3a513-8f71-467c-b11d-50dd1ee32848)
+
+![IMG_1540](https://github.com/user-attachments/assets/2d0c2b80-7f7a-4012-a5be-e3e1adf919bb)
+
+
+![IMG_1541](https://github.com/user-attachments/assets/2b0b44d2-7d7b-464b-9d8a-cee5d30a41a8)
+
+![snake](https://github.com/user-attachments/assets/dcebf076-6526-4e16-878c-279b97e84e3d)
+
+
+
